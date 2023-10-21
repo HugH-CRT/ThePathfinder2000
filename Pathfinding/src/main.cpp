@@ -10,8 +10,8 @@
 * @date 12/10/2023
 */
 #include "macro.h"
-#include "core/Game.h"
 #include "defined.h"
+#include "Game.h"
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>

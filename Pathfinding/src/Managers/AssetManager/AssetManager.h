@@ -7,7 +7,7 @@
 class AssetManager
 {
 	
-public : 
+public: 
 	AssetManager() {}
 	~AssetManager() {}
 
@@ -17,7 +17,7 @@ public :
 	void LoadFont(std::string name, std::string fileName);
 	sf::Font& GetFont(std::string name);
 
-private : 
+private: 
 	std::map<std::string, sf::Texture> _textures;
 	std::map<std::string, sf::Font> _fonts;
 };
