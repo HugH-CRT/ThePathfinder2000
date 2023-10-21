@@ -1,8 +1,8 @@
 #ifndef MAIN_MENU_STATE_H
 #define MAIN_MENU_STATE_H
 
-#include "../StateMachine/State.h"
-#include "../Game.h"
+#include "State.h"
+#include "Game.h"
 
 #include <SFML/Graphics.hpp>
 

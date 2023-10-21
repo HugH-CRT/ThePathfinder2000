@@ -13,6 +13,8 @@
 #include "core/Game.h"
 #include "defined.h"
 
+#include "c_path.h"
+
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Clock.hpp>
@@ -23,6 +25,9 @@
 */
 int main() 
 {
+
+	C_PATH::CurrentDir();
+
 	Game(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE_WINDOW);
 	return EXIT_SUCCESS;
 }
