@@ -1,5 +1,6 @@
 #include "MainMenuState.h"
 #include "defined.h"
+#include "GameState.h"
 
 #include <sstream>
 #include <iostream>
@@ -42,7 +43,7 @@ void MainMenuState::HandleInput()
 		}
 		if (this->_data->m_inputManager.IsSpriteClicked(this->playButton, sf::Mouse::Left, this->_data->m_window))
 		{
-			std::cout << "Go to Game Screen" << std::endl;
+			this->_data->machine.AddState(StateRef(new GameState(_data)), true); 
 		}
 	}
 }
