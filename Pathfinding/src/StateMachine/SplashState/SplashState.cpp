@@ -15,6 +15,8 @@ void SplashState::Init()
 	this->m_data->m_assetManager.LoadTexture("Splash State Background", SPLASH_SCENE_BACKGROUND_FILEPATH);
 
 	m_background.setTexture(m_data->m_assetManager.GetTexture("Splash State Background"));
+	this->m_background.setScale(SCREEN_WIDTH / this->m_background.getLocalBounds().width, SCREEN_HEIGHT / this->m_background.getLocalBounds().height);
+
 }
 
 void SplashState::HandleInput()

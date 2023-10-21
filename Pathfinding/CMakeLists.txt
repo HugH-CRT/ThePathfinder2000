@@ -12,6 +12,7 @@ set(HEADERS
     "${PATH_DIR}/StateMachine/GameState/GameState.h"
     "${PATH_DIR}/StateMachine/MainMenu/MainMenuState.h"
     "${PATH_DIR}/StateMachine/SplashState/SplashState.h"
+	"${PATH_DIR}/StateMachine/PauseState/PauseState.h"
     "${PATH_DIR}/defined.h"
     
     
@@ -26,6 +27,7 @@ set(SOURCES
    "${PATH_DIR}/StateMachine/GameState/GameState.cpp"
    "${PATH_DIR}/StateMachine/SplashState/SplashState.cpp"
    "${PATH_DIR}/StateMachine/MainMenu/MainMenuState.cpp"
+   	"${PATH_DIR}/StateMachine/PauseState/PauseState.cpp"
 
 
 

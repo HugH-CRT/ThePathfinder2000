@@ -1,29 +1,30 @@
-#ifndef GAME_STATE_H
-#define GAME_STATE_H
+#ifndef PAUSE_STATE_H
+#define PAUSE_STATE_H
 
 #include "../State.h"
 #include "../Game.h"
 
 #include <SFML/Graphics.hpp>
 
-class GameState : public State
+class PauseState : public State
 {
 
 public:
-	GameState(GameDataRef data);
-	
+	PauseState(GameDataRef data);
+
 	void Init();
-	
+
 	void HandleInput();
 	void Update(float dt);
 	void Draw(float dt);
 
-private : 
-	
+private:
+
 	GameDataRef _data;
 
 	sf::Sprite _background;
-	sf::Sprite _pauseButton;
+	sf::Sprite _resumeButton;
+	sf::Sprite _homeButton;
 };
 
-#endif /* GAME_STATE_H */
+#endif /* PAUSE_STATE_H */
