@@ -28,7 +28,7 @@ set(SOURCES
    "${PATH_DIR}/StateMachine/GameState/GameState.cpp"
    "${PATH_DIR}/StateMachine/SplashState/SplashState.cpp"
    "${PATH_DIR}/StateMachine/MainMenu/MainMenuState.cpp"
-   	"${PATH_DIR}/StateMachine/PauseState/PauseState.cpp"
+   "${PATH_DIR}/StateMachine/PauseState/PauseState.cpp"
 
    # LIB 
    "${PATH_DIR}/lib/ImGUI/imgui.cpp"
@@ -57,8 +57,9 @@ add_executable(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME}
     PUBLIC
 	$<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${HEADER_DIR}>
+	$<BUILD_INTERFACE:${HEADER_DIR}>
 	$<BUILD_INTERFACE:${C_PATH_HEADER}>
+	$<BUILD_INTERFACE:${LOGGER_HEADER}>
         "${PATH_DIR}/lib/SFML/include"
         "${PATH_DIR}/lib/ImGUI"
         "${PATH_DIR}/lib/ImGUI/backends"
@@ -80,6 +81,7 @@ target_link_libraries(${PROJECT_NAME}
 	${OTHER_LINK_LIBRARIES}
     PRIVATE
 	CustomPath
+	Logger
 )
 
 # Copy DLL
