@@ -1,8 +1,8 @@
 #ifndef PAUSE_STATE_H
 #define PAUSE_STATE_H
 
-#include "../State.h"
-#include "../Game.h"
+#include "State.h"
+#include "Game.h"
 
 #include <SFML/Graphics.hpp>
 

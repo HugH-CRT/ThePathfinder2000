@@ -1,7 +1,7 @@
 #include "PauseState.h"
-#include "../defined.h"
-#include "../GameState.h"
-#include "../MainMenuState.h"
+#include "defined.h"
+#include "GameState/GameState.h"
+#include "MainMenu/MainMenuState.h"
 
 #include <sstream>
 #include <iostream>

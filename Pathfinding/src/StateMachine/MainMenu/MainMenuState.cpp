@@ -1,6 +1,6 @@
 #include "MainMenuState.h"
 #include "defined.h"
-#include "GameState.h"
+#include "GameState/GameState.h"
 
 #include <sstream>
 #include <iostream>
