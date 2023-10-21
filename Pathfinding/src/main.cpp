@@ -11,33 +11,6 @@
 */
 #include "macro.h"
 
-/*
-#include <iostream>
-
-#include <SFML/Graphics.hpp>
-
-int main()
-{
-    auto window = sf::RenderWindow{ { 1920u, 1080u }, "ThePathfinder2000" };
-    window.setFramerateLimit(144);
-
-    while (window.isOpen())
-    {
-        for (auto event = sf::Event{}; window.pollEvent(event);)
-        {
-            if (event.type == sf::Event::Closed)
-            {
-                window.close();
-            }
-        }
-
-        window.clear();
-        window.display();
-    }
-}
-
-*/
-
 #include "imgui.h"
 #include "imgui-SFML.h"
 
@@ -46,7 +19,13 @@ int main()
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 
-int main() {
+
+/**
+* @fn main
+*/
+int main() 
+{
+
     sf::RenderWindow window(sf::VideoMode(640, 480), "ThePathFinder2000");
     window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
