@@ -1,12 +1,14 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H
 
-#include <memory>
-#include <string>
-#include <SFML/Graphics.hpp>
 #include "../StateMachine.h"
 #include "../AssetManager.h"
 #include "../AssetManager.h"
 #include "../Managers/InputManager/InputManager.h"
+
+#include <memory>
+#include <string>
+#include <SFML/Graphics.hpp>
 
 struct GameData
 {
@@ -32,3 +34,5 @@ class Game
 
 		void Run();	
 };
+
+#endif /* GAME_H */

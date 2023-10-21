@@ -11,7 +11,7 @@
 */
 #include "macro.h"
 #include "core/Game.h"
-#include "DEFINITIONS.h"
+#include "defined.h"
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -23,6 +23,6 @@
 */
 int main() 
 {
-	Game(SCREEN_WIDTH, SCREEN_HEIGHT, "Title");
+	Game(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE_WINDOW);
 	return EXIT_SUCCESS;
 }

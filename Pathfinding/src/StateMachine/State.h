@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STATE_H
+#define STATE_H
 
 class State
 {
@@ -12,3 +13,5 @@ class State
 		virtual void Pause() { }
 		virtual void Resume() { }
 };
+
+#endif /* STATE_H */

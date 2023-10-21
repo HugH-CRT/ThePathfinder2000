@@ -1,8 +1,10 @@
-#pragma once
+#ifndef SPLASH_STATE_H
+#define SPLASH_STATE_H
 
-#include <SFML/Graphics.hpp>
 #include "../StateMachine/State.h"
 #include "../core/Game.h"
+
+#include <SFML/Graphics.hpp>
 
 class SplashState : public State
 {
@@ -22,3 +24,5 @@ class SplashState : public State
 
 		sf::Sprite m_background;
 };
+
+#endif /* SPLASH_STATE_H */ 

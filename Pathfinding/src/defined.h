@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DEFINED_H
+#define DEFINED_H
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -10,3 +11,7 @@
 #define MAIN_MENU_TITLE_PATH "../../Pathfinding/Resources/PathfinderLogo.png"
 #define MAIN_MENU_PLAY_BUTTON "../../Pathfinding/Resources/PlayButton.png"
 #define MAIN_MENU_PLAY_BUTTON_OUTER "../../Pathfinding/Resources/CloseButtonLogo.png"
+
+#define TITLE_WINDOW "Pathfinding"
+
+#endif /* DEFINED_H */

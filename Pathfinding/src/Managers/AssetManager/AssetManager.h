@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ASSET_MANAGER_H
+#define ASSET_MANAGER_H
 
 #include <map>
 #include <SFML/Graphics.hpp>
@@ -20,3 +21,5 @@ private :
 	std::map<std::string, sf::Texture> _textures;
 	std::map<std::string, sf::Font> _fonts;
 };
+
+#endif /* _ASSET_MANAGER_H */

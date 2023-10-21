@@ -1,8 +1,9 @@
 #include "SplashState.h"
+#include "../defined.h"
+#include "../MainMenu/MainMenuState.h"
+
 #include <sstream>
 #include <iostream>
-#include "../DEFINITIONS.h"
-#include "../MainMenu/MainMenuState.h"
 
 
 SplashState::SplashState(GameDataRef data) : m_data(data)

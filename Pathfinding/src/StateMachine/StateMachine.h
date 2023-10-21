@@ -1,9 +1,10 @@
-#pragma once
+#ifndef STATE_MACHINE_H
+#define STATE_MACHINE_H
+
+#include "State.h"
 
 #include <memory>
 #include <stack>
-
-#include "State.h"
 
 typedef std::unique_ptr<State> StateRef;
 
@@ -28,3 +29,5 @@ class StateMachine
 		bool _isAdding;
 		bool _isReplacing;
 };
+
+#endif /* STATE_MACHINE_H */

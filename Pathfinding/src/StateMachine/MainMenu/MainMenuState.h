@@ -1,8 +1,10 @@
-#pragma once
+#ifndef MAIN_MENU_STATE_H
+#define MAIN_MENU_STATE_H
 
-#include <SFML/Graphics.hpp>
 #include "../StateMachine/State.h"
 #include "../Game.h"
+
+#include <SFML/Graphics.hpp>
 
 class MainMenuState : public State
 {
@@ -24,3 +26,4 @@ class MainMenuState : public State
 		sf::Sprite title;
 
 };
+#endif /* MAIN_MENU_STATE_H */

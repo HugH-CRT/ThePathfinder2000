@@ -1,5 +1,6 @@
 #include "MainMenuState.h"
-#include "../DEFINITIONS.h"
+#include "../defined.h"
+
 #include <sstream>
 #include <iostream>
 

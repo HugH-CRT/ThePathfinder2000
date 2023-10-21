@@ -12,7 +12,7 @@ set(HEADERS
     "${PATH_DIR}/StateMachine/GameState/GameState.h"
     "${PATH_DIR}/StateMachine/MainMenu/MainMenuState.h"
     "${PATH_DIR}/StateMachine/SplashState/SplashState.h"
-    "${PATH_DIR}/DEFINITIONS.h"
+    "${PATH_DIR}/defined.h"
     
     
 )
