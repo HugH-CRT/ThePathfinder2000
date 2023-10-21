@@ -4,10 +4,28 @@ set (PATH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 set(HEADERS
     "${PATH_DIR}/macro.h"
+    "${PATH_DIR}/core/Game.h"
+    "${PATH_DIR}/Managers/AssetManager/AssetManager.h"
+    "${PATH_DIR}/Managers/InputManager/InputManager.h"
+    "${PATH_DIR}/StateMachine/StateMachine.h"
+    "${PATH_DIR}/StateMachine/State.h"
+    "${PATH_DIR}/StateMachine/GameState/GameState.h"
+    "${PATH_DIR}/StateMachine/MainMenu/MainMenuState.h"
+    "${PATH_DIR}/StateMachine/SplashState/SplashState.h"
+    "${PATH_DIR}/DEFINITIONS.h"
+    
+    
 )
 
 set(SOURCES
    "${PATH_DIR}/main.cpp" 
+   "${PATH_DIR}/core/Game.cpp"
+   "${PATH_DIR}/Managers/AssetManager/AssetManager.cpp"
+   "${PATH_DIR}/Managers/InputManager/InputManager.cpp"
+   "${PATH_DIR}/StateMachine/StateMachine.cpp"
+   "${PATH_DIR}/StateMachine/GameState/GameState.cpp"
+   "${PATH_DIR}/StateMachine/SplashState/SplashState.cpp"
+   "${PATH_DIR}/StateMachine/MainMenu/MainMenuState.cpp"
 
 
 
