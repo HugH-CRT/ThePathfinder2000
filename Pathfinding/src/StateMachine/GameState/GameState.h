@@ -5,9 +5,8 @@
 
 class GameState : public State
 {
-
 //public:
-//	GameState(GameDataRef data);
+//	explicit GameState(GameDataRef data);
 //	
 //	void Init();
 //	
@@ -15,7 +14,7 @@ class GameState : public State
 //	void Update(float dt);
 //	void Draw(float dt);
 //
-//private : 
+//private: 
 //	
 //	GameDataRef _data;
 //	

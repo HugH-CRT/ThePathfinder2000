@@ -1,3 +1,14 @@
+/**
+* @file c_path.cpp
+* @brief
+* 
+* @author hugo.carricart@ynov.com
+* 
+* @copyright TeamRandom (c) 2023
+* @version 0.1
+*
+* @date 21/10/2023
+*/
 #include "c_path.h"
 
 #include <filesystem>

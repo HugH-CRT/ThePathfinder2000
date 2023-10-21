@@ -21,17 +21,17 @@ typedef std::shared_ptr<GameData> GameDataRef;
 
 class Game
 {
-	public : 
-		Game(int width, int height, std::string title);
+public: 
+	explicit Game(int width = 1280, int height = 720, std::string title = "DefaultTitle");
 
-	private : 
+private: 
 
-		const float frameRate = 1.0f / 60.0f;
-		sf::Clock m_clock;
+	const float frameRate = 1.0f / 60.0f;
+	sf::Clock m_clock;
 
-		GameDataRef m_data = std::make_shared<GameData>();
+	GameDataRef m_data = std::make_shared<GameData>();
 
-		void Run();	
+	void Run();	
 };
 
 #endif /* GAME_H */
