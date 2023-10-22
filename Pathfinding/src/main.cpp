@@ -18,11 +18,18 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 
+Game* gGame;
+
+Game* GetGame()
+{
+	return gGame;
+}
+
 /**
 * @fn main
 */
 int main() 
 {
-	Game(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE_WINDOW);
+	gGame = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE_WINDOW);
 	return EXIT_SUCCESS;
 }

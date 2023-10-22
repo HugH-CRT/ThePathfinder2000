@@ -4,10 +4,13 @@
 #include "StateMachine.h"
 #include "AssetManager/AssetManager.h"
 #include "InputManager/InputManager.h"
+#include "defined.h"
 
 #include <memory>
 #include <string>
 #include <SFML/Graphics.hpp>
+
+using namespace std;
 
 struct GameData
 {
@@ -19,10 +22,21 @@ struct GameData
 
 typedef std::shared_ptr<GameData> GameDataRef;
 
+typedef pair<int, int> Pair;
+typedef pair<double, pair<int, int> > pPair;
+
+struct cell {
+	int parent_i, parent_j;
+
+	double f, g, h; // f = g + h
+};
+
 class Game
 {
 public: 
 	explicit Game(int width = 1280, int height = 720, std::string title = "DefaultTitle");
+
+	stack<Pair> AStarAlgorithm(int gridArray[NB_LINES][NB_COLUMNS], sf::Vector2i startingPoint, sf::Vector2i endingPoint);
 
 private: 
 
@@ -32,6 +46,21 @@ private:
 	GameDataRef m_data = std::make_shared<GameData>();
 
 	void Run();	
+
+	bool isValid(int row, int col);
+
+	bool isNotAWall(int grid[][NB_COLUMNS], int row, int col);
+
+	bool isDestination(int row, int col, Pair dest);
+
+	double calculateHValue(int row, int col, Pair dest);
+
+	stack<Pair> tracePath(cell cellDetails[][NB_COLUMNS], Pair dest);
+
+	stack<Pair> aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest);
+
 };
+
+Game* GetGame();
 
 #endif /* GAME_H */

@@ -1,6 +1,7 @@
 #include "GameState.h"
 #include "../defined.h"
 #include "../PauseState/PauseState.h"
+#include "Game.h"
 
 #include <sstream>
 #include <iostream>
@@ -11,6 +12,10 @@ GameState::GameState(GameDataRef data)
 	, EndPlaced(false)
 	, _gridArray{ }
 {
+	startingPoint.x = -1;
+	startingPoint.y = -1;
+	endingPoint.x = -1;
+	endingPoint.y = -1;
 }
 
 void GameState::Init()
@@ -22,13 +27,18 @@ void GameState::Init()
 	this->_data->m_assetManager.LoadTexture("Path", PATH);
 	this->_data->m_assetManager.LoadTexture("Start Point", START_POINT);
 	this->_data->m_assetManager.LoadTexture("End Point", END_POINT);
+	this->_data->m_assetManager.LoadTexture("Play Button", MAIN_MENU_PLAY_BUTTON);
 	
 	_background.setTexture(this->_data->m_assetManager.GetTexture("Game Background"));
 	this->_background.setScale(SCREEN_WIDTH / this->_background.getLocalBounds().width, SCREEN_HEIGHT / this->_background.getLocalBounds().height);
-
+	
 	_pauseButton.setScale(0.3f, 0.3f);
 	_pauseButton.setTexture(this->_data->m_assetManager.GetTexture("Pause Button"));
 	_pauseButton.setPosition((SCREEN_WIDTH - _pauseButton.getGlobalBounds().width), _pauseButton.getPosition().y);
+
+	_playButton.setScale(0.3f, 0.3f);
+	_playButton.setTexture(this->_data->m_assetManager.GetTexture("Play Button"));
+	_playButton.setPosition(_playButton.getGlobalBounds().width, _playButton.getPosition().y);
 
 	_gridSprite.setTexture(this->_data->m_assetManager.GetTexture("Path"));
 	_gridSprite.setPosition((SCREEN_WIDTH / 2) - (_gridSprite.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) - (_gridSprite.getGlobalBounds().height / 2));
@@ -66,6 +76,11 @@ void GameState::HandleInput()
 		{
 			PlacePiece(sf::Mouse::Middle);
 		}
+
+		if (this->_data->m_inputManager.IsSpriteClicked(this->_playButton, sf::Mouse::Left, this->_data->m_window))
+		{
+			Play();
+		}
 	}
 }
 
@@ -78,6 +93,7 @@ void GameState::Draw(float dt)
 	_data->m_window.clear();
 	_data->m_window.draw(_background);
 	_data->m_window.draw(_gridSprite);
+	_data->m_window.draw(_playButton);
 
 	for (int x = 0; x < NB_LINES; x++)
 	{
@@ -108,6 +124,8 @@ void GameState::InitGridTiles()
 			float positionY = _gridSprite.getPosition().y + ( y * _gridPieces[x][y].getGlobalBounds().height)+ y;
 
 			_gridPieces[x][y].setPosition(positionX,positionY);
+
+			_gridArray[x][y] = EMPTY_PIECE;
 		}
 	}
 }
@@ -203,7 +221,28 @@ void GameState::PlacePiece(sf::Mouse::Button clickSide)
 			PlaceWall(column, row);
 		}
 	}
-	
+}
+
+void GameState::Play()
+{
+	ClearPath();
+	if (CheckMapValidity())
+	{
+		stack<Pair> path = GetGame()->AStarAlgorithm(_gridArray,startingPoint, endingPoint);
+
+		while (!path.empty())
+		{
+			Pair p = path.top();
+			path.pop();
+			_gridPieces[p.first][p.second].setTexture(this->_data->m_assetManager.GetTexture("Path"));
+			_gridArray[p.first][p.second] = PATH_PIECE;
+		}
+	}
+}
+
+bool GameState::CheckMapValidity()
+{
+	return startingPoint.x != -1 && startingPoint.y != -1 && endingPoint.x != -1 && endingPoint.y != -1;
 }
 
 void GameState::ResetStartPoint(int column, int row)
@@ -211,6 +250,7 @@ void GameState::ResetStartPoint(int column, int row)
 	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
 	StartPlaced = false;
 	startingPoint = sf::Vector2i(-1, -1);
+	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
 }
 
 void GameState::ResetEndPoint(int column, int row)
@@ -218,11 +258,13 @@ void GameState::ResetEndPoint(int column, int row)
 	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
 	EndPlaced = false;
 	endingPoint = sf::Vector2i(-1, -1);
+	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
 }
 
 void GameState::ResetWall(int column, int row)
 {
 	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
+	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
 }
 
 void GameState::PlaceStartPoint(int column, int row)
@@ -230,6 +272,7 @@ void GameState::PlaceStartPoint(int column, int row)
 	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Start Point"));
 	StartPlaced = true;
 	startingPoint = sf::Vector2i(column - 1, row - 1);
+	_gridArray[column - 1][row - 1] = START_PIECE;
 }
 
 void GameState::PlaceEndPoint(int column, int row)
@@ -237,9 +280,30 @@ void GameState::PlaceEndPoint(int column, int row)
 	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("End Point"));
 	EndPlaced = true;
 	endingPoint = sf::Vector2i(column - 1, row - 1);
+	_gridArray[column - 1][row - 1] = END_PIECE;
 }
 
 void GameState::PlaceWall(int column, int row)
 {
 	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Wall"));
+	_gridArray[column - 1][row - 1] = WALL_PIECE;
+}
+
+void GameState::DrawPath(stack<Pair> Path)
+{
+}
+
+void GameState::ClearPath()
+{
+	for (int x = 0; x < NB_LINES; x++)
+	{
+		for (int y = 0; y < NB_COLUMNS; y++)
+		{
+			if (_gridArray[x][y] == PATH_PIECE)
+			{
+				_gridArray[x][y] = EMPTY_PIECE;
+				_gridPieces[x][y].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
+			}
+		}
+	}
 }
