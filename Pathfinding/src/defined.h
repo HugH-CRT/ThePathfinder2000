@@ -28,4 +28,7 @@
 
 #define TITLE_WINDOW "Pathfinding"
 
+#define NB_LINES 10
+#define NB_COLUMNS 10
+
 #endif /* DEFINED_H */
