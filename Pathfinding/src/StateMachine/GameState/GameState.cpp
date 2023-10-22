@@ -9,7 +9,7 @@ GameState::GameState(GameDataRef data)
 	: _data(data)
 	, StartPlaced(false)
 	, EndPlaced(false)
-	, _gridArray{ {0, 0, 0}, {0, 0, 0}, {0, 0, 0} }
+	, _gridArray{ }
 {
 }
 
@@ -79,9 +79,9 @@ void GameState::Draw(float dt)
 	_data->m_window.draw(_background);
 	_data->m_window.draw(_gridSprite);
 
-	for (int x = 0; x < 3; x++)
+	for (int x = 0; x < NB_LINES; x++)
 	{
-		for (int y = 0; y < 3; y++)
+		for (int y = 0; y < NB_COLUMNS; y++)
 		{
 			this->_data->m_window.draw(_gridPieces[x][y]);
 		}
@@ -95,17 +95,17 @@ void GameState::InitGridTiles()
 {
 	sf::Vector2u tempSpriteSize = this->_data->m_assetManager.GetTexture("Grid Sprite").getSize();
 
-	for (int x = 0; x < 3; x++)
+	for (int x = 0; x < NB_LINES; x++)
 	{
-		for (int y = 0; y < 3; ++y)
+		for (int y = 0; y < NB_COLUMNS; ++y)
 		{
-			float factor = static_cast<float>(1.f) / 3.f;
+			float factor = static_cast<float>(1.f) / NB_COLUMNS;
 
 			_gridPieces[x][y].setScale(factor, factor);
 			_gridPieces[x][y].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
 
-			float positionX = _gridSprite.getPosition().x + ( x * _gridPieces[x][y].getGlobalBounds().width);
-			float positionY = _gridSprite.getPosition().y + ( y * _gridPieces[x][y].getGlobalBounds().height);
+			float positionX = _gridSprite.getPosition().x + ( x * _gridPieces[x][y].getGlobalBounds().width ) + x;
+			float positionY = _gridSprite.getPosition().y + ( y * _gridPieces[x][y].getGlobalBounds().height)+ y;
 
 			_gridPieces[x][y].setPosition(positionX,positionY);
 		}
@@ -121,34 +121,25 @@ void GameState::PlacePiece(sf::Mouse::Button clickSide)
 
 	sf::Vector2f gridLocalTouchPos = sf::Vector2f(touchPoint.x - gapOutsideOfGrid.x, touchPoint.y - gapOutsideOfGrid.y);
 
-	sf::Vector2f gridSectionSize = sf::Vector2f(gridSize.width / 3, gridSize.height / 3);
+	sf::Vector2f gridSectionSize = sf::Vector2f(gridSize.width / NB_COLUMNS, gridSize.height / NB_LINES);
 
 	int column, row;
 	
-	if (gridLocalTouchPos.x < _gridSprite.getGlobalBounds().width / 3)
-	{
-		column = 1;
-	}
-	else if (gridLocalTouchPos.x < _gridSprite.getGlobalBounds().width / 3 * 2)
-	{
-		column = 2;
-	}
-	else if (gridLocalTouchPos.x < _gridSprite.getGlobalBounds().width)
-	{
-		column = 3;
+	float columnWidth = _gridSprite.getGlobalBounds().width / NB_COLUMNS; 
+	float rowHeight = _gridSprite.getGlobalBounds().height / NB_LINES; 
+
+	for (int c = 1; c <= NB_COLUMNS; c++) {
+		if (gridLocalTouchPos.x < columnWidth * c) {
+			column = c;
+			break;
+		}
 	}
 
-	if (gridLocalTouchPos.y < gridSectionSize.y )
-	{
-		row = 1;
-	}
-	else if (gridLocalTouchPos.y < gridSectionSize.y * 2)
-	{
-		row = 2;
-	}
-	else if (gridLocalTouchPos.y < _gridSprite.getGlobalBounds().height)
-	{
-		row = 3;
+	for (int r = 1; r <= NB_LINES; r++) {
+		if (gridLocalTouchPos.y < rowHeight * r) {
+			row = r;
+			break;
+		}
 	}
 
 	if (clickSide == sf::Mouse::Left)
@@ -203,8 +194,14 @@ void GameState::PlacePiece(sf::Mouse::Button clickSide)
 		{
 			ResetStartPoint(column, row);
 		}
-
-		PlaceWall(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Wall"))
+		{
+			ResetWall(column, row);
+		}
+		else
+		{
+			PlaceWall(column, row);
+		}
 	}
 	
 }

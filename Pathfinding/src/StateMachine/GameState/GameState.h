@@ -3,6 +3,7 @@
 
 #include "State.h"
 #include "Game.h"
+#include "../defined.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -43,8 +44,8 @@ private :
 	sf::Sprite _background;
 	sf::Sprite _pauseButton;
 	sf::Sprite _gridSprite;
-	sf::Sprite _gridPieces[3][3];
-	int _gridArray[3][3];
+	sf::Sprite _gridPieces[NB_LINES][NB_COLUMNS];
+	int _gridArray[NB_LINES][NB_COLUMNS];
 };
 
 #endif /* GAME_STATE_H */
