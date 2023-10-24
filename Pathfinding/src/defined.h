@@ -25,6 +25,7 @@
 #define WALL "../../Pathfinding/Resources/Wall.png"
 #define PATH "../../Pathfinding/Resources/Path.png"
 #define EMPTY_TILE "../../Pathfinding/Resources/EmptyTile.png"
+#define CHECKPOINT "../../Pathfinding/Resources/CheckPoint.png"
 
 #define CHECK_BOX_CHECKED "../../Pathfinding/Resources/CheckBoxChecked.png"
 #define CHECK_BOX_UNCHECKED "../../Pathfinding/Resources/CheckBoxUnchecked.png" 
