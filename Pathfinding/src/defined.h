@@ -26,6 +26,11 @@
 #define PATH "../../Pathfinding/Resources/Path.png"
 #define EMPTY_TILE "../../Pathfinding/Resources/EmptyTile.png"
 
+#define CHECK_BOX_CHECKED "../../Pathfinding/Resources/CheckBoxChecked.png"
+#define CHECK_BOX_UNCHECKED "../../Pathfinding/Resources/CheckBoxUnchecked.png" 
+
+#define FONT "../../Pathfinding/Resources/Roboto-Black.ttf"
+
 #define TITLE_WINDOW "Pathfinding"
 
 #define NB_LINES 10

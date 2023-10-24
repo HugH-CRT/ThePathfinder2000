@@ -36,7 +36,7 @@ class Game
 public: 
 	explicit Game(int width = 1280, int height = 720, std::string title = "DefaultTitle");
 
-	stack<Pair> AStarAlgorithm(int gridArray[NB_LINES][NB_COLUMNS], sf::Vector2i startingPoint, sf::Vector2i endingPoint);
+	stack<Pair> AStarAlgorithm(int gridArray[NB_LINES][NB_COLUMNS], sf::Vector2i startingPoint, sf::Vector2i endingPoint, bool UseDiagonal);
 
 private: 
 
@@ -57,7 +57,7 @@ private:
 
 	stack<Pair> tracePath(cell cellDetails[][NB_COLUMNS], Pair dest);
 
-	stack<Pair> aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest);
+	stack<Pair> aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest, bool UseDiagonal);
 
 };
 

@@ -10,6 +10,7 @@ GameState::GameState(GameDataRef data)
 	: _data(data)
 	, StartPlaced(false)
 	, EndPlaced(false)
+	, UseDiagonal(false)
 	, _gridArray{ }
 {
 	startingPoint.x = -1;
@@ -28,6 +29,9 @@ void GameState::Init()
 	this->_data->m_assetManager.LoadTexture("Start Point", START_POINT);
 	this->_data->m_assetManager.LoadTexture("End Point", END_POINT);
 	this->_data->m_assetManager.LoadTexture("Play Button", MAIN_MENU_PLAY_BUTTON);
+	this->_data->m_assetManager.LoadTexture("Check Box Checked", CHECK_BOX_CHECKED);
+	this->_data->m_assetManager.LoadTexture("Check Box Unchecked", CHECK_BOX_UNCHECKED);
+	this->_data->m_assetManager.LoadFont("Robotto Font", FONT); 
 	
 	_background.setTexture(this->_data->m_assetManager.GetTexture("Game Background"));
 	this->_background.setScale(SCREEN_WIDTH / this->_background.getLocalBounds().width, SCREEN_HEIGHT / this->_background.getLocalBounds().height);
@@ -42,6 +46,14 @@ void GameState::Init()
 
 	_gridSprite.setTexture(this->_data->m_assetManager.GetTexture("Path"));
 	_gridSprite.setPosition((SCREEN_WIDTH / 2) - (_gridSprite.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) - (_gridSprite.getGlobalBounds().height / 2));
+
+	_checkBox.setScale(0.1f, 0.1f);
+	_checkBox.setTexture(this->_data->m_assetManager.GetTexture("Check Box Unchecked"));
+	_checkBox.setPosition((SCREEN_WIDTH / 4) - _checkBox.getGlobalBounds().width, (SCREEN_HEIGHT / 2) - _checkBox.getGlobalBounds().height );
+
+	_checkBoxText = sf::Text("Diagonal Movement", this->_data->m_assetManager.GetFont("Robotto Font"), 20);
+	
+	_checkBoxText.setPosition((SCREEN_WIDTH / 4) - _checkBoxText.getGlobalBounds().width - _checkBox.getGlobalBounds().width * 2, (SCREEN_HEIGHT / 2) - _checkBox.getGlobalBounds().height);
 
 	InitGridTiles();
 }
@@ -81,6 +93,12 @@ void GameState::HandleInput()
 		{
 			Play();
 		}
+
+		if (this->_data->m_inputManager.IsSpriteClicked(this->_checkBox, sf::Mouse::Left, this->_data->m_window))
+		{
+			UseDiagonal = !UseDiagonal;
+			_checkBox.setTexture(this->_data->m_assetManager.GetTexture(UseDiagonal ? "Check Box Checked" : "Check Box Unchecked"));
+		}
 	}
 }
 
@@ -94,6 +112,7 @@ void GameState::Draw(float dt)
 	_data->m_window.draw(_background);
 	_data->m_window.draw(_gridSprite);
 	_data->m_window.draw(_playButton);
+	_data->m_window.draw(_checkBox);
 
 	for (int x = 0; x < NB_LINES; x++)
 	{
@@ -104,6 +123,7 @@ void GameState::Draw(float dt)
 	}
 	
 	_data->m_window.draw(_pauseButton);
+	_data->m_window.draw(_checkBoxText);
 	_data->m_window.display();
 }
 
@@ -228,7 +248,7 @@ void GameState::Play()
 	ClearPath();
 	if (CheckMapValidity())
 	{
-		stack<Pair> path = GetGame()->AStarAlgorithm(_gridArray,startingPoint, endingPoint);
+		stack<Pair> path = GetGame()->AStarAlgorithm(_gridArray,startingPoint, endingPoint,UseDiagonal);
 
 		while (!path.empty())
 		{

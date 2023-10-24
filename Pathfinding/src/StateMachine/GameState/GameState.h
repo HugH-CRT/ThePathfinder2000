@@ -52,6 +52,7 @@ private :
 
 	bool StartPlaced;
 	bool EndPlaced;
+	bool UseDiagonal;
 
 	sf::Vector2i startingPoint;
 	sf::Vector2i endingPoint;
@@ -60,6 +61,9 @@ private :
 	sf::Sprite _pauseButton;
 	sf::Sprite _gridSprite;
 	sf::Sprite _playButton;
+	sf::Sprite _checkBox;
+
+	sf::Text _checkBoxText;
 	
 	sf::Sprite _gridPieces[NB_LINES][NB_COLUMNS];
 	int _gridArray[NB_LINES][NB_COLUMNS];
