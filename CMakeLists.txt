@@ -12,7 +12,9 @@ endif()
 project(ThePathfinder2000)
 
 set(C_PATH_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/C_PATH/include)
+set(LOGGER_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/Logger/include)
 
 add_subdirectory(C_PATH)
+add_subdirectory(Logger)
 
 add_subdirectory(Pathfinding)

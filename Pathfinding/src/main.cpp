@@ -1,4 +1,4 @@
-﻿/**
+/**
 * @file main.cpp
 * @brief
 *
@@ -11,6 +11,8 @@
 */
 #include "macro.h"
 #include "defined.h"
+#include "logger.h"
+
 #include "Game.h"
 
 #include <SFML/Graphics/CircleShape.hpp>
@@ -30,6 +32,11 @@ Game* GetGame()
 */
 int main() 
 {
-	gGame = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE_WINDOW);
+	Logger::setConsoleLog_ON();
+
+	Logger::info("Start game ... ");
+  
+  gGame = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE_WINDOW);
+
 	return EXIT_SUCCESS;
 }
