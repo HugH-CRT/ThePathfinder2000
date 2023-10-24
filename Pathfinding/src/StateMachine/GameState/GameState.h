@@ -7,6 +7,15 @@
 
 #include <SFML/Graphics.hpp>
 
+enum GridPieces
+{
+	EMPTY_PIECE = 0,
+	START_PIECE = 1,
+	END_PIECE = 2,
+	WALL_PIECE = 3,
+	PATH_PIECE = 4
+};
+
 class GameState : public State
 {
 
@@ -24,14 +33,20 @@ private :
 	void InitGridTiles();
 	void PlacePiece(sf::Mouse::Button);
 
+	void Play();
+	bool CheckMapValidity();
+
 	void ResetStartPoint(int column, int row);
 	void ResetEndPoint(int column, int row);
-	void ResetWall(int column, int row);
-	
+	void ResetWall(int column, int row);	
 
 	void PlaceStartPoint(int column, int row);
 	void PlaceEndPoint(int column, int row);
 	void PlaceWall(int column, int row);
+
+	void DrawPath(stack<Pair> Path);
+
+	void ClearPath();
 	
 	GameDataRef _data;
 
@@ -44,6 +59,8 @@ private :
 	sf::Sprite _background;
 	sf::Sprite _pauseButton;
 	sf::Sprite _gridSprite;
+	sf::Sprite _playButton;
+	
 	sf::Sprite _gridPieces[NB_LINES][NB_COLUMNS];
 	int _gridArray[NB_LINES][NB_COLUMNS];
 };
