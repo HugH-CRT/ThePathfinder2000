@@ -73,8 +73,6 @@ private :
 
 	int CurrentDebugStep;
 
-	sf::Vector2i LastCellChanged;
-
 	std::vector<sf::Vector2i> CheckPoints;
 	std::vector<sf::Vector2i> Portals;
 

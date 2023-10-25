@@ -590,13 +590,26 @@ sf::Vector2i& GameState::GetClosestPortal(sf::Vector2i& point)
 	
 	for (int i = 0; i < Portals.size(); i++)
 	{
-		float distance = CalculateDistance(point, Portals[i]);
+		std::vector<Pair> tempPath;
 
-		if (distance < minDistance)
+		sf::Vector2i currentPoint = Portals[i];
+		GetGame()->AStarAlgorithm(_gridArray, currentPoint, point, UseDiagonal, tempPath);
+
+		if (tempPath.size() == 0)
 		{
-			minDistance = distance;
+			continue;
+		}
+
+		if (tempPath.size() < minDistance)
+		{
+			minDistance = tempPath.size();
 			minIndex = i;
 		}
+	}
+
+	if (minIndex == -1)
+	{
+		return point;
 	}
 
 	return Portals[minIndex];
