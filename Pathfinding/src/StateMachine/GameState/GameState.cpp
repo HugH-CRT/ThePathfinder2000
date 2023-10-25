@@ -11,6 +11,8 @@ GameState::GameState(GameDataRef data)
 	, StartPlaced(false)
 	, EndPlaced(false)
 	, UseDiagonal(false)
+	, DebugMode(false)
+	, CurrentDebugStep(0)
 	, _gridArray{ }
 {
 	startingPoint.x = -1;
@@ -32,6 +34,8 @@ void GameState::Init()
 	this->_data->m_assetManager.LoadTexture("Check Box Checked", CHECK_BOX_CHECKED);
 	this->_data->m_assetManager.LoadTexture("Check Box Unchecked", CHECK_BOX_UNCHECKED);
 	this->_data->m_assetManager.LoadTexture("CheckPoint", CHECKPOINT);
+	this->_data->m_assetManager.LoadTexture("Forward Arrow", FORWARD_ARROW); 
+	this->_data->m_assetManager.LoadTexture("Backward Arrow", BACKWARD_ARROW);
 	
 	this->_data->m_assetManager.LoadFont("Robotto Font", FONT); 
 	
@@ -49,13 +53,27 @@ void GameState::Init()
 	_gridSprite.setTexture(this->_data->m_assetManager.GetTexture("Path"));
 	_gridSprite.setPosition((SCREEN_WIDTH / 2) - (_gridSprite.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) - (_gridSprite.getGlobalBounds().height / 2));
 
-	_checkBox.setScale(0.1f, 0.1f);
-	_checkBox.setTexture(this->_data->m_assetManager.GetTexture("Check Box Unchecked"));
-	_checkBox.setPosition((SCREEN_WIDTH / 4) - _checkBox.getGlobalBounds().width, (SCREEN_HEIGHT / 2) - _checkBox.getGlobalBounds().height );
+	_checkBoxDiagMode.setScale(0.1f, 0.1f);
+	_checkBoxDiagMode.setTexture(this->_data->m_assetManager.GetTexture("Check Box Unchecked"));
+	_checkBoxDiagMode.setPosition((SCREEN_WIDTH / 4) - _checkBoxDiagMode.getGlobalBounds().width, (SCREEN_HEIGHT / 2) - _checkBoxDiagMode.getGlobalBounds().height );
 
-	_checkBoxText = sf::Text("Diagonal Movement", this->_data->m_assetManager.GetFont("Robotto Font"), 20);
-	
-	_checkBoxText.setPosition((SCREEN_WIDTH / 4) - _checkBoxText.getGlobalBounds().width - _checkBox.getGlobalBounds().width * 2, (SCREEN_HEIGHT / 2) - _checkBox.getGlobalBounds().height);
+	_checkBoxDiagText = sf::Text("Diagonal Movement", this->_data->m_assetManager.GetFont("Robotto Font"), 20);
+	_checkBoxDiagText.setPosition((SCREEN_WIDTH / 4) - _checkBoxDiagText.getGlobalBounds().width - _checkBoxDiagMode.getGlobalBounds().width * 2, (SCREEN_HEIGHT / 2) - _checkBoxDiagMode.getGlobalBounds().height);
+
+	_checkBoxDebugMode.setScale(0.1f, 0.1f);
+	_checkBoxDebugMode.setTexture(this->_data->m_assetManager.GetTexture("Check Box Unchecked"));
+	_checkBoxDebugMode.setPosition((SCREEN_WIDTH / 4) - _checkBoxDebugMode.getGlobalBounds().width, (SCREEN_HEIGHT / 2) - _checkBoxDebugMode.getGlobalBounds().height - _checkBoxDiagMode.getGlobalBounds().height);
+
+	_checkBoxDebugText = sf::Text("Debug mode", this->_data->m_assetManager.GetFont("Robotto Font"), 20);
+	_checkBoxDebugText.setPosition((SCREEN_WIDTH / 4) - _checkBoxDebugText.getGlobalBounds().width - _checkBoxDebugMode.getGlobalBounds().width * 2, (SCREEN_HEIGHT / 2) - _checkBoxDebugMode.getGlobalBounds().height - _checkBoxDiagMode.getGlobalBounds().height);
+
+	_backwardDebug.setScale(0.5f, 0.5f);
+	_backwardDebug.setTexture(this->_data->m_assetManager.GetTexture("Backward Arrow"));
+	_backwardDebug.setPosition((SCREEN_WIDTH / 2) - _backwardDebug.getGlobalBounds().width/2, SCREEN_HEIGHT - _backwardDebug.getGlobalBounds().height );
+
+	_forwardDebug.setScale(0.5f, 0.5f);
+	_forwardDebug.setTexture(this->_data->m_assetManager.GetTexture("Forward Arrow"));
+	_forwardDebug.setPosition((SCREEN_WIDTH / 2) + _forwardDebug.getGlobalBounds().width /2  , SCREEN_HEIGHT - _forwardDebug.getGlobalBounds().height);
 
 	InitGridTiles();
 }
@@ -71,7 +89,7 @@ void GameState::HandleInput()
 			this->_data->m_window.close();
 		}
 
-		if (this->_data->m_inputManager.IsSpriteClicked(this->_pauseButton, sf::Mouse::Left, this->_data->m_window))
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code &&this->_data->m_inputManager.IsMouseOverSprite( this->_pauseButton, this->_data->m_window))
 		{
 			this->_data->machine.AddState(StateRef(new PauseState(_data)), false);
 		}
@@ -90,7 +108,6 @@ void GameState::HandleInput()
 		{
 			PlacePiece(WALL_PIECE);
 		}
-
 		
 		if (sf::Event::KeyReleased == event.type && sf::Keyboard::C == event.key.code)
 		{
@@ -100,15 +117,37 @@ void GameState::HandleInput()
 			}
 		}
 
-		if (this->_data->m_inputManager.IsSpriteClicked(this->_playButton, sf::Mouse::Left, this->_data->m_window))
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_playButton, this->_data->m_window))
 		{
 			Play();
 		}
 
-		if (this->_data->m_inputManager.IsSpriteClicked(this->_checkBox, sf::Mouse::Left, this->_data->m_window))
+		if (this->_data->m_inputManager.IsSpriteClicked(this->_checkBoxDiagMode, sf::Mouse::Left, this->_data->m_window))
 		{
 			UseDiagonal = !UseDiagonal;
-			_checkBox.setTexture(this->_data->m_assetManager.GetTexture(UseDiagonal ? "Check Box Checked" : "Check Box Unchecked"));
+			_checkBoxDiagMode.setTexture(this->_data->m_assetManager.GetTexture(UseDiagonal ? "Check Box Checked" : "Check Box Unchecked"));
+		}
+
+		if (this->_data->m_inputManager.IsSpriteClicked(this->_checkBoxDebugMode, sf::Mouse::Left, this->_data->m_window))
+		{
+			DebugMode = !DebugMode;
+			_checkBoxDebugMode.setTexture(this->_data->m_assetManager.GetTexture(DebugMode ? "Check Box Checked" : "Check Box Unchecked"));
+		}
+
+		if (this->_data->m_inputManager.IsSpriteClicked(this->_forwardDebug, sf::Mouse::Left, this->_data->m_window))
+		{
+			if (DebugMode)
+			{
+				ForwardDebug();
+			}
+		}
+
+		if (this->_data->m_inputManager.IsSpriteClicked(this->_backwardDebug, sf::Mouse::Left, this->_data->m_window))
+		{
+			if (DebugMode)
+			{
+				BackwardDebug();
+			}
 		}
 	}
 }
@@ -123,7 +162,7 @@ void GameState::Draw(float dt)
 	_data->m_window.draw(_background);
 	_data->m_window.draw(_gridSprite);
 	_data->m_window.draw(_playButton);
-	_data->m_window.draw(_checkBox);
+	_data->m_window.draw(_checkBoxDiagText);
 
 	for (int x = 0; x < NB_LINES; x++)
 	{
@@ -133,8 +172,12 @@ void GameState::Draw(float dt)
 		}
 	}
 	
+	_data->m_window.draw(_forwardDebug);
+	_data->m_window.draw(_backwardDebug);
+	_data->m_window.draw(_checkBoxDebugText);
+	_data->m_window.draw(_checkBoxDebugMode);
 	_data->m_window.draw(_pauseButton);
-	_data->m_window.draw(_checkBoxText);
+	_data->m_window.draw(_checkBoxDiagMode);
 	_data->m_window.display();
 }
 
@@ -265,6 +308,8 @@ void GameState::PlacePiece(GridPieces clickSide)
 
 void GameState::Play()
 {
+	CurrentDebugStep = -1;
+	_path.clear();
 	std::vector<sf::Vector2i> tempCheckPoints = CheckPoints;
 	sf::Vector2i currentPoint = startingPoint;
 
@@ -272,11 +317,11 @@ void GameState::Play()
 
 	if (CheckMapValidity())
 	{
-		while (!tempCheckPoints.empty())
+		for (int i = 0; i < CheckPoints.size(); i++)
 		{
 			SortCheckpointsByDistance(tempCheckPoints, currentPoint);
 			currentPoint = ProcessNextCheckpoint(tempCheckPoints, currentPoint);
-		}
+		}		
 
 		ProcessFinalPath(currentPoint);
 	}
@@ -294,14 +339,16 @@ void GameState::SortCheckpointsByDistance(std::vector<sf::Vector2i>& checkpoints
 sf::Vector2i GameState::ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, const sf::Vector2i& currentPoint)
 {
 	sf::Vector2i closestCheckpoint = checkpoints[0];
-	stack<Pair> path = GetGame()->AStarAlgorithm(_gridArray, currentPoint, closestCheckpoint, UseDiagonal);
 
-	while (!path.empty())
+	GetGame()->AStarAlgorithm(_gridArray, currentPoint, closestCheckpoint, UseDiagonal,_path);
+
+	if (!DebugMode)
 	{
-		Pair p = path.top();
-		path.pop();
-		_gridPieces[p.first][p.second].setTexture(this->_data->m_assetManager.GetTexture("Path"));
-		_gridArray[p.first][p.second] = PATH_PIECE;
+		for (int i = 0; i < _path.size(); i++)
+		{
+			CurrentDebugStep++;
+			DrawStepPath(_path.at(CurrentDebugStep),true);
+		}
 	}
 
 	checkpoints.erase(checkpoints.begin());
@@ -311,14 +358,15 @@ sf::Vector2i GameState::ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpo
 
 void GameState::ProcessFinalPath(const sf::Vector2i& currentPoint)
 {
-	stack<Pair> finalPath = GetGame()->AStarAlgorithm(_gridArray, currentPoint, endingPoint, UseDiagonal);
+	GetGame()->AStarAlgorithm(_gridArray, currentPoint, endingPoint, UseDiagonal,_path);
 
-	while (!finalPath.empty())
+	if (!DebugMode)
 	{
-		Pair p = finalPath.top();
-		finalPath.pop();
-		_gridPieces[p.first][p.second].setTexture(this->_data->m_assetManager.GetTexture("Path"));
-		_gridArray[p.first][p.second] = PATH_PIECE;
+		for (int i = 0; i < _path.size(); i++)
+		{
+			CurrentDebugStep++;
+			DrawStepPath(_path.at(CurrentDebugStep),true);
+		}
 	}
 }
 
@@ -400,10 +448,6 @@ void GameState::PlaceCheckPoint(int column, int row)
 	CheckPoints.push_back(sf::Vector2i(column - 1, row - 1));
 }
 
-void GameState::DrawPath(stack<Pair> Path)
-{
-}
-
 void GameState::ClearPath()
 {
 	for (int x = 0; x < NB_LINES; x++)
@@ -417,4 +461,32 @@ void GameState::ClearPath()
 			}
 		}
 	}
+}
+
+void GameState::ForwardDebug()
+{
+	if (_path.empty() || CurrentDebugStep + 1 >= _path.size() )
+	{ 
+		return;
+	}
+
+	CurrentDebugStep++;
+	DrawStepPath(_path.at(CurrentDebugStep),true);
+}
+
+void GameState::BackwardDebug()
+{
+	if (_path.empty() || CurrentDebugStep < 0 )
+	{
+		return;
+	}
+
+	DrawStepPath(_path.at(CurrentDebugStep), false);
+	CurrentDebugStep--;
+}
+
+void GameState::DrawStepPath(Pair step,bool isPath)
+{
+	_gridPieces[step.first][step.second].setTexture(this->_data->m_assetManager.GetTexture(isPath ? "Path" : "Grid Sprite"));
+	_gridArray[step.first][step.second] = PATH_PIECE;
 }

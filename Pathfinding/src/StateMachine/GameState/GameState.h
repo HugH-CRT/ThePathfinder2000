@@ -51,15 +51,20 @@ private :
 	void PlaceWall(int column, int row);
 	void PlaceCheckPoint(int column, int row);
 
-	void DrawPath(stack<Pair> Path);
-
 	void ClearPath();
-	
+
+	void ForwardDebug();
+	void BackwardDebug();
+
+	void DrawStepPath(Pair step,bool isPath);
 	GameDataRef _data;
 
 	bool StartPlaced;
 	bool EndPlaced;
 	bool UseDiagonal;
+	bool DebugMode;
+
+	int CurrentDebugStep;
 
 	sf::Vector2i LastCellChanged;
 
@@ -72,12 +77,19 @@ private :
 	sf::Sprite _pauseButton;
 	sf::Sprite _gridSprite;
 	sf::Sprite _playButton;
-	sf::Sprite _checkBox;
+	sf::Sprite _forwardDebug;
+	sf::Sprite _backwardDebug;
 
-	sf::Text _checkBoxText;
+	sf::Sprite _checkBoxDiagMode;
+	sf::Text _checkBoxDiagText;
+
+	sf::Sprite _checkBoxDebugMode;
+	sf::Text _checkBoxDebugText;
 	
 	sf::Sprite _gridPieces[NB_LINES][NB_COLUMNS];
 	int _gridArray[NB_LINES][NB_COLUMNS];
+
+	std::vector<Pair> _path;
 };
 
 #endif /* GAME_STATE_H */

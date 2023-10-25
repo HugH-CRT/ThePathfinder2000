@@ -34,6 +34,9 @@
 
 #define TITLE_WINDOW "Pathfinding"
 
+#define FORWARD_ARROW "../../Pathfinding/Resources/ForwardArrow.png"
+#define BACKWARD_ARROW "../../Pathfinding/Resources/BackwardArrow.png"
+
 #define NB_LINES 10
 #define NB_COLUMNS 10
 
