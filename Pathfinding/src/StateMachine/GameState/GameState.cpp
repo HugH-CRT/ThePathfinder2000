@@ -571,18 +571,16 @@ void GameState::CheckPortalPath(sf::Vector2i& currentPoint, sf::Vector2i& nextPo
 		{
 			for (int i = 0; i < tempPath.size(); i++)
 			{
-				_path.push_back(tempPath[i]);
+				_path.push_back(tempPath[i]);			
 			}
-		}
-		else
-		{
-			for (int i = 0; i < basePath.size(); i++)
-			{
-				_path.push_back(basePath[i]);
-			}
+			return;
 		}
 	}
 
+	for (int i = 0; i < basePath.size(); i++)
+	{
+		_path.push_back(basePath[i]);
+	}
 }
 
 sf::Vector2i& GameState::GetClosestPortal(sf::Vector2i& point)
