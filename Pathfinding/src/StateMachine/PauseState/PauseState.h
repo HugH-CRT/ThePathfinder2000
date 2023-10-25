@@ -12,11 +12,16 @@ class PauseState : public State
 public:
 	PauseState(GameDataRef data);
 
-	void Init();
-
-	void HandleInput();
-	void Update(float dt);
-	void Draw(float dt);
+	/* Implementation of State class */
+	
+	void Init() override;
+	void HandleInput() override;
+	void Update(float dt) override;
+	void Draw(float dt) override;
+	void LoadTextures() override;
+	void SetTextures() override;
+	
+	/* Implementation of State class */
 
 private:
 

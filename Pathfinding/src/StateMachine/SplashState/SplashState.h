@@ -11,11 +11,16 @@ class SplashState : public State
 public:
 	explicit SplashState(GameDataRef data);
 
-	void Init();
+	/* Implementation of State class */
+	
+	void Init() override;
+	void HandleInput() override;
+	void Update(float dt) override;
+	void Draw(float dt) override;
+	void LoadTextures() override;
+	void SetTextures() override;
 
-	void HandleInput();
-	void Update(float dt);
-	void Draw(float dt);
+	/* Implementation of State class */
 
 private: 
 	GameDataRef m_data;

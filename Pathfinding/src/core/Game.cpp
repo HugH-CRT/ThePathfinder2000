@@ -1,8 +1,9 @@
 #include "Game.h"
 #include "SplashState/SplashState.h"
 #include <set>
+#include <GameState/GameState.h>
 
-Game::Game(int width, int height, std::string title)
+Game::Game(int width, int height, std::string title) : m_data(new GameData), frameRate(1.0f / 60.0f), m_clock()
 {
 	m_data->m_window.create(sf::VideoMode(width, height), title, sf::Style::Close | sf::Style::Titlebar);
 	m_data->machine.AddState(StateRef(new SplashState(this->m_data)));
@@ -51,7 +52,7 @@ bool Game::isValid(int row, int col)
 
 bool Game::isNotAWall(int grid[][NB_COLUMNS], int row, int col)
 {
-    if (grid[row][col] != 3)
+    if (grid[row][col] != WALL_PIECE)
         return (true);
     else
         return (false);
@@ -97,9 +98,6 @@ std::vector<Pair>  Game::tracePath(cell cellDetails[][NB_COLUMNS], Pair dest, st
 		path.push_back(tempPath[i]);
 	}
     
-    // depart
-	//Path.push(make_pair(row, col));
-
 	return path;
 }
 
@@ -134,14 +132,9 @@ std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest,
         return Path;
     }
 
-    // Create a closed list and initialise it to false which
-    // means that no cell has been included yet This closed
-    // list is implemented as a boolean 2D array
     bool closedList[NB_LINES][NB_COLUMNS];
     memset(closedList, false, sizeof(closedList));
 
-    // Declare a 2D array of structure to hold the details
-    // of that cell
     cell cellDetails[NB_LINES][NB_COLUMNS];
 
     int i, j;
@@ -172,7 +165,7 @@ std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest,
 
     bool foundDest = false;
 
-    // Définir les mouvements possibles       
+    // Available movements   
     std::vector<int> dx = { -1, 1, 0, 0 };
     std::vector<int> dy = { 0, 0, 1, -1 };
 

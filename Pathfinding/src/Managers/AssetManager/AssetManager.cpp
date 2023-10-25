@@ -29,6 +29,11 @@ void AssetManager::LoadFont(std::string name, std::string fileName)
 	{
 		this->_fonts[name] = font;
 	}
+	else
+	{
+		std::cout << "Error loading font: " << fileName << std::endl;
+		exit(1);
+	}
 }
 
 sf::Font& AssetManager::GetFont(std::string name)

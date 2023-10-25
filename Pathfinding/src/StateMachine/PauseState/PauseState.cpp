@@ -12,21 +12,15 @@ PauseState::PauseState(GameDataRef data) : _data(data)
 
 void PauseState::Init()
 {
-	this->_data->m_assetManager.LoadTexture("Pause Background", PAUSE_BACKGROUND_FILEPATH);
-	this->_data->m_assetManager.LoadTexture("Resume Button", RESUME_BUTTON);
-	this->_data->m_assetManager.LoadTexture("Home Button", HOME_BUTTON);
-
-	this->_background.setTexture(this->_data->m_assetManager.GetTexture("Pause Background"));
-	this->_resumeButton.setTexture(this->_data->m_assetManager.GetTexture("Resume Button"));
-	this->_homeButton.setTexture(this->_data->m_assetManager.GetTexture("Home Button"));
-
+	LoadTextures();
+	SetTextures();
+	
 	this->_resumeButton.setScale(0.1f, 0.1f);
 	this->_homeButton.setScale(0.1f, 0.1f);
+	this->_background.setScale(SCREEN_WIDTH / this->_background.getGlobalBounds().width, SCREEN_HEIGHT / this->_background.getGlobalBounds().height);	
 
 	this->_resumeButton.setPosition((SCREEN_WIDTH / 2) - (this->_resumeButton.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 3) - (this->_resumeButton.getGlobalBounds().height / 2));
 	this->_homeButton.setPosition((SCREEN_WIDTH / 2) - (this->_homeButton.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 3 * 2) - (this->_homeButton.getGlobalBounds().height / 2));
-	
-	this->_background.setScale(SCREEN_WIDTH / this->_background.getGlobalBounds().width, SCREEN_HEIGHT / this->_background.getGlobalBounds().height);	
 }
 
 void PauseState::HandleInput()
@@ -40,12 +34,14 @@ void PauseState::HandleInput()
 			this->_data->m_window.close();
 		}
 		
-		if (this->_data->m_inputManager.IsSpriteClicked(this->_resumeButton, sf::Mouse::Left, this->_data->m_window))
+		// Resume button
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_resumeButton, this->_data->m_window))
 		{
 			this->_data->machine.RemoveState();
 		}
 
-		if (this->_data->m_inputManager.IsSpriteClicked(this->_homeButton, sf::Mouse::Left, this->_data->m_window))
+		// Home button
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_homeButton, this->_data->m_window))
 		{
 			this->_data->machine.RemoveState();
 			this->_data->machine.AddState(StateRef(new MainMenuState(_data)), true);
@@ -66,4 +62,18 @@ void PauseState::Draw(float dt)
 	this->_data->m_window.draw(this->_homeButton);
 
 	this->_data->m_window.display();
+}
+
+void PauseState::LoadTextures()
+{
+	this->_data->m_assetManager.LoadTexture("Pause Background", PAUSE_BACKGROUND_FILEPATH);
+	this->_data->m_assetManager.LoadTexture("Resume Button", RESUME_BUTTON);
+	this->_data->m_assetManager.LoadTexture("Home Button", HOME_BUTTON);
+}
+
+void PauseState::SetTextures()
+{
+	this->_background.setTexture(this->_data->m_assetManager.GetTexture("Pause Background"));
+	this->_resumeButton.setTexture(this->_data->m_assetManager.GetTexture("Resume Button"));
+	this->_homeButton.setTexture(this->_data->m_assetManager.GetTexture("Home Button"));
 }

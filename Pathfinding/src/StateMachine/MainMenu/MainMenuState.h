@@ -11,18 +11,23 @@ class MainMenuState : public State
 public: 
 	explicit MainMenuState(GameDataRef data);
 
-	void Init();
+	/* Implementation of State class */
+	
+	void Init() override;
+	void HandleInput() override;
+	void Update(float dt) override;
+	void Draw(float dt) override;
+	void LoadTextures() override;
+	void SetTextures() override;
 
-	void HandleInput();
-	void Update(float dt);
-	void Draw(float dt);
+	/* Implementation of State class */
 
 private: 
 		
 	GameDataRef _data;
+	
 	sf::Sprite _background;
 	sf::Sprite playButton;
-	sf::Sprite playButtonOuter;
 	sf::Sprite title;
 };
 #endif /* MAIN_MENU_STATE_H */

@@ -21,7 +21,6 @@ struct GameData
 };
 
 typedef std::shared_ptr<GameData> GameDataRef;
-
 typedef pair<int, int> Pair;
 typedef pair<double, pair<int, int> > pPair;
 
@@ -58,7 +57,6 @@ private:
 	std::vector<Pair> tracePath(cell cellDetails[][NB_COLUMNS], Pair dest,std::vector<Pair>& path);
 
 	std::vector<Pair> aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest, bool UseDiagonal,std::vector<Pair>& path);
-
 };
 
 Game* GetGame();

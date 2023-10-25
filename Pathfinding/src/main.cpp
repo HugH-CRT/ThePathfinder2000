@@ -12,7 +12,6 @@
 #include "macro.h"
 #include "defined.h"
 #include "logger.h"
-
 #include "Game.h"
 
 #include <SFML/Graphics/CircleShape.hpp>
@@ -36,7 +35,7 @@ int main()
 
 	Logger::info("Start game ... ");
   
-  gGame = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE_WINDOW);
+    gGame = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE_WINDOW);
 
 	return EXIT_SUCCESS;
 }

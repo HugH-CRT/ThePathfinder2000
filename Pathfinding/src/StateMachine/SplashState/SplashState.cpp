@@ -12,11 +12,10 @@ SplashState::SplashState(GameDataRef data) : m_data(data)
 
 void SplashState::Init()
 {
-	this->m_data->m_assetManager.LoadTexture("Splash State Background", SPLASH_SCENE_BACKGROUND_FILEPATH);
-
-	m_background.setTexture(m_data->m_assetManager.GetTexture("Splash State Background"));
+	LoadTextures();
+	SetTextures();
+	
 	this->m_background.setScale(SCREEN_WIDTH / this->m_background.getLocalBounds().width, SCREEN_HEIGHT / this->m_background.getLocalBounds().height);
-
 }
 
 void SplashState::HandleInput()
@@ -43,6 +42,18 @@ void SplashState::Update(float dt)
 void SplashState::Draw(float dt)
 {
 	this->m_data->m_window.clear();
+
 	this->m_data->m_window.draw(m_background);
+	
 	this->m_data->m_window.display();
+}
+
+void SplashState::LoadTextures()
+{
+	this->m_data->m_assetManager.LoadTexture("Splash State Background", SPLASH_SCENE_BACKGROUND_FILEPATH);
+}
+
+void SplashState::SetTextures()
+{
+	m_background.setTexture(m_data->m_assetManager.GetTexture("Splash State Background"));
 }
