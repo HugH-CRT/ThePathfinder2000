@@ -10,6 +10,7 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 
+enum GridPieces : int;
 using namespace std;
 
 struct GameData
@@ -33,10 +34,13 @@ struct cell {
 class Game
 {
 public: 
-	explicit Game(int width = 1280, int height = 720, std::string title = "DefaultTitle");
+	explicit Game(int width = 1280, int height = 720, const std::string& title = "DefaultTitle");
+	~Game();
 
 	std::vector<Pair> AStarAlgorithm(int gridArray[NB_LINES][NB_COLUMNS], sf::Vector2i startingPoint, sf::Vector2i endingPoint, bool UseDiagonal, std::vector<Pair>& _path);
 
+	void Run();
+	
 private: 
 
 	const float frameRate = 1.0f / 60.0f;
@@ -44,7 +48,21 @@ private:
 
 	GameDataRef m_data = std::make_shared<GameData>();
 
-	void Run();	
+	bool m_UseDiagonal;
+	bool m_DebugMode;
+
+	int m_CurrentDebugStep;
+	int _gridArray[NB_LINES][NB_COLUMNS];
+
+	std::vector<sf::Vector2i>* m_CheckPoints;
+	std::vector<sf::Vector2i>* m_Portals;
+
+	sf::Vector2i m_StartingPoint;
+	sf::Vector2i m_EndingPoint;
+
+	std::vector<Pair> _path;
+
+#pragma region AStartAlgorithm
 
 	bool isValid(int row, int col);
 
@@ -54,9 +72,57 @@ private:
 
 	double calculateHValue(int row, int col, Pair dest);
 
-	std::vector<Pair> tracePath(cell cellDetails[][NB_COLUMNS], Pair dest,std::vector<Pair>& path);
+	std::vector<Pair> tracePath(cell cellDetails[][NB_COLUMNS], Pair dest, std::vector<Pair>& path);
 
-	std::vector<Pair> aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest, bool UseDiagonal,std::vector<Pair>& path);
+	std::vector<Pair> aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest, bool UseDiagonal, std::vector<Pair>& path);
+
+#pragma endregion AStartAlgorithm
+	
+	sf::Vector2i ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, sf::Vector2i& currentPoint);
+	void ProcessFinalPath(sf::Vector2i& currentPoint);
+	bool CheckMapValidity();
+
+	void CheckPortalPath(sf::Vector2i& currentPoint, sf::Vector2i& nextPoint, const std::vector<Pair>& basePath);
+	sf::Vector2i& GetClosestPortal(sf::Vector2i& point);
+
+	void InitGridArray();
+
+public : 
+	void Play();
+	void ForwardDebug();
+	void BackwardDebug();
+	void ClearPath();
+
+#pragma region Getters
+
+	bool IsDebugMode() const;
+	bool IsUseDiagonal() const;
+	
+	int GetPathSize();
+	
+	sf::Vector2i& GetStartingPoint();
+	sf::Vector2i& GetEndingPoint();
+
+	std::vector<sf::Vector2i>* GetCheckPoints();
+	std::vector<sf::Vector2i>* GetPortals();
+
+	int(&GetGridArray())[NB_LINES][NB_COLUMNS]{
+		return _gridArray;
+	}
+
+#pragma endregion Getters
+
+#pragma region Setters
+
+	void SetDebugMode(bool debugMode);
+	void SetUseDiagonal(bool useDiagonal);
+
+	void SetStartingPoint(sf::Vector2i& startingPoint);
+	void SetEndingPoint(const sf::Vector2i& endingPoint);
+	void SetGridArrayItem(int column, int row, GridPieces piece);
+		
+#pragma endregion Setters
+
 };
 
 Game* GetGame();

@@ -3,12 +3,32 @@
 #include <set>
 #include <GameState/GameState.h>
 
-Game::Game(int width, int height, std::string title) : m_data(new GameData), frameRate(1.0f / 60.0f), m_clock()
+Game::Game(const int width, const int height, const std::string& title) :
+    m_UseDiagonal(false)
+    , m_DebugMode(false)
+    , m_CurrentDebugStep(0)
+    , _gridArray{}
+    , m_CheckPoints(new std::vector<sf::Vector2i>)
+    , m_Portals(new std::vector<sf::Vector2i>)
 {
+    m_StartingPoint.x = -1;
+    m_StartingPoint.y = -1;
+    m_EndingPoint.x = -1;
+    m_EndingPoint.y = -1;
+    
+    InitGridArray();
+
 	m_data->m_window.create(sf::VideoMode(width, height), title, sf::Style::Close | sf::Style::Titlebar);
 	m_data->machine.AddState(StateRef(new SplashState(this->m_data)));
-	Run();
 }
+
+Game::~Game()
+{
+    delete m_CheckPoints;
+    delete m_Portals;
+}
+
+#pragma region AStartAlgorithm
 
 void Game::Run()
 {
@@ -184,14 +204,14 @@ std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest,
 
     while (!openList.empty()) {
         
-        // Extraire le nœud de la liste ouverte avec le coût "f" le plus bas
+        // Extraire le nï¿½ud de la liste ouverte avec le coï¿½t "f" le plus bas
         pPair p = *openList.begin();
         openList.erase(openList.begin());
 
         int i = p.second.first;
         int j = p.second.second;
 
-        // Vérifier si c'est la destination
+        // Vï¿½rifier si c'est la destination
         if (isDestination(i, j, dest)) {
             printf("The destination cell is found\n");
             
@@ -199,7 +219,7 @@ std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest,
 
         }
 
-        // Marquer le nœud actuel comme visité
+        // Marquer le nï¿½ud actuel comme visitï¿½
         closedList[i][j] = true;
 
         // Parcourir les voisins
@@ -226,7 +246,9 @@ std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest,
 
     // When the destination cell is not found due to blockages)
     if (foundDest == false)
+    {
         printf("Failed to find the Destination Cell\n");
+    }
 
 	return Path;
 }
@@ -238,3 +260,254 @@ std::vector<Pair> Game::AStarAlgorithm(int gridArray[NB_LINES][NB_COLUMNS], sf::
 
     return aStarSearch(gridArray, src, dest, UseDiagonal,path);
 }
+
+#pragma endregion AStartAlgorithm
+
+void Game::Play()
+{
+    m_CurrentDebugStep = -1;
+    _path.clear();
+    std::vector<sf::Vector2i> tempCheckPoints = *m_CheckPoints;
+    sf::Vector2i currentPoint = m_StartingPoint;
+
+    ClearPath();
+
+    if (CheckMapValidity())
+    {
+        for (int i = 0; i < m_CheckPoints->size(); i++)
+        {
+            currentPoint = ProcessNextCheckpoint(tempCheckPoints, currentPoint);
+
+            if (currentPoint.x == -1 || currentPoint.y == -1) // No path found to next checkpoint
+            {
+                return;
+            }
+        }
+
+        ProcessFinalPath(currentPoint);
+    }
+}
+
+sf::Vector2i Game::ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, sf::Vector2i& currentPoint)
+{
+    sf::Vector2i closestCheckpoint = checkpoints[0];
+
+    int pathLength = _path.size();
+    std::vector<Pair> tempPath;
+
+    GetGame()->AStarAlgorithm(_gridArray, currentPoint, closestCheckpoint, m_UseDiagonal, tempPath);
+
+    if (pathLength == tempPath.size())
+    {
+        return sf::Vector2i(-1, -1);
+    }
+
+    CheckPortalPath(currentPoint, closestCheckpoint, tempPath);
+
+    if (!m_DebugMode)
+    {
+        for (auto& i : _path)
+        {
+            dynamic_cast<GameState*>(m_data->machine.GetActiveState().get())->DrawStepPath(i, false);
+        }
+    }
+
+    checkpoints.erase(checkpoints.begin());
+
+    return closestCheckpoint;
+}
+
+void Game::ProcessFinalPath(sf::Vector2i& currentPoint)
+{
+    std::vector<Pair> tempPath;
+
+    GetGame()->AStarAlgorithm(_gridArray, currentPoint, m_EndingPoint, m_UseDiagonal, tempPath);
+
+    CheckPortalPath(currentPoint, m_EndingPoint, tempPath);
+
+    if (!m_DebugMode)
+    {
+        for (auto& i : _path)
+        {
+            dynamic_cast<GameState*>(m_data->machine.GetActiveState().get())->DrawStepPath(i, true);
+        }
+    }
+}
+
+bool Game::CheckMapValidity()
+{
+    return m_StartingPoint.x != -1 && m_StartingPoint.y != -1 && m_EndingPoint.x != -1 && m_EndingPoint.y != -1;
+}
+
+void Game::CheckPortalPath(sf::Vector2i& currentPoint, sf::Vector2i& nextPoint, const std::vector<Pair>& basePath)
+{
+    if (!m_Portals->empty())
+    {
+        std::vector<Pair> tempPath;
+        GetGame()->AStarAlgorithm(_gridArray, currentPoint, GetClosestPortal(currentPoint), m_UseDiagonal, tempPath);
+        GetGame()->AStarAlgorithm(_gridArray, nextPoint, GetClosestPortal(nextPoint), m_UseDiagonal, tempPath);
+
+        if (tempPath.size() < basePath.size())
+        {
+            for (auto i : tempPath)
+            {
+                _path.push_back(i);
+            }
+            return;
+        }
+    }
+
+    for (auto i : basePath)
+    {
+        _path.push_back(i);
+    }
+}
+
+sf::Vector2i& Game::GetClosestPortal(sf::Vector2i& point)
+{
+    float minDistance = 99999;
+    int minIndex = -1;
+
+    for (int i = 0; i < m_Portals->size(); i++)
+    {
+        std::vector<Pair> tempPath;
+
+        sf::Vector2i currentPoint = m_Portals->at(i);
+        GetGame()->AStarAlgorithm(_gridArray, currentPoint, point, m_UseDiagonal, tempPath);
+
+        if (tempPath.empty())
+        {
+            continue;
+        }
+
+        if (tempPath.size() < minDistance)
+        {
+            minDistance = tempPath.size();
+            minIndex = i;
+        }
+    }
+
+    if (minIndex == -1)
+    {
+        return point;
+    }
+
+    return m_Portals->at(minIndex);
+}
+
+void Game::InitGridArray()
+{
+    for (auto& i : _gridArray)
+    {
+        for (int& j : i)
+        {
+            j = EMPTY_PIECE;
+        }
+    }
+}
+
+void Game::ForwardDebug()
+{
+    if (_path.empty() || m_CurrentDebugStep + 1 >= _path.size())
+    {
+        return;
+    }
+
+    m_CurrentDebugStep++;
+    dynamic_cast<GameState*>(m_data->machine.GetActiveState().get())->DrawStepPath(_path.at(m_CurrentDebugStep), true);
+}
+
+void Game::BackwardDebug()
+{
+    if (_path.empty() || m_CurrentDebugStep < 0)
+    {
+        return;
+    }
+
+    dynamic_cast<GameState*>(m_data->machine.GetActiveState().get())->DrawStepPath(_path.at(m_CurrentDebugStep), false);
+    m_CurrentDebugStep--;
+}
+
+void Game::ClearPath()
+{
+    _path.clear();
+    m_CurrentDebugStep = -1;
+}
+
+#pragma region Setters
+
+void Game::SetDebugMode(bool debugMode)
+{
+    if ( debugMode )
+    {
+        m_CurrentDebugStep = _path.size() - 1;
+    }
+
+    m_DebugMode = debugMode;
+}
+
+void Game::SetUseDiagonal(bool useDiagonal)
+{
+    m_UseDiagonal = useDiagonal;
+}
+
+void Game::SetStartingPoint(sf::Vector2i& startingPoint)
+{
+    m_StartingPoint = startingPoint;
+}
+
+void Game::SetEndingPoint(const sf::Vector2i& endingPoint)
+{
+    m_EndingPoint = endingPoint;
+}
+
+void Game::SetGridArrayItem(const int column, const int row, const GridPieces piece)
+{
+    if ( column < 0 || column >= NB_COLUMNS || row < 0 || row >= NB_LINES)
+    {
+        return;
+    }
+    
+    _gridArray[column][row] = piece;
+}
+
+#pragma endregion Setters
+
+#pragma region Getters
+
+bool Game::IsDebugMode() const
+{
+    return m_DebugMode;
+}
+
+bool Game::IsUseDiagonal() const
+{
+    return m_UseDiagonal;
+}
+
+sf::Vector2i& Game::GetEndingPoint()
+{
+    return m_EndingPoint;
+}
+
+std::vector<sf::Vector2i>* Game::GetCheckPoints()
+{
+    return m_CheckPoints;
+}
+
+std::vector<sf::Vector2i>* Game::GetPortals()
+{
+    return m_Portals;
+}
+
+int Game::GetPathSize()
+{
+    return _path.size();
+}
+
+sf::Vector2i& Game::GetStartingPoint()
+{
+    return m_StartingPoint;
+}
+
+#pragma endregion Getters

@@ -9,9 +9,9 @@ public:
 	InputManager() {}
 	~InputManager() {}
 
-	bool IsSpriteClicked(sf::Sprite object, sf::Mouse::Button button, sf::RenderWindow& window);
-	sf::Vector2i GetMousePosition(sf::RenderWindow& window);
-	bool IsMouseOverSprite(sf::Sprite object, sf::RenderWindow& window);
+	bool IsSpriteClicked(const sf::Sprite& object, sf::Mouse::Button button, sf::RenderWindow& window);
+	sf::Vector2i GetMousePosition(const sf::RenderWindow& window);
+	bool IsMouseOverSprite(const sf::Sprite& object, const sf::RenderWindow& window);
 };
 
 #endif /* INPUT_MANAGER_H */

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-void AssetManager::LoadTexture(std::string name, std::string fileName)
+void AssetManager::LoadTexture(const std::string& name, const std::string& fileName)
 {
 	sf::Texture texture;
 
@@ -16,16 +16,14 @@ void AssetManager::LoadTexture(std::string name, std::string fileName)
 	}
 }
 
-sf::Texture& AssetManager::GetTexture(std::string name)
+sf::Texture& AssetManager::GetTexture(const std::string& name)
 {
 	return this->_textures.at(name);
 }
 
-void AssetManager::LoadFont(std::string name, std::string fileName)
+void AssetManager::LoadFont(const std::string& name, const std::string& fileName)
 {
-	sf::Font font;
-
-	if (font.loadFromFile(fileName))
+	if (sf::Font font; font.loadFromFile(fileName))
 	{
 		this->_fonts[name] = font;
 	}
@@ -36,7 +34,7 @@ void AssetManager::LoadFont(std::string name, std::string fileName)
 	}
 }
 
-sf::Font& AssetManager::GetFont(std::string name)
+sf::Font& AssetManager::GetFont(const std::string& name)
 {
 	return this->_fonts.at(name);
 }

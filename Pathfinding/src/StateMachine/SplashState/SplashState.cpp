@@ -5,8 +5,8 @@
 #include <sstream>
 #include <iostream>
 
-
-SplashState::SplashState(GameDataRef data) : m_data(data)
+SplashState::SplashState(GameDataRef data) 
+	: m_data(data)
 {
 }
 
@@ -20,7 +20,7 @@ void SplashState::Init()
 
 void SplashState::HandleInput()
 {
-	sf::Event event;
+	sf::Event event{};
 	
 	while (this->m_data->m_window.pollEvent(event))
 	{

@@ -6,7 +6,8 @@
 #include <sstream>
 #include <iostream>
 
-PauseState::PauseState(GameDataRef data) : _data(data)
+PauseState::PauseState(GameDataRef data) 
+	: _data(data)
 {
 }
 
@@ -25,7 +26,7 @@ void PauseState::Init()
 
 void PauseState::HandleInput()
 {
-	sf::Event event;
+	sf::Event event{};
 
 	while (this->_data->m_window.pollEvent(event))
 	{
@@ -35,13 +36,15 @@ void PauseState::HandleInput()
 		}
 		
 		// Resume button
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_resumeButton, this->_data->m_window))
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->
+			m_inputManager.IsMouseOverSprite(this->_resumeButton, this->_data->m_window))
 		{
 			this->_data->machine.RemoveState();
 		}
 
 		// Home button
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_homeButton, this->_data->m_window))
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->
+			m_inputManager.IsMouseOverSprite(this->_homeButton, this->_data->m_window))
 		{
 			this->_data->machine.RemoveState();
 			this->_data->machine.AddState(StateRef(new MainMenuState(_data)), true);

@@ -23,7 +23,6 @@ class GameState : public State
 
 public:
 	GameState(GameDataRef data);
-	~GameState();
 	
 	/* Implementation of State class */
 	
@@ -36,27 +35,11 @@ public:
 	
 	/* Implementation of State class */
 
+	void DrawStepPath(Pair step, bool isPath);
+
 private : 
 
-	GameDataRef m_data;
-
-	/* TODO : A deplacer */
-	
-	bool m_UseDiagonal;
-	bool m_DebugMode;
-	
-	int m_CurrentDebugStep;
-	int _gridArray[NB_LINES][NB_COLUMNS];
-
-	std::vector<sf::Vector2i>* m_CheckPoints;
-	std::vector<sf::Vector2i>* m_Portals;
-
-	sf::Vector2i m_StartingPoint;
-	sf::Vector2i m_EndingPoint;
-
-	std::vector<Pair> _path;
-
-	/* TODO : A deplacer  */
+	GameDataRef _data;
 
 #pragma region Sprites 
 
@@ -82,28 +65,10 @@ private :
 
 	void InitGridTiles();
 	void ClearPath();
-	void DrawStepPath(Pair step, bool isPath);
-	void PlaceItem(int column, int row, const std::string& textureName, int itemType, std::vector<sf::Vector2i>* itemContainer);
-	void ResetItem(int column, int row, const std::string& resetTexture, int resetType, std::vector<sf::Vector2i>* itemContainer);
-
-
+	void PlaceItem(int column, int row, const std::string& textureName, GridPieces itemType, std::vector<sf::Vector2i>* itemContainer);
+	void ResetItem(int column, int row, const std::string& resetTexture, GridPieces resetType, std::vector<sf::Vector2i>* itemContainer);
 	
 	void PlacePiece(GridPieces);
-
-
-	
-
-	void Play();
-	sf::Vector2i ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, sf::Vector2i& currentPoint);
-	void ProcessFinalPath(sf::Vector2i& currentPoint);
-	bool CheckMapValidity();
-
-	void CheckPortalPath(sf::Vector2i& currentPoint, sf::Vector2i& nextPoint, std::vector<Pair> basePath);
-
-	sf::Vector2i& GetClosestPortal(sf::Vector2i& point);
-
-	void ForwardDebug();
-	void BackwardDebug();
 };
 
 #endif /* GAME_STATE_H */

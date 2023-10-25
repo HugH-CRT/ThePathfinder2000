@@ -3,7 +3,8 @@
 
 class State
 {
-public: 
+public:
+	virtual ~State() = default;
 	virtual void Init() = 0;
 
 	virtual void HandleInput() = 0;
