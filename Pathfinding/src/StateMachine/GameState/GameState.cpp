@@ -34,6 +34,7 @@ void GameState::Init()
 	this->_data->m_assetManager.LoadTexture("Check Box Checked", CHECK_BOX_CHECKED);
 	this->_data->m_assetManager.LoadTexture("Check Box Unchecked", CHECK_BOX_UNCHECKED);
 	this->_data->m_assetManager.LoadTexture("CheckPoint", CHECKPOINT);
+	this->_data->m_assetManager.LoadTexture("Portal", PORTAL);
 	this->_data->m_assetManager.LoadTexture("Forward Arrow", FORWARD_ARROW); 
 	this->_data->m_assetManager.LoadTexture("Backward Arrow", BACKWARD_ARROW);
 	
@@ -94,19 +95,22 @@ void GameState::HandleInput()
 			this->_data->machine.AddState(StateRef(new PauseState(_data)), false);
 		}
 
-		if (this->_data->m_inputManager.IsSpriteClicked(this->_gridSprite, sf::Mouse::Left, this->_data->m_window))
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_gridSprite, this->_data->m_window))
 		{
 			PlacePiece(START_PIECE);
 		}
 
-		if (this->_data->m_inputManager.IsSpriteClicked(this->_gridSprite, sf::Mouse::Right, this->_data->m_window))
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Right == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_gridSprite, this->_data->m_window))
 		{
 			PlacePiece(END_PIECE);
 		}
 
-		if (this->_data->m_inputManager.IsSpriteClicked(this->_gridSprite, sf::Mouse::Middle, this->_data->m_window))
+		if (sf::Event::KeyReleased == event.type && sf::Keyboard::W == event.key.code)
 		{
-			PlacePiece(WALL_PIECE);
+			if (this->_data->m_inputManager.IsMouseOverSprite(this->_gridSprite, this->_data->m_window))
+			{
+				PlacePiece(WALL_PIECE);
+			}
 		}
 		
 		if (sf::Event::KeyReleased == event.type && sf::Keyboard::C == event.key.code)
@@ -114,6 +118,14 @@ void GameState::HandleInput()
 			if (this->_data->m_inputManager.IsMouseOverSprite(this->_gridSprite, this->_data->m_window))
 			{
 				PlacePiece(CHECKPOINT_PIECE);
+			}
+		}
+
+		if (sf::Event::KeyReleased == event.type && sf::Keyboard::P == event.key.code)
+		{
+			if (this->_data->m_inputManager.IsMouseOverSprite(this->_gridSprite, this->_data->m_window))
+			{
+				PlacePiece(PORTAL_PIECE);
 			}
 		}
 
@@ -134,7 +146,7 @@ void GameState::HandleInput()
 			_checkBoxDebugMode.setTexture(this->_data->m_assetManager.GetTexture(DebugMode ? "Check Box Checked" : "Check Box Unchecked"));
 		}
 
-		if (this->_data->m_inputManager.IsSpriteClicked(this->_forwardDebug, sf::Mouse::Left, this->_data->m_window))
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_forwardDebug, this->_data->m_window))
 		{
 			if (DebugMode)
 			{
@@ -142,7 +154,7 @@ void GameState::HandleInput()
 			}
 		}
 
-		if (this->_data->m_inputManager.IsSpriteClicked(this->_backwardDebug, sf::Mouse::Left, this->_data->m_window))
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_backwardDebug, this->_data->m_window))
 		{
 			if (DebugMode)
 			{
@@ -236,37 +248,54 @@ void GameState::PlacePiece(GridPieces clickSide)
 
 	switch (clickSide) {
 	case START_PIECE:
-		if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Grid Sprite") && !StartPlaced) {
-			PlaceStartPoint(column, row);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Start Point")) {
-			PlaceStartPoint(column, row);
+		if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Start Point")) {
+			ResetStartPoint(column, row);
+			break;
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("End Point") && !StartPlaced) {
 			ResetEndPoint(column, row);
-			PlaceStartPoint(column, row);
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Wall") && !StartPlaced) {
 			ResetWall(column, row);
+		}
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Portal")) {
+			ResetPortal(column, row);
+		}
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("CheckPoint")) {
+			ResetCheckPoint(column, row);
+		}
+
+		if (!StartPlaced)
+		{
 			PlaceStartPoint(column, row);
 		}
+
 		break;
 
 	case END_PIECE:
-		if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Grid Sprite") && !EndPlaced) {
-			PlaceEndPoint(column, row);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("End Point")) {
+		if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("End Point")) {
 			ResetEndPoint(column, row);
+			break;
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Start Point") && !EndPlaced) {
 			ResetStartPoint(column, row);
-			PlaceEndPoint(column, row);
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Wall") && !EndPlaced) {
 			ResetWall(column, row);
+
+		}
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Portal")) {
+			ResetPortal(column, row);
+		}
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("CheckPoint")) {
+			ResetCheckPoint(column, row);
+		}
+
+		if (!EndPlaced)
+		{
 			PlaceEndPoint(column, row);
 		}
+
 		break;
 
 	case WALL_PIECE:
@@ -278,10 +307,17 @@ void GameState::PlacePiece(GridPieces clickSide)
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Wall")) {
 			ResetWall(column, row);
+			break;
 		}
-		else {
-			PlaceWall(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Portal")) {
+			ResetPortal(column, row);
 		}
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("CheckPoint")) {
+			ResetCheckPoint(column, row);
+		}
+
+		PlaceWall(column, row);
+		
 		break;
 
 	case CHECKPOINT_PIECE:
@@ -295,12 +331,38 @@ void GameState::PlacePiece(GridPieces clickSide)
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("End Point")) {
 			ResetEndPoint(column, row);		
 		}
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Wall")) {
+			ResetWall(column, row);
+		}
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Portal")) {
+			ResetPortal(column, row);
+		}
 		
 		PlaceCheckPoint(column, row); 
 		break;
 
+	case PORTAL_PIECE:
+		if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Portal")) {
+			ResetPortal(column, row);
+			break;
+		}
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Start Point")) {
+			ResetStartPoint(column, row);
+		}
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("End Point")) {
+			ResetEndPoint(column, row);
+		}
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Wall")) {
+			ResetWall(column, row);
+		}
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("CheckPoint")) {
+			ResetCheckPoint(column, row);
+		}
+
+		PlacePortal(column, row);
+		break;
+
 	default:
-		// Handle other cases or provide a default behavior if needed
 		break;
 	}
 
@@ -321,6 +383,11 @@ void GameState::Play()
 		{
 			SortCheckpointsByDistance(tempCheckPoints, currentPoint);
 			currentPoint = ProcessNextCheckpoint(tempCheckPoints, currentPoint);
+
+			if (currentPoint.x == -1 || currentPoint.y == -1) // No path found to next checkpoint
+			{
+				return;
+			}
 		}		
 
 		ProcessFinalPath(currentPoint);
@@ -336,18 +403,27 @@ void GameState::SortCheckpointsByDistance(std::vector<sf::Vector2i>& checkpoints
 		});
 }
 
-sf::Vector2i GameState::ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, const sf::Vector2i& currentPoint)
+sf::Vector2i GameState::ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, sf::Vector2i& currentPoint)
 {
 	sf::Vector2i closestCheckpoint = checkpoints[0];
 
-	GetGame()->AStarAlgorithm(_gridArray, currentPoint, closestCheckpoint, UseDiagonal,_path);
+	int pathLength = _path.size();
+	std::vector<Pair> tempPath;
+
+	GetGame()->AStarAlgorithm(_gridArray, currentPoint, closestCheckpoint, UseDiagonal, tempPath);
+
+	if (pathLength == tempPath.size())
+	{
+		return sf::Vector2i(-1, -1);
+	}
+
+	CheckPortalPath(currentPoint,closestCheckpoint,tempPath);
 
 	if (!DebugMode)
 	{
 		for (int i = 0; i < _path.size(); i++)
 		{
-			CurrentDebugStep++;
-			DrawStepPath(_path.at(CurrentDebugStep),true);
+			DrawStepPath(_path.at(i),true);
 		}
 	}
 
@@ -356,16 +432,19 @@ sf::Vector2i GameState::ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpo
 	return closestCheckpoint;
 }
 
-void GameState::ProcessFinalPath(const sf::Vector2i& currentPoint)
+void GameState::ProcessFinalPath(sf::Vector2i& currentPoint)
 {
-	GetGame()->AStarAlgorithm(_gridArray, currentPoint, endingPoint, UseDiagonal,_path);
+	std::vector<Pair> tempPath;
+
+	GetGame()->AStarAlgorithm(_gridArray, currentPoint, endingPoint, UseDiagonal, tempPath);
+
+	CheckPortalPath(currentPoint, endingPoint,tempPath);
 
 	if (!DebugMode)
 	{
 		for (int i = 0; i < _path.size(); i++)
 		{
-			CurrentDebugStep++;
-			DrawStepPath(_path.at(CurrentDebugStep),true);
+			DrawStepPath(_path.at(i),true);
 		}
 	}
 }
@@ -388,6 +467,7 @@ void GameState::ResetStartPoint(int column, int row)
 	StartPlaced = false;
 	startingPoint = sf::Vector2i(-1, -1);
 	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
+	ClearPath();
 }
 
 void GameState::ResetEndPoint(int column, int row)
@@ -396,16 +476,19 @@ void GameState::ResetEndPoint(int column, int row)
 	EndPlaced = false;
 	endingPoint = sf::Vector2i(-1, -1);
 	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
+	ClearPath();
 }
 
 void GameState::ResetWall(int column, int row)
 {
 	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
 	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
+	ClearPath();
 }
 
 void GameState::ResetCheckPoint(int column, int row)
 {
+	ClearPath();
 	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
 	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
 	
@@ -419,12 +502,29 @@ void GameState::ResetCheckPoint(int column, int row)
 	}
 }
 
+void GameState::ResetPortal(int column, int row)
+{
+	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
+	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
+	ClearPath();
+
+	for (int i = 0; i < Portals.size(); i++)
+	{
+		if (Portals[i].x == column - 1 && Portals[i].y == row - 1)
+		{
+			Portals.erase(Portals.begin() + i);
+			break;
+		}
+	}
+}
+
 void GameState::PlaceStartPoint(int column, int row)
 {
 	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Start Point"));
 	StartPlaced = true;
 	startingPoint = sf::Vector2i(column - 1, row - 1);
 	_gridArray[column - 1][row - 1] = START_PIECE;
+	ClearPath();
 }
 
 void GameState::PlaceEndPoint(int column, int row)
@@ -433,12 +533,14 @@ void GameState::PlaceEndPoint(int column, int row)
 	EndPlaced = true;
 	endingPoint = sf::Vector2i(column - 1, row - 1);
 	_gridArray[column - 1][row - 1] = END_PIECE;
+	ClearPath();
 }
 
 void GameState::PlaceWall(int column, int row)
 {
 	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Wall"));
 	_gridArray[column - 1][row - 1] = WALL_PIECE;
+	ClearPath();
 }
 
 void GameState::PlaceCheckPoint(int column, int row)
@@ -446,6 +548,60 @@ void GameState::PlaceCheckPoint(int column, int row)
 	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("CheckPoint"));
 	_gridArray[column - 1][row - 1] = CHECKPOINT_PIECE;
 	CheckPoints.push_back(sf::Vector2i(column - 1, row - 1));
+	ClearPath();
+}
+
+void GameState::PlacePortal(int column, int row)
+{
+	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Portal"));
+	_gridArray[column - 1][row - 1] = PORTAL_PIECE;
+	Portals.push_back(sf::Vector2i(column - 1, row - 1));
+	ClearPath();
+}
+
+void GameState::CheckPortalPath(sf::Vector2i& currentPoint, sf::Vector2i& nextPoint, std::vector<Pair> basePath)
+{
+	if (Portals.size() > 0)
+	{
+		std::vector<Pair> tempPath;
+		GetGame()->AStarAlgorithm(_gridArray, currentPoint, GetClosestPortal(currentPoint), UseDiagonal, tempPath);
+		GetGame()->AStarAlgorithm(_gridArray, nextPoint, GetClosestPortal(nextPoint),UseDiagonal, tempPath);
+
+		if (tempPath.size() < basePath.size())
+		{
+			for (int i = 0; i < tempPath.size(); i++)
+			{
+				_path.push_back(tempPath[i]);
+			}
+		}
+		else
+		{
+			for (int i = 0; i < basePath.size(); i++)
+			{
+				_path.push_back(basePath[i]);
+			}
+		}
+	}
+
+}
+
+sf::Vector2i& GameState::GetClosestPortal(sf::Vector2i& point)
+{
+	float minDistance = 99999;
+	int minIndex = -1;
+	
+	for (int i = 0; i < Portals.size(); i++)
+	{
+		float distance = CalculateDistance(point, Portals[i]);
+
+		if (distance < minDistance)
+		{
+			minDistance = distance;
+			minIndex = i;
+		}
+	}
+
+	return Portals[minIndex];
 }
 
 void GameState::ClearPath()
@@ -461,6 +617,7 @@ void GameState::ClearPath()
 			}
 		}
 	}
+	_path.clear();
 }
 
 void GameState::ForwardDebug()

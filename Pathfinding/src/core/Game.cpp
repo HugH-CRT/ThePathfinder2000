@@ -203,6 +203,7 @@ std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest,
             printf("The destination cell is found\n");
             
             return tracePath(cellDetails, dest,path);
+
         }
 
         // Marquer le nœud actuel comme visité

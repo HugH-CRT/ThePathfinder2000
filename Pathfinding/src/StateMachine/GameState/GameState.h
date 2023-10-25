@@ -14,7 +14,8 @@ enum GridPieces
 	END_PIECE = 2,
 	WALL_PIECE = 3,
 	PATH_PIECE = 4,
-	CHECKPOINT_PIECE = 5
+	CHECKPOINT_PIECE = 5,
+	PORTAL_PIECE = 6
 };
 
 class GameState : public State
@@ -36,8 +37,8 @@ private :
 
 	void Play();
 	void SortCheckpointsByDistance(std::vector<sf::Vector2i>& checkpoints, const sf::Vector2i& fromPoint);
-	sf::Vector2i ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, const sf::Vector2i& currentPoint);
-	void ProcessFinalPath(const sf::Vector2i& currentPoint);
+	sf::Vector2i ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, sf::Vector2i& currentPoint);
+	void ProcessFinalPath(sf::Vector2i& currentPoint);
 	float CalculateDistance(const sf::Vector2i& point1, const sf::Vector2i& point2);
 	bool CheckMapValidity();
 
@@ -45,11 +46,17 @@ private :
 	void ResetEndPoint(int column, int row);
 	void ResetWall(int column, int row);	
 	void ResetCheckPoint(int column, int row);
+	void ResetPortal(int column, int row);
 
 	void PlaceStartPoint(int column, int row);
 	void PlaceEndPoint(int column, int row);
 	void PlaceWall(int column, int row);
 	void PlaceCheckPoint(int column, int row);
+	void PlacePortal(int column, int row);
+
+	void CheckPortalPath(sf::Vector2i& currentPoint, sf::Vector2i& nextPoint, std::vector<Pair> basePath);
+
+	sf::Vector2i& GetClosestPortal(sf::Vector2i& point);
 
 	void ClearPath();
 
@@ -69,6 +76,7 @@ private :
 	sf::Vector2i LastCellChanged;
 
 	std::vector<sf::Vector2i> CheckPoints;
+	std::vector<sf::Vector2i> Portals;
 
 	sf::Vector2i startingPoint;
 	sf::Vector2i endingPoint;
@@ -79,6 +87,7 @@ private :
 	sf::Sprite _playButton;
 	sf::Sprite _forwardDebug;
 	sf::Sprite _backwardDebug;
+	sf::Sprite _portal;
 
 	sf::Sprite _checkBoxDiagMode;
 	sf::Text _checkBoxDiagText;
