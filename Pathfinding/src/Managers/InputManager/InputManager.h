@@ -11,6 +11,7 @@ public:
 
 	bool IsSpriteClicked(sf::Sprite object, sf::Mouse::Button button, sf::RenderWindow& window);
 	sf::Vector2i GetMousePosition(sf::RenderWindow& window);
+	bool IsMouseOverSprite(sf::Sprite object, sf::RenderWindow& window);
 };
 
 #endif /* INPUT_MANAGER_H */

@@ -4,12 +4,7 @@ bool InputManager::IsSpriteClicked(sf::Sprite object, sf::Mouse::Button button, 
 {
 	if (sf::Mouse::isButtonPressed(button))
 	{
-		sf::IntRect tempRect(object.getPosition().x, object.getPosition().y, object.getGlobalBounds().width, object.getGlobalBounds().height);
-
-		if (tempRect.contains(sf::Mouse::getPosition(window)))
-		{
-			return true;
-		}
+		return IsMouseOverSprite(object, window);
 	}
 
 	return false;
@@ -18,4 +13,16 @@ bool InputManager::IsSpriteClicked(sf::Sprite object, sf::Mouse::Button button, 
 sf::Vector2i InputManager::GetMousePosition(sf::RenderWindow& window)
 {
 	return sf::Mouse::getPosition(window);
+}
+
+bool InputManager::IsMouseOverSprite(sf::Sprite object, sf::RenderWindow& window)
+{
+	sf::IntRect tempRect(object.getPosition().x, object.getPosition().y, object.getGlobalBounds().width, object.getGlobalBounds().height);
+
+	if (tempRect.contains(sf::Mouse::getPosition(window)))
+	{
+		return true;
+	}
+
+	return false;
 }

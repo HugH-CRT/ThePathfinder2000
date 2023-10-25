@@ -25,8 +25,18 @@
 #define WALL "../../Pathfinding/Resources/Wall.png"
 #define PATH "../../Pathfinding/Resources/Path.png"
 #define EMPTY_TILE "../../Pathfinding/Resources/EmptyTile.png"
+#define CHECKPOINT "../../Pathfinding/Resources/CheckPoint.png"
+#define PORTAL "../../Pathfinding/Resources/Portal.png"
+
+#define CHECK_BOX_CHECKED "../../Pathfinding/Resources/CheckBoxChecked.png"
+#define CHECK_BOX_UNCHECKED "../../Pathfinding/Resources/CheckBoxUnchecked.png" 
+
+#define FONT "../../Pathfinding/Resources/Roboto-Black.ttf"
 
 #define TITLE_WINDOW "Pathfinding"
+
+#define FORWARD_ARROW "../../Pathfinding/Resources/ForwardArrow.png"
+#define BACKWARD_ARROW "../../Pathfinding/Resources/BackwardArrow.png"
 
 #define NB_LINES 10
 #define NB_COLUMNS 10

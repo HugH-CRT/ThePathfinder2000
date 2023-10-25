@@ -73,19 +73,18 @@ double Game::calculateHValue(int row, int col, Pair dest)
         + (col - dest.second) * (col - dest.second)));
 }
 
-stack<Pair>  Game::tracePath(cell cellDetails[][NB_COLUMNS], Pair dest)
+std::vector<Pair>  Game::tracePath(cell cellDetails[][NB_COLUMNS], Pair dest, std::vector<Pair>& path)
 {
-    printf("\nThe Path is ");
     int row = dest.first;
     int col = dest.second;
 
-    stack<Pair> Path;
+    std::vector<Pair> tempPath;
 
     while (!(cellDetails[row][col].parent_i == row
         && cellDetails[row][col].parent_j == col)) {
 
 		if (row != dest.first || col != dest.second) {
-			Path.push(make_pair(row, col));
+            tempPath.push_back(make_pair(row, col));
 		}
 
         int temp_row = cellDetails[row][col].parent_i;
@@ -93,16 +92,20 @@ stack<Pair>  Game::tracePath(cell cellDetails[][NB_COLUMNS], Pair dest)
         row = temp_row;
         col = temp_col;    
     }
+
+    for (int i = tempPath.size() - 1; i >= 0; i--) {
+		path.push_back(tempPath[i]);
+	}
     
     // depart
 	//Path.push(make_pair(row, col));
 
-	return Path;
+	return path;
 }
 
-stack<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest)
+std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest, bool UseDiagonal,std::vector<Pair>& path)
 {
-    stack<Pair> Path; 
+    std::vector<Pair> Path;
     
     // If the start is out of range
     if (isValid(src.first, src.second) == false) {
@@ -169,7 +172,25 @@ stack<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest)
 
     bool foundDest = false;
 
+    // Définir les mouvements possibles       
+    std::vector<int> dx = { -1, 1, 0, 0 };
+    std::vector<int> dy = { 0, 0, 1, -1 };
+
+    if (UseDiagonal)
+    {
+        dx.push_back(-1);
+        dx.push_back(1);
+        dx.push_back(-1);
+        dx.push_back(1);
+
+        dy.push_back(-1);
+        dy.push_back(1);
+        dy.push_back(1);
+        dy.push_back(-1);
+    }
+
     while (!openList.empty()) {
+        
         // Extraire le nœud de la liste ouverte avec le coût "f" le plus bas
         pPair p = *openList.begin();
         openList.erase(openList.begin());
@@ -180,19 +201,16 @@ stack<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest)
         // Vérifier si c'est la destination
         if (isDestination(i, j, dest)) {
             printf("The destination cell is found\n");
+            
+            return tracePath(cellDetails, dest,path);
 
-            return tracePath(cellDetails, dest);
         }
 
         // Marquer le nœud actuel comme visité
         closedList[i][j] = true;
 
-        // Définir les mouvements possibles
-        int dx[] = { -1, 1, 0, 0, -1, 1, -1, 1 };
-        int dy[] = { 0, 0, 1, -1, 1, -1, -1, 1 };
-
         // Parcourir les voisins
-        for (int k = 0; k < 8; k++) {
+        for (int k = 0; k < dx.size(); k++) {
             int ni = i + dx[k];
             int nj = j + dy[k];
 
@@ -213,7 +231,6 @@ stack<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest)
         }
     }
 
-
     // When the destination cell is not found due to blockages)
     if (foundDest == false)
         printf("Failed to find the Destination Cell\n");
@@ -221,10 +238,10 @@ stack<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest)
 	return Path;
 }
 
-stack<Pair> Game::AStarAlgorithm(int gridArray[NB_LINES][NB_COLUMNS], sf::Vector2i startingPoint, sf::Vector2i endingPoint)
+std::vector<Pair> Game::AStarAlgorithm(int gridArray[NB_LINES][NB_COLUMNS], sf::Vector2i startingPoint, sf::Vector2i endingPoint,bool UseDiagonal, std::vector<Pair>& path)
 {
 	Pair src = make_pair(startingPoint.x, startingPoint.y);
 	Pair dest = make_pair(endingPoint.x, endingPoint.y);
 
-    return aStarSearch(gridArray, src, dest);
+    return aStarSearch(gridArray, src, dest, UseDiagonal,path);
 }
