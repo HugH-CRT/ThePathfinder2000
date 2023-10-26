@@ -305,57 +305,71 @@ void Game::Play()
 
     ClearPath();
 
+    bool AllCheckPointsReached = true;
+
     if (CheckMapValidity())
     {
         for (int i = 0; i < _CheckPoints->size(); i++)
         {
-            currentPoint = ProcessNextCheckpoint(tempCheckPoints, currentPoint);
+            std::tuple<sf::Vector2i, bool> result = ProcessNextCheckpoint(tempCheckPoints, currentPoint);
+
+            currentPoint = std::get<sf::Vector2i>(result);
+            bool res = std::get<bool>(result);
 
             if (currentPoint.x == -1 || currentPoint.y == -1) // No path found to next checkpoint
             {
+                AllCheckPointsReached = false;
                 return;
+            }
+
+            if ( !res )
+            {
+                i--;
             }
         }
 
-        ProcessFinalPath(currentPoint);
+        if ( AllCheckPointsReached )
+        {
+            ProcessFinalPath(currentPoint);
+        }
     }
 }
 
 /*
  * Brief : Process the next checkpoint, Draw the shortest path from the current point to the next checkpoint
  */
-sf::Vector2i Game::ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, sf::Vector2i& currentPoint)
+std::tuple<sf::Vector2i, bool> Game::ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, sf::Vector2i& currentPoint)
 {
-    const int pathLength = _path.size();
-
     std::vector<Pair> tempPath;
-    const sf::Vector2i closestCheckPoint = PathToClosestCheckPoint(currentPoint,checkpoints, tempPath);
+    
+    sf::Vector2i closestCheckPoint = PathToClosestCheckPoint(currentPoint,checkpoints, tempPath);
 
-    if (pathLength == tempPath.size())
+    if ( closestCheckPoint.x == -1 && closestCheckPoint.y == -1) // Means no path to a checkpoint was found
     {
-        return {-1, -1};
-    }
-
-    CheckPortalPath(currentPoint, closestCheckPoint, tempPath);
-
-    if (!_DebugMode)
-    {
-        for (auto& i : _path)
-        {
-            dynamic_cast<GameState*>(m_data->machine.GetActiveState().get())->DrawStepPath(i, false);
-        }
+        closestCheckPoint = checkpoints.at(0);
     }
     
-    for (int i = 0; i < checkpoints.size(); i++)
-    {
-        if (checkpoints[i] == closestCheckPoint)
-        {
-            checkpoints.erase(checkpoints.begin() + i);
-            break;
-        }
-    }
+    const sf::Vector2i closestPortal = CheckPortalPath(currentPoint, closestCheckPoint, tempPath);
 
-    return closestCheckPoint;
+    if (tempPath.empty())
+    {
+        return {closestPortal, false};
+    }
+    
+    if ( closestCheckPoint.x != -1 && closestCheckPoint.y != -1)
+    {
+        for (int i = 0; i < checkpoints.size(); i++)
+        {
+            if (checkpoints[i] == closestCheckPoint)
+            {
+                checkpoints.erase(checkpoints.begin() + i);
+                break;
+            }
+        }
+        
+        return {closestCheckPoint, true};
+    }
+    return {closestPortal, false};
 }
 
 /*
@@ -369,14 +383,11 @@ void Game::ProcessFinalPath(sf::Vector2i& currentPoint)
 
     GetGame()->AStarAlgorithm( currentPoint, _EndingPoint,_UseDiagonal, tempPath);
 
-    CheckPortalPath(currentPoint, _EndingPoint, tempPath);
+    sf::Vector2i closestPortal =  CheckPortalPath(currentPoint, _EndingPoint, tempPath);
 
-    if (!_DebugMode)
+    if ( !tempPath.empty() || closestPortal.x != -1 && closestPortal.y != -1)
     {
-        for (const auto& i : _path)
-        {
-            dynamic_cast<GameState*>(m_data->machine.GetActiveState().get())->DrawStepPath(i, true);
-        }
+        DrawPath();
     }
 }
 
@@ -391,31 +402,40 @@ bool Game::CheckMapValidity()
 /*
  * Brief : Check if the path through a portal is shorter than the base path
  */
-void Game::CheckPortalPath(const sf::Vector2i& currentPoint, const sf::Vector2i& nextPoint, const std::vector<Pair>& basePath)
+sf::Vector2i Game::CheckPortalPath(const sf::Vector2i& currentPoint, sf::Vector2i& nextPoint, const std::vector<Pair>& basePath)
 {
     if (!_Portals->empty())
     {
         std::vector<Pair> tempPath;
         
-        PathToClosestPortal(currentPoint,tempPath);
+        sf::Vector2i closestPortalStart =  PathToClosestPortal(currentPoint,tempPath); 
         
         std::reverse(tempPath.begin(), tempPath.end());
         
-        PathToClosestPortal(nextPoint,tempPath);
-        
-        if (tempPath.size() < basePath.size() && !tempPath.empty())
+        sf::Vector2i closestPortalNextPoint = PathToClosestPortal(nextPoint,tempPath);
+
+        bool PointFound = closestPortalStart.x != -1 && closestPortalStart.y && closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1; 
+  
+        if ( PointFound && (tempPath.size() < basePath.size() || basePath.empty() )  && !tempPath.empty())
         {
             for (auto i : tempPath)
             {
                 _path.push_back(i);
             }
-            return;
+            
+            if ( closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1)
+            {
+                return closestPortalNextPoint;
+            }
+            return closestPortalStart;
         }
-    }
-    
-    for (auto i : basePath)
-    {
-        _path.push_back(i);
+
+        for (auto i : basePath)
+        {
+            _path.push_back(i);
+        }
+        
+        return {-1, -1};
     }
 }
 
@@ -425,7 +445,7 @@ void Game::CheckPortalPath(const sf::Vector2i& currentPoint, const sf::Vector2i&
  * @param point : the point from which we want to find the closest portal
  * @param finalPath : the path to the closest portal we are building
  */
-void Game::PathToClosestPortal(const sf::Vector2i& point,std::vector<Pair>& finalPath)
+sf::Vector2i Game::PathToClosestPortal(const sf::Vector2i& point,std::vector<Pair>& finalPath)
 {
     float minDistance = 99999;
     int minIndex = -1;
@@ -440,7 +460,7 @@ void Game::PathToClosestPortal(const sf::Vector2i& point,std::vector<Pair>& fina
         GetGame()->AStarAlgorithm( currentPoint, point, _UseDiagonal, fPath);
 
         // If the path is shorter than the current shortest path
-        if (fPath.size() < minDistance)
+        if (fPath.size() < minDistance && !fPath.empty())
         {
             minDistance = fPath.size();
             minIndex = i;
@@ -454,7 +474,9 @@ void Game::PathToClosestPortal(const sf::Vector2i& point,std::vector<Pair>& fina
         {
             finalPath.push_back(i);
         }
+        return _Portals->at(minIndex);
     }
+    return {-1, -1};
 }
 
 /*
@@ -515,6 +537,20 @@ void Game::InitGridArray()
         for (int& j : i)
         {
             j = EMPTY_PIECE;
+        }
+    }
+}
+
+/*
+ * Brief : Draw the path on the grid
+ */
+void Game::DrawPath()
+{
+    if (!_DebugMode)
+    {
+        for (const auto& i : _path)
+        {
+            dynamic_cast<GameState*>(m_data->machine.GetActiveState().get())->DrawStepPath(i, true);
         }
     }
 }

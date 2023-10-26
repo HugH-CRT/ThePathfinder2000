@@ -85,17 +85,18 @@ private:
 
 #pragma endregion AStartAlgorithm
 	
-	sf::Vector2i ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, sf::Vector2i& currentPoint);
+	std::tuple<sf::Vector2i, bool> ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, sf::Vector2i& currentPoint);
 	void ProcessFinalPath(sf::Vector2i& currentPoint);
 	bool CheckMapValidity();
 
-	void CheckPortalPath(const sf::Vector2i& currentPoint, const sf::Vector2i& nextPoint, const std::vector<Pair>& basePath);
-	void PathToClosestPortal(const sf::Vector2i& point,std::vector<Pair>& finalPath);
+	sf::Vector2i  CheckPortalPath(const sf::Vector2i& currentPoint, sf::Vector2i& nextPoint, const std::vector<Pair>& basePath);
+	sf::Vector2i PathToClosestPortal(const sf::Vector2i& point,std::vector<Pair>& finalPath);
 	sf::Vector2i PathToClosestCheckPoint(const sf::Vector2i& point,std::vector<sf::Vector2i>& checkpoints,std::vector<Pair>& finalPath);
 
 	std::vector<Pair> aStarSearch(Pair startingPoint, Pair endingPoint,bool UseDiagonal, std::vector<Pair>& path);
 	
 	void InitGridArray();
+	void DrawPath();
 
 public : 
 	void Play();
