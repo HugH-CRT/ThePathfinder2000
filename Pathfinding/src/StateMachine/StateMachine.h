@@ -1,3 +1,12 @@
+/**
+* @file StateMachine.h
+ *
+ * @brief Manage the states of the game
+ *
+ * @author yoan.laurain@ynov.com
+ *
+ */
+
 #ifndef STATE_MACHINE_H
 #define STATE_MACHINE_H
 
@@ -12,12 +21,13 @@ class StateMachine
 {
 public: 
 	StateMachine();
+	StateMachine(const StateMachine&) = delete;
+	StateMachine& operator=(const StateMachine&) = delete;
 	~StateMachine() { }
 
 	void AddState(StateRef newState, bool isReplacing = true);
-	void RemoveState();
-
 	void ProcessStateChanges();
+	void RemoveState();
 
 	StateRef& GetActiveState();
 

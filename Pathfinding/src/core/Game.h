@@ -1,3 +1,12 @@
+/**
+* @file Game.h
+ *
+ * @brief Logic of the game
+ *
+ * @author yoan.laurain@ynov.com
+ *
+ */
+
 #ifndef GAME_H
 #define GAME_H
 
@@ -37,7 +46,7 @@ public:
 	explicit Game(int width = 1280, int height = 720, const std::string& title = "DefaultTitle");
 	~Game();
 
-	std::vector<Pair> AStarAlgorithm(int gridArray[NB_LINES][NB_COLUMNS], sf::Vector2i startingPoint, sf::Vector2i endingPoint, bool UseDiagonal, std::vector<Pair>& _path);
+	std::vector<Pair> AStarAlgorithm(sf::Vector2i startingPoint, sf::Vector2i endingPoint, bool UseDiagonal, std::vector<Pair>& _path);
 
 	void Run();
 	
@@ -48,33 +57,31 @@ private:
 
 	GameDataRef m_data = std::make_shared<GameData>();
 
-	bool m_UseDiagonal;
-	bool m_DebugMode;
+	bool _UseDiagonal;
+	bool _DebugMode;
 
-	int m_CurrentDebugStep;
+	int _CurrentDebugStep;
 	int _gridArray[NB_LINES][NB_COLUMNS];
 
-	std::vector<sf::Vector2i>* m_CheckPoints;
-	std::vector<sf::Vector2i>* m_Portals;
+	std::vector<sf::Vector2i>* _CheckPoints;
+	std::vector<sf::Vector2i>* _Portals;
 
-	sf::Vector2i m_StartingPoint;
-	sf::Vector2i m_EndingPoint;
+	sf::Vector2i _StartingPoint;
+	sf::Vector2i _EndingPoint;
 
 	std::vector<Pair> _path;
 
 #pragma region AStartAlgorithm
 
-	bool isValid(int row, int col);
+	bool IsValid(int row, int col);
 
-	bool isNotAWall(int grid[][NB_COLUMNS], int row, int col);
+	bool IsNotAWall(int row, int col);
 
-	bool isDestination(int row, int col, Pair dest);
+	bool IsDestination(int row, int col, Pair dest);
 
-	double calculateHValue(int row, int col, Pair dest);
+	double CalculateHValue(int row, int col, Pair dest);
 
 	std::vector<Pair> tracePath(cell cellDetails[][NB_COLUMNS], Pair dest, std::vector<Pair>& path);
-
-	std::vector<Pair> aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest, bool UseDiagonal, std::vector<Pair>& path);
 
 #pragma endregion AStartAlgorithm
 	
@@ -82,9 +89,12 @@ private:
 	void ProcessFinalPath(sf::Vector2i& currentPoint);
 	bool CheckMapValidity();
 
-	void CheckPortalPath(sf::Vector2i& currentPoint, sf::Vector2i& nextPoint, const std::vector<Pair>& basePath);
-	sf::Vector2i& GetClosestPortal(sf::Vector2i& point);
+	void CheckPortalPath(const sf::Vector2i& currentPoint, const sf::Vector2i& nextPoint, const std::vector<Pair>& basePath);
+	void PathToClosestPortal(const sf::Vector2i& point,std::vector<Pair>& finalPath);
+	sf::Vector2i PathToClosestCheckPoint(const sf::Vector2i& point,std::vector<sf::Vector2i>& checkpoints,std::vector<Pair>& finalPath);
 
+	std::vector<Pair> aStarSearch(Pair startingPoint, Pair endingPoint,bool UseDiagonal, std::vector<Pair>& path);
+	
 	void InitGridArray();
 
 public : 

@@ -2,58 +2,75 @@
 
 StateMachine::StateMachine()
 {
-	this->_isAdding = false;
-	this->_isRemoving = false;
-	this->_isReplacing = false;
+	_isAdding = false;
+	_isRemoving = false;
+	_isReplacing = false;
 }
 
-void StateMachine::AddState(StateRef newState, bool isReplacing)
+/*
+ * Brief : Add a new state to the stack
+ *
+ * @param newState : the new state to add
+ * @param isReplacing : if true, the current state will be replaced by the new one
+ */
+void StateMachine::AddState(StateRef newState, const bool isReplacing)
 {
-	this->_isAdding = true;
-	this->_isReplacing = isReplacing;
-	this->_newState = std::move(newState);
+	_isAdding = true;
+	_isReplacing = isReplacing;
+	_newState = std::move(newState);
 }
 
+/*
+ * Brief : Remove the current state
+ */
 void StateMachine::RemoveState()
 {
-	this->_isRemoving = true;	
+	_isRemoving = true;	
 }
 
+/*
+ * Brief : Handle the state changes	 
+ */
 void StateMachine::ProcessStateChanges()
 {
-	if (this->_isRemoving && !this->_states.empty())
+	// Remove the current state
+	if (_isRemoving && !_states.empty())
 	{
-		this->_states.pop();
+		_states.pop();
 
-		if (!this->_states.empty())
+		if (!_states.empty())
 		{
-			this->_states.top()->Resume();
+			_states.top()->Resume();
 		}
 
-		this->_isRemoving = false;
+		_isRemoving = false;
 	}
 
-	if (this->_isAdding)
+	// Add the new state
+	if (_isAdding)
 	{
-		if (!this->_states.empty())
+		if (!_states.empty())
 		{
-			if (this->_isReplacing)
+			if (_isReplacing)
 			{
-				this->_states.pop();
+				_states.pop();
 			}
 			else
 			{
-				this->_states.top()->Pause();
+				_states.top()->Pause();
 			}
 		}
 
-		this->_states.push(std::move(this->_newState));
-		this->_states.top()->Init();
-		this->_isAdding = false;
+		_states.push(std::move(_newState));
+		_states.top()->Init();
+		_isAdding = false;
 	}
 }
 
+/*
+ * Brief : Return the current state
+ */
 StateRef& StateMachine::GetActiveState()
 {
-	return this->_states.top();
+	return _states.top();
 }

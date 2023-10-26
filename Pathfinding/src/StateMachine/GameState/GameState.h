@@ -1,3 +1,12 @@
+/**
+* @file GameState.h
+ *
+ * @brief Game screen of the game
+ *
+ * @author yoan.laurain@ynov.com
+ *
+ */
+
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
@@ -7,6 +16,9 @@
 
 #include <SFML/Graphics.hpp>
 
+/*
+ *  Brief : Enum of the grid pieces
+ */
 enum GridPieces
 {
 	EMPTY_PIECE = 0,
@@ -18,20 +30,24 @@ enum GridPieces
 	PORTAL_PIECE = 6
 };
 
-class GameState : public State
+class GameState final : public State
 {
 
 public:
-	GameState(GameDataRef data);
+	explicit GameState(GameDataRef data);
 	
-	/* Implementation of State class */
+	/* ImplGameDataRef e class */
 	
 	void Draw(float dt) override;
 	void HandleInput() override;
 	void Init() override;
 	void LoadTextures() override;
+	void LoadFonts() override;
+	void SetTexts() override;
 	void SetTextures() override;
 	void Update(float dt) override;
+	void SetScales() override;
+	void SetPositions() override;
 	
 	/* Implementation of State class */
 
@@ -43,30 +59,30 @@ private :
 
 #pragma region Sprites 
 
-	sf::Sprite m_background;
-	sf::Sprite m_backwardDebug;
-	sf::Sprite m_checkBoxDebugMode;
-	sf::Sprite m_checkBoxDiagMode;
-	sf::Sprite m_forwardDebug;
-	sf::Sprite m_gridPieces[NB_LINES][NB_COLUMNS];
-	sf::Sprite m_gridSprite;
-	sf::Sprite m_pauseButton;
-	sf::Sprite m_playButton;
-	sf::Sprite m_portal;
+	sf::Sprite _background;
+	sf::Sprite _backwardDebug;
+	sf::Sprite _checkBoxDebugMode;
+	sf::Sprite _checkBoxDiagMode;
+	sf::Sprite _forwardDebug;
+	sf::Sprite _gridPieces[NB_LINES][NB_COLUMNS];
+	sf::Sprite _gridSprite;
+	sf::Sprite _pauseButton;
+	sf::Sprite _playButton;
+	sf::Sprite _portal;
 
 #pragma endregion Sprites
 	
 #pragma region Texts 
 
-	sf::Text m_checkBoxDebugText;
-	sf::Text m_checkBoxDiagText;
+	sf::Text _checkBoxDebugText;
+	sf::Text _checkBoxDiagText;
 	
 #pragma endregion Texts
 
 	void InitGridTiles();
 	void ClearPath();
 	void PlaceItem(int column, int row, const std::string& textureName, GridPieces itemType, std::vector<sf::Vector2i>* itemContainer);
-	void ResetItem(int column, int row, const std::string& resetTexture, GridPieces resetType, std::vector<sf::Vector2i>* itemContainer);
+	void ResetItem(int column, int row, GridPieces resetType, std::vector<sf::Vector2i>* itemContainer);
 	
 	void PlacePiece(GridPieces);
 };

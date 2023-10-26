@@ -1,3 +1,12 @@
+/**
+* @file MainMenuState.h
+ *
+ * @brief Main menu screen of the game
+ *
+ * @author yoan.laurain@ynov.com
+ *
+ */
+
 #ifndef MAIN_MENU_STATE_H
 #define MAIN_MENU_STATE_H
 
@@ -6,19 +15,23 @@
 
 #include <SFML/Graphics.hpp>
 
-class MainMenuState : public State
+class MainMenuState final : public State
 {
 public: 
 	explicit MainMenuState(GameDataRef data);
 
 	/* Implementation of State class */
 	
-	void Init() override;
-	void HandleInput() override;
-	void Update(float dt) override;
 	void Draw(float dt) override;
+	void HandleInput() override;
+	void Init() override;
 	void LoadTextures() override;
+	void LoadFonts() override {}
+	void SetTexts() override{}
 	void SetTextures() override;
+	void Update(float dt) override;
+	void SetScales() override;
+	void SetPositions() override;
 
 	/* Implementation of State class */
 

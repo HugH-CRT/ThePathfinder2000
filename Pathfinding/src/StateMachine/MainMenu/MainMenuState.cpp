@@ -3,25 +3,27 @@
 #include "GameState/GameState.h"
 
 #include <sstream>
-#include <iostream>
 
 MainMenuState::MainMenuState(GameDataRef data) 
-	: _data(data)
+	: _data(std::move(data))
 {
 }
 
+/*
+ * Brief : Initialize the state
+ *		- Load & set the textures & set scale & position	
+ */
 void MainMenuState::Init()
 {
 	LoadTextures();
 	SetTextures();
-
-	title.setScale(0.2f, 0.2f);
-	_background.setScale(SCREEN_WIDTH / _background.getLocalBounds().width, SCREEN_HEIGHT / _background.getLocalBounds().height);
-
-	playButton.setPosition((SCREEN_WIDTH / 2) - (playButton.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) - (playButton.getGlobalBounds().height / 2));
-	title.setPosition((SCREEN_WIDTH / 2) - (title.getGlobalBounds().width / 2), title.getGlobalBounds().height * 0.1f);	
+	SetScales();
+	SetPositions();
 }
 
+/*
+ * Brief : Handle the user inputs
+ */
 void MainMenuState::HandleInput()
 {
 	sf::Event event{};
@@ -36,7 +38,7 @@ void MainMenuState::HandleInput()
 		// Start button
 		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(playButton, _data->m_window))
 		{
-			_data->machine.AddState(StateRef(new GameState(_data)), true); 
+			_data->machine.AddState(std::make_unique<GameState>(_data), true); 
 		}
 	}
 }
@@ -45,6 +47,28 @@ void MainMenuState::Update(float dt)
 {
 }
 
+/*
+ * Brief : Set the scale of the elements
+ */
+void MainMenuState::SetScales()
+{
+	title.setScale(0.2f, 0.2f);
+	_background.setScale(SCREEN_WIDTH / _background.getLocalBounds().width,
+						 SCREEN_HEIGHT / _background.getLocalBounds().height);
+}
+
+void MainMenuState::SetPositions()
+{
+	playButton.setPosition(SCREEN_WIDTH / 2 - playButton.getGlobalBounds().width / 2,
+						   SCREEN_HEIGHT / 2 - playButton.getGlobalBounds().height / 2);
+	title.setPosition(SCREEN_WIDTH / 2 - title.getGlobalBounds().width / 2, title.getGlobalBounds().height * 0.1f);	
+}
+
+/*
+ * Brief : Draw all the elements of the state
+ *
+ * @param dt : Delta time
+ */
 void MainMenuState::Draw(float dt)
 {
 	_data->m_window.clear();
@@ -56,6 +80,9 @@ void MainMenuState::Draw(float dt)
 	_data->m_window.display();
 }
 
+/*
+ * Brief : Load all the textures of the state
+ */
 void MainMenuState::LoadTextures()
 {
 	_data->m_assetManager.LoadTexture("Main Menu Background", MAIN_MENU_BACKGROUND_FILEPATH);
@@ -64,6 +91,9 @@ void MainMenuState::LoadTextures()
 	_data->m_assetManager.LoadTexture("Play Button Outer", MAIN_MENU_PLAY_BUTTON_OUTER);
 }
 
+/*
+ * Brief : Set all the textures of the state
+ */
 void MainMenuState::SetTextures()
 {
 	_background.setTexture(_data->m_assetManager.GetTexture("Main Menu Background"));
