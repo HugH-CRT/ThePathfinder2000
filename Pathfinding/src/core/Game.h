@@ -56,40 +56,29 @@ private:
 	sf::Clock m_clock;
 
 	GameDataRef m_data = std::make_shared<GameData>();
-
-	bool _UseDiagonal;
 	bool _DebugMode;
 
-	int _CurrentDebugStep;
 	int _gridArray[NB_LINES][NB_COLUMNS];
-
-	std::vector<sf::Vector2i>* _CheckPoints;
-	std::vector<sf::Vector2i>* _Portals;
-
-	sf::Vector2i _StartingPoint;
-	sf::Vector2i _EndingPoint;
-
-	std::vector<Pair> _path;
 
 #pragma region AStartAlgorithm
 
-	bool IsValid(int row, int col);
+	bool IsCellInBoundOfTheGrid(int row, int col);
 
 	bool IsNotAWall(int row, int col);
 
 	bool IsDestination(int row, int col, Pair dest);
 
-	double CalculateHValue(int row, int col, Pair dest);
+	double CalculateHeuristicValue(int row, int col, Pair dest);
 
 	std::vector<Pair> tracePath(cell cellDetails[][NB_COLUMNS], Pair dest, std::vector<Pair>& path);
 
 #pragma endregion AStartAlgorithm
 	
-	std::tuple<sf::Vector2i, bool> ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, sf::Vector2i& currentPoint);
-	void ProcessFinalPath(sf::Vector2i& currentPoint);
+	sf::Vector2i ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, const sf::Vector2i& currentPoint);
+	void ProcessFinalPath(const sf::Vector2i& currentPoint);
 	bool CheckMapValidity();
 
-	sf::Vector2i  CheckPortalPath(const sf::Vector2i& currentPoint, sf::Vector2i& nextPoint, const std::vector<Pair>& basePath);
+	sf::Vector2i  CheckPortalPath(const sf::Vector2i& currentPoint, const sf::Vector2i& nextPoint, std::vector<Pair>& basePath);
 	sf::Vector2i PathToClosestPortal(const sf::Vector2i& point,std::vector<Pair>& finalPath);
 	sf::Vector2i PathToClosestCheckPoint(const sf::Vector2i& point,std::vector<sf::Vector2i>& checkpoints,std::vector<Pair>& finalPath);
 
@@ -98,6 +87,7 @@ private:
 	void InitGridArray();
 	void DrawPath();
 	sf::Vector2i GetClosestCheckPoint(const sf::Vector2i& point, std::vector<sf::Vector2i>& checkpoints);
+	void RemoveCheckPoint(const sf::Vector2i& point, std::vector<sf::Vector2i>& checkpoints);
 
 public : 
 	void Play();
@@ -105,37 +95,27 @@ public :
 	void BackwardDebug();
 	void ClearPath();
 	void ResetGame();
+	
+	bool _UseDiagonal;
 
-#pragma region Getters
+	int _CurrentDebugStep;
 
+	std::vector<sf::Vector2i>* _CheckPoints;
+	std::vector<sf::Vector2i>* _Portals;
+
+	sf::Vector2i _StartingPoint;
+	sf::Vector2i _EndingPoint;
+
+	std::vector<Pair> _path;
+	
 	bool IsDebugMode() const;
-	bool IsUseDiagonal() const;
-	
-	int GetPathSize();
-	
-	sf::Vector2i& GetStartingPoint();
-	sf::Vector2i& GetEndingPoint();
-
-	std::vector<sf::Vector2i>* GetCheckPoints();
-	std::vector<sf::Vector2i>* GetPortals();
 
 	int(&GetGridArray())[NB_LINES][NB_COLUMNS]{
 		return _gridArray;
 	}
-
-#pragma endregion Getters
-
-#pragma region Setters
-
+	
 	void SetDebugMode(bool debugMode);
-	void SetUseDiagonal(bool useDiagonal);
-
-	void SetStartingPoint(sf::Vector2i& startingPoint);
-	void SetEndingPoint(const sf::Vector2i& endingPoint);
 	void SetGridArrayItem(int column, int row, GridPieces piece);
-		
-#pragma endregion Setters
-
 };
 
 Game* GetGame();

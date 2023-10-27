@@ -95,8 +95,8 @@ void GameState::HandleInput()
 		// Check / uncheck the diagonal mode
 		if (_data->m_inputManager.IsSpriteClicked(_checkBoxDiagMode, sf::Mouse::Left, _data->m_window))
 		{
-			GetGame()->SetUseDiagonal(!GetGame()->IsUseDiagonal());
-			_checkBoxDiagMode.setTexture(_data->m_assetManager.GetTexture(GetGame()->IsUseDiagonal() ? "Check Box Checked" : "Check Box Unchecked"));
+			GetGame()->_UseDiagonal = !GetGame()->_UseDiagonal;
+			_checkBoxDiagMode.setTexture(_data->m_assetManager.GetTexture(GetGame()->_UseDiagonal ? "Check Box Checked" : "Check Box Unchecked"));
 		}
 
 		// Check / uncheck the debug mode
@@ -333,10 +333,10 @@ void GameState::PlaceItem(const int column, const int row, const std::string& te
 	sf::Vector2i point(column - 1, row - 1);
 	
 	if (itemType == START_PIECE) {
-		GetGame()->SetStartingPoint(point);
+		GetGame()->_StartingPoint = point;
 	}
 	else if (itemType == END_PIECE) {
-		GetGame()->SetEndingPoint(point);
+		GetGame()->_EndingPoint = point;
 	}
 
 	ClearPath();
@@ -370,13 +370,13 @@ void GameState::ResetItem(const int column, const int row, const GridPieces rese
 	sf::Vector2i point(- 1, - 1);
 
 	if (resetType == START_PIECE) {
-		GetGame()->SetStartingPoint(point);
+		GetGame()->_StartingPoint = point;
 	}
 	else if (resetType == END_PIECE) {
-		GetGame()->SetEndingPoint(point);
+		GetGame()->_EndingPoint = point;
 	}
 
-	if (GetGame()->GetPathSize() > 0)
+	if (GetGame()->_path.size() > 0)
 	{
 		ClearPath(); 
 	}
@@ -446,8 +446,8 @@ void GameState::PlacePiece(const GridPieces Piece)
 		}
 	}
 
-	const bool StartPlaced = GetGame()->GetStartingPoint().x != -1 && GetGame()->GetStartingPoint().y != -1;
-	const bool EndPlaced = GetGame()->GetEndingPoint().x != -1 && GetGame()->GetEndingPoint().y != -1;
+	const bool StartPlaced = GetGame()->_StartingPoint.x != -1 && GetGame()->_StartingPoint.y != -1;
+	const bool EndPlaced = GetGame()->_EndingPoint.x != -1 && GetGame()->_EndingPoint.y != -1;
 
 	sf::Vector2i point( -1, - 1);
 
@@ -459,16 +459,16 @@ void GameState::PlacePiece(const GridPieces Piece)
 		}
 		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("End Point")  ) {
 			ResetItem(column, row, END_PIECE, nullptr);
-			GetGame()->SetEndingPoint(point);
+			GetGame()->_EndingPoint = point;
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Wall") ) {
 			ResetItem(column, row, WALL_PIECE, nullptr);
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
-			ResetItem(column, row, PORTAL_PIECE, GetGame()->GetPortals());
+			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->GetCheckPoints());
+			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
 		}
 
 		if (!StartPlaced)
@@ -485,17 +485,17 @@ void GameState::PlacePiece(const GridPieces Piece)
 		}
 		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Start Point")) {
 			ResetItem(column, row, START_PIECE, nullptr);
-			GetGame()->SetStartingPoint(point);
+			GetGame()->_StartingPoint = point;
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Wall")) {
 			ResetItem(column, row, WALL_PIECE, nullptr);
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
-			ResetItem(column, row, PORTAL_PIECE, GetGame()->GetPortals());
+			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
 
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->GetCheckPoints());
+			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
 
 		}
 
@@ -518,11 +518,11 @@ void GameState::PlacePiece(const GridPieces Piece)
 			break;
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
-			ResetItem(column, row, PORTAL_PIECE, GetGame()->GetPortals());
+			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
 
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->GetCheckPoints());
+			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
 
 		}
 
@@ -532,7 +532,7 @@ void GameState::PlacePiece(const GridPieces Piece)
 
 	case CHECKPOINT_PIECE:
 		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->GetCheckPoints());
+			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
 
 			break;
 		}
@@ -547,17 +547,17 @@ void GameState::PlacePiece(const GridPieces Piece)
 			ResetItem(column, row, WALL_PIECE, nullptr);
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
-			ResetItem(column, row, PORTAL_PIECE, GetGame()->GetPortals());
+			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
 
 		}
 		
-		PlaceItem(column, row, "CheckPoint", CHECKPOINT_PIECE, GetGame()->GetCheckPoints());
+		PlaceItem(column, row, "CheckPoint", CHECKPOINT_PIECE, GetGame()->_CheckPoints);
 
 		break;
 
 	case PORTAL_PIECE:
 		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
-			ResetItem(column, row, PORTAL_PIECE, GetGame()->GetPortals());
+			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
 			break;
 		}
 		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Start Point")) {
@@ -570,10 +570,10 @@ void GameState::PlacePiece(const GridPieces Piece)
 			ResetItem(column, row, WALL_PIECE, nullptr);
 		}
 		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->GetCheckPoints());
+			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
 		}
 
-		PlaceItem(column, row, "Portal", PORTAL_PIECE, GetGame()->GetPortals());
+		PlaceItem(column, row, "Portal", PORTAL_PIECE, GetGame()->_Portals);
 
 		break;
 
