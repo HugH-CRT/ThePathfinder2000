@@ -348,11 +348,6 @@ std::tuple<sf::Vector2i, bool> Game::ProcessNextCheckpoint(std::vector<sf::Vecto
     }
     
     const sf::Vector2i closestPortal = CheckPortalPath(currentPoint, closestCheckPoint, tempPath);
-
-    if (tempPath.empty())
-    {
-        return {closestPortal, false};
-    }
     
     if ( closestCheckPoint.x != -1 && closestCheckPoint.y != -1)
     {
@@ -462,6 +457,7 @@ sf::Vector2i Game::PathToClosestPortal(const sf::Vector2i& point,std::vector<Pai
         {
             minDistance = fPath.size();
             minIndex = i;
+            fPath.erase(fPath.begin());// remove portal as we want to tp not go over it
             tempPath = fPath;
         }
     }
@@ -509,6 +505,7 @@ sf::Vector2i Game::PathToClosestCheckPoint(const sf::Vector2i& point,std::vector
         {
             minDistance = tempPath.size();
             minIndex = i;
+            tempPath.erase(tempPath.begin());// remove checkpoint as we dont want to go over it
             fPath = tempPath;
         }
     }
