@@ -11,12 +11,7 @@ Game::Game(const int width, const int height, const std::string& title) :
     , _CheckPoints(new std::vector<sf::Vector2i>)
     , _Portals(new std::vector<sf::Vector2i>)
 {
-    _StartingPoint.x = -1;
-    _StartingPoint.y = -1;
-    _EndingPoint.x = -1;
-    _EndingPoint.y = -1;
-    
-    InitGridArray();
+    ResetGame();
 
     // Start the game with the splash screen
 	m_data->m_window.create(sf::VideoMode(width, height), title, sf::Style::Close | sf::Style::Titlebar);
@@ -152,6 +147,8 @@ std::vector<Pair> Game::tracePath(cell cellDetails[][NB_COLUMNS], Pair dest,std:
         row = temp_row;
         col = temp_col;    
     }
+    
+    tempPath.emplace_back(row, col);
 
     // Add the starting cell to the path in reverse order
     for (int i = tempPath.size() - 1; i >= 0; i--) {
@@ -319,6 +316,7 @@ void Game::Play()
             if (currentPoint.x == -1 || currentPoint.y == -1) // No path found to next checkpoint
             {
                 AllCheckPointsReached = false;
+                _path.clear();
                 return;
             }
 
@@ -414,7 +412,7 @@ sf::Vector2i Game::CheckPortalPath(const sf::Vector2i& currentPoint, sf::Vector2
         
         sf::Vector2i closestPortalNextPoint = PathToClosestPortal(nextPoint,tempPath);
 
-        bool PointFound = closestPortalStart.x != -1 && closestPortalStart.y && closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1; 
+        bool PointFound = closestPortalStart.x != -1 && closestPortalStart.y != -1 && closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1; 
   
         if ( PointFound && (tempPath.size() < basePath.size() || basePath.empty() )  && !tempPath.empty())
         {
@@ -429,14 +427,14 @@ sf::Vector2i Game::CheckPortalPath(const sf::Vector2i& currentPoint, sf::Vector2
             }
             return closestPortalStart;
         }
-
-        for (auto i : basePath)
-        {
-            _path.push_back(i);
-        }
-        
-        return {-1, -1};
     }
+    
+    for (auto i : basePath)
+    {
+        _path.push_back(i);
+    }
+        
+    return {-1, -1};
 }
 
 /*
@@ -590,6 +588,21 @@ void Game::ClearPath()
 {
     _path.clear();
     _CurrentDebugStep = -1;
+}
+
+void Game::ResetGame()
+{
+    _StartingPoint.x = -1;
+    _StartingPoint.y = -1;
+    _EndingPoint.x = -1;
+    _EndingPoint.y = -1;
+    
+    InitGridArray();
+
+    _CheckPoints->clear();
+    _Portals->clear();
+    _CurrentDebugStep = -1;
+    _path.clear();
 }
 
 #pragma region Setters

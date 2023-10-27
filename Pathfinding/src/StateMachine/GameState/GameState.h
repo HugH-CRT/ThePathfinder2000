@@ -69,6 +69,8 @@ private :
 	sf::Sprite _pauseButton;
 	sf::Sprite _playButton;
 	sf::Sprite _portal;
+	sf::Sprite _clearButton;
+	sf::Sprite _clearPathButton;
 
 #pragma endregion Sprites
 	

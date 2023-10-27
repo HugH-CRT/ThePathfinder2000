@@ -120,6 +120,19 @@ void GameState::HandleInput()
 				GetGame()->BackwardDebug();
 			}
 		}
+
+		// clear button
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_clearButton, _data->m_window))
+		{
+			GetGame()->ResetGame();
+			InitGridTiles();
+		}
+
+		// clear path button
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_clearPathButton, _data->m_window))
+		{
+			ClearPath();
+		}
 	}
 }
 
@@ -138,8 +151,11 @@ void GameState::SetScales()
 	_playButton.setScale(0.3f, 0.3f);
 	_checkBoxDiagMode.setScale(0.1f, 0.1f);
 	_checkBoxDebugMode.setScale(0.1f, 0.1f);
+	
 	_backwardDebug.setScale(0.5f, 0.5f);
 	_forwardDebug.setScale(0.5f, 0.5f);
+	_clearButton.setScale(0.5f, 0.5f);
+	_clearPathButton.setScale(0.5f, 0.5f);
 }
 
 /*
@@ -173,6 +189,12 @@ void GameState::SetPositions()
 	
 	_forwardDebug.setPosition(SCREEN_WIDTH / 2 + _forwardDebug.getGlobalBounds().width / 2,
 	                          SCREEN_HEIGHT - _forwardDebug.getGlobalBounds().height);
+
+	_clearButton.setPosition(SCREEN_WIDTH / 2 - _clearButton.getGlobalBounds().width / 2,
+							_clearButton.getGlobalBounds().height / 2);
+
+	_clearPathButton.setPosition(SCREEN_WIDTH / 2 + _clearButton.getGlobalBounds().width + _clearPathButton.getGlobalBounds().width / 2,
+								_clearPathButton.getGlobalBounds().height / 2);
 }
 
 /*
@@ -194,6 +216,8 @@ void GameState::Draw(float dt)
 	_data->m_window.draw(_checkBoxDebugMode);
 	_data->m_window.draw(_pauseButton);
 	_data->m_window.draw(_checkBoxDiagMode);
+	_data->m_window.draw(_clearButton);
+	_data->m_window.draw(_clearPathButton);
 
 	for (const auto& m_gridPiece : _gridPieces)
 	{
@@ -225,6 +249,8 @@ void GameState::LoadTextures()
 	_data->m_assetManager.LoadTexture("Portal", PORTAL);
 	_data->m_assetManager.LoadTexture("Forward Arrow", FORWARD_ARROW);
 	_data->m_assetManager.LoadTexture("Backward Arrow", BACKWARD_ARROW);
+	_data->m_assetManager.LoadTexture("Clear Button", CLEAR_BUTTON);
+	_data->m_assetManager.LoadTexture("Clear Path Button", CLEAR_PATH_BUTTON);
 }
 
 /*
@@ -257,6 +283,8 @@ void GameState::SetTextures()
 	_backwardDebug.setTexture(_data->m_assetManager.GetTexture("Backward Arrow"));
 	_forwardDebug.setTexture(_data->m_assetManager.GetTexture("Forward Arrow"));
 	_checkBoxDebugMode.setTexture(_data->m_assetManager.GetTexture("Check Box Unchecked"));
+	_clearButton.setTexture(_data->m_assetManager.GetTexture("Clear Button"));
+	_clearPathButton.setTexture(_data->m_assetManager.GetTexture("Clear Path Button"));
 }
 
 /*

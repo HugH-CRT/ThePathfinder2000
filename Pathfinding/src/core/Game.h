@@ -103,6 +103,7 @@ public :
 	void ForwardDebug();
 	void BackwardDebug();
 	void ClearPath();
+	void ResetGame();
 
 #pragma region Getters
 
