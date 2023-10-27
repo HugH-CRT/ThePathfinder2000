@@ -341,11 +341,6 @@ std::tuple<sf::Vector2i, bool> Game::ProcessNextCheckpoint(std::vector<sf::Vecto
     std::vector<Pair> tempPath;
     
     sf::Vector2i closestCheckPoint = PathToClosestCheckPoint(currentPoint,checkpoints, tempPath);
-
-    if ( closestCheckPoint.x == -1 && closestCheckPoint.y == -1) // Means no path to a checkpoint was found
-    {
-        closestCheckPoint = checkpoints.at(0);
-    }
     
     const sf::Vector2i closestPortal = CheckPortalPath(currentPoint, closestCheckPoint, tempPath);
     
@@ -401,7 +396,7 @@ sf::Vector2i Game::CheckPortalPath(const sf::Vector2i& currentPoint, sf::Vector2
     {
         std::vector<Pair> tempPath;
         
-        sf::Vector2i closestPortalStart =  PathToClosestPortal(currentPoint,tempPath); 
+        sf::Vector2i closestPortalStart = PathToClosestPortal(currentPoint,tempPath); 
         
         std::reverse(tempPath.begin(), tempPath.end());
         
@@ -482,44 +477,24 @@ sf::Vector2i Game::PathToClosestPortal(const sf::Vector2i& point,std::vector<Pai
  */
 sf::Vector2i Game::PathToClosestCheckPoint(const sf::Vector2i& point,std::vector<sf::Vector2i>& checkpoints, std::vector<Pair>& finalPath)
 {
-    float minDistance = 99999;
-    int minIndex = -1;
-
-    std::vector<Pair> fPath;
-
-    // Loop through all the checkpoints
-    for (int i = 0; i < checkpoints.size(); i++)
-    {
-        std::vector<Pair> tempPath;
+    std::vector<Pair> tempPath;
         
-        const sf::Vector2i currentPoint = checkpoints.at(i);
-        GetGame()->AStarAlgorithm( currentPoint, point, _UseDiagonal, tempPath);
+    const sf::Vector2i closestCheckPoint = GetClosestCheckPoint(point,checkpoints);
+    GetGame()->AStarAlgorithm( closestCheckPoint, point, _UseDiagonal, tempPath);
 
-        if (tempPath.empty())
-        {
-            continue;
-        }
-
-        // If the path is shorter than the current shortest path
-        if (tempPath.size() < minDistance)
-        {
-            minDistance = tempPath.size();
-            minIndex = i;
-            tempPath.erase(tempPath.begin());// remove checkpoint as we dont want to go over it
-            fPath = tempPath;
-        }
-    }
-
-    if ( minIndex != -1 )
+    if (tempPath.empty()) // no path found ( portal not included )
     {
-        for (int i = fPath.size() - 1; i >= 0; i--)
-        {
-            finalPath.push_back(fPath[i]);
-        }
-        return checkpoints.at(minIndex);
+        return closestCheckPoint;
     }
+    
+    tempPath.erase(tempPath.begin());// remove checkpoint as we dont want to go over it
 
-    return {-1, -1};
+    for (int i = tempPath.size() - 1; i >= 0; i--)
+    {
+        finalPath.push_back(tempPath[i]);
+    }
+    
+    return closestCheckPoint;
 }
 
 /*
@@ -548,6 +523,33 @@ void Game::DrawPath()
             dynamic_cast<GameState*>(m_data->machine.GetActiveState().get())->DrawStepPath(i, true);
         }
     }
+}
+
+/*
+ * Brief : Get the closest checkpoint from a point using pythagore means no matters the obstacles
+ *
+ * @param point : the point from which we want to find the closest checkpoint
+ * @param checkpoints : the checkpoints we want to check
+ *
+ * @return the closest checkpoint to the point
+ */
+sf::Vector2i Game::GetClosestCheckPoint(const sf::Vector2i& point, std::vector<sf::Vector2i>& checkpoints)
+{
+    float minDistance = 99999;
+    int minIndex = -1;
+
+    for (int i = 0; i < checkpoints.size(); i++)
+    {
+        const sf::Vector2i currentPoint = checkpoints.at(i);
+        const float distance = sqrt(pow(currentPoint.x - point.x, 2) + pow(currentPoint.y - point.y, 2));
+
+        if (distance < minDistance && (point.x != currentPoint.x || point.y != currentPoint.y))
+        {
+            minDistance = distance;
+            minIndex = i;
+        }
+    }
+    return _CheckPoints->at(minIndex);
 }
 
 /*

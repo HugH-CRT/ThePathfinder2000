@@ -97,6 +97,7 @@ private:
 	
 	void InitGridArray();
 	void DrawPath();
+	sf::Vector2i GetClosestCheckPoint(const sf::Vector2i& point, std::vector<sf::Vector2i>& checkpoints);
 
 public : 
 	void Play();
