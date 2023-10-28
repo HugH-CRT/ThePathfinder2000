@@ -1,15 +1,23 @@
 /**
 * @file State.h
- *
- * @brief Interface for the states of the game
- *
- * @author yoan.laurain@ynov.com
- *
- */
+*
+* @brief Interface for the states of the game
+*
+* @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 0.1
+*
+* @date 21/10/2023
+*/
 
 #ifndef STATE_H
 #define STATE_H
 
+/**
+* @class State
+* @brief
+*/
 class State
 {
 public:

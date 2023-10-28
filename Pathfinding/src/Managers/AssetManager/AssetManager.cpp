@@ -1,14 +1,25 @@
+/**
+* @file AssetManager.cpp
+* @brief  
+*
+* @authors yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 1.0.0
+* @date 28/10/2023
+*/
 #include "AssetManager.h"
 
-#include <iostream>
+#include "logger.h"
 
-/*
- * Brief : Load a texture from a file
- * @param name : name of the texture
- * @param fileName : path of the file
- *
- *  Exit the program if the file is not found
- */
+/**
+* @fn LoadTexture
+* @brief Load a texture from a file
+* @param name : name of the texture
+* @param fileName : path of the file
+*
+* @details Exit the program if the file is not found
+*/
 void AssetManager::LoadTexture(const std::string& name, const std::string& fileName)
 {
 	sf::Texture texture;
@@ -19,36 +30,37 @@ void AssetManager::LoadTexture(const std::string& name, const std::string& fileN
 	}
 	else
 	{
-		std::cout << "Error loading texture: " << fileName << std::endl;
+		Logger::error("Error loading texture: " + fileName);
 		exit(1); // @Todo : throw an exception
 	}
 }
 
-/*
- * Brief : Get a texture
- * @param name : name of the texture
- *
- * Exit the program if the texture is not found
- */
-
+/**
+* @fn GetTexture
+* @brief Get a texture
+* @param name : name of the texture
+*
+* @details Exit the program if the texture is not found
+*/
 sf::Texture& AssetManager::GetTexture(const std::string& name)
 {
 	if (_textures.find(name) == _textures.end())
 	{
-		std::cout << "Error texture not found: " << name << std::endl;
+		Logger::error("Error texture not found: " + name);
 		exit(1); // @Todo : throw an exception
 	}
 	
 	return _textures.at(name);
 }
 
-/*
- * Brief : Load a font from a file
- * @param name : name of the font
- * @param fileName : path of the file
- *
- * Exit the program if the file is not found
- */
+/**
+* @fn LoadFont
+* @brief Load a font from a file
+* @param name : name of the font
+* @param fileName : path of the file
+*
+* @details Exit the program if the file is not found
+*/
 void AssetManager::LoadFont(const std::string& name, const std::string& fileName)
 {
 	if (sf::Font font; font.loadFromFile(fileName))
@@ -57,22 +69,23 @@ void AssetManager::LoadFont(const std::string& name, const std::string& fileName
 	}
 	else
 	{
-		std::cout << "Error loading font: " << fileName << std::endl;
+		Logger::error("Error loading font: " + fileName);
 		exit(1); // @Todo : throw an exception
 	}
 }
 
-/*
- * Brief : Get a font from a file
- * @param name : name of the font
- *
- * Exit the program if the font is not found
- */
+/**
+* @fn GetFont
+* @brief Get a font from a file
+* @param name : name of the font
+*
+* @details Exit the program if the font is not found
+*/
 sf::Font& AssetManager::GetFont(const std::string& name)
 {
 	if (_fonts.find(name) == _fonts.end())
 	{
-		std::cout << "Error font not found: " << name << std::endl;
+		Logger::error("Error font not found: " + name);
 		exit(1); // @Todo : throw an exception
 	}
 	

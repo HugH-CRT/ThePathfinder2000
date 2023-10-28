@@ -1,18 +1,34 @@
+/**
+* @file MainMenuState.cpp
+* @brief  
+*
+* @authors yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 1.0.0
+* @date 28/10/2023
+*/
 #include "MainMenuState.h"
 #include "defined.h"
 #include "GameState/GameState.h"
 
 #include <sstream>
 
+/**
+* @fn MainMenuState
+* @brief  
+* @param data
+*/
 MainMenuState::MainMenuState(GameDataRef data) 
 	: _data(std::move(data))
 {
 }
 
-/*
- * Brief : Initialize the state
- *		- Load & set the textures & set scale & position	
- */
+/**
+* @fn Init
+* @brief  Initialize the state
+*         - Load & set the textures & set scale & position	
+*/
 void MainMenuState::Init()
 {
 	LoadTextures();
@@ -21,9 +37,10 @@ void MainMenuState::Init()
 	SetPositions();
 }
 
-/*
- * Brief : Handle the user inputs
- */
+/**
+* @fn HandleInput
+* @brief Handle the user inputs  
+*/
 void MainMenuState::HandleInput()
 {
 	sf::Event event{};
@@ -43,13 +60,19 @@ void MainMenuState::HandleInput()
 	}
 }
 
+/**
+* @fn Update
+* @brief  
+* @param dt
+*/
 void MainMenuState::Update(float dt)
 {
 }
 
-/*
- * Brief : Set the scale of the elements
- */
+/**
+* @fn SetScales
+* @brief Set the scale of the elements  
+*/
 void MainMenuState::SetScales()
 {
 	title.setScale(0.2f, 0.2f);
@@ -57,6 +80,10 @@ void MainMenuState::SetScales()
 						 SCREEN_HEIGHT / _background.getLocalBounds().height);
 }
 
+/**
+* @fn SetPositions
+* @brief  
+*/
 void MainMenuState::SetPositions()
 {
 	playButton.setPosition(SCREEN_WIDTH / 2 - playButton.getGlobalBounds().width / 2,
@@ -64,11 +91,11 @@ void MainMenuState::SetPositions()
 	title.setPosition(SCREEN_WIDTH / 2 - title.getGlobalBounds().width / 2, title.getGlobalBounds().height * 0.1f);	
 }
 
-/*
- * Brief : Draw all the elements of the state
- *
- * @param dt : Delta time
- */
+/**
+* @fn Draw
+* @brief Draw all the elements of the state
+* @param dt : Delta time
+*/
 void MainMenuState::Draw(float dt)
 {
 	_data->m_window.clear();
@@ -80,9 +107,10 @@ void MainMenuState::Draw(float dt)
 	_data->m_window.display();
 }
 
-/*
- * Brief : Load all the textures of the state
- */
+/**
+* @fn LoadTextures
+* @brief Load all the textures of the state  
+*/
 void MainMenuState::LoadTextures()
 {
 	_data->m_assetManager.LoadTexture("Main Menu Background", MAIN_MENU_BACKGROUND_FILEPATH);
@@ -91,9 +119,10 @@ void MainMenuState::LoadTextures()
 	_data->m_assetManager.LoadTexture("Play Button Outer", MAIN_MENU_PLAY_BUTTON_OUTER);
 }
 
-/*
- * Brief : Set all the textures of the state
- */
+/**
+* @fn SetTextures
+* @brief Set all the textures of the state
+*/
 void MainMenuState::SetTextures()
 {
 	_background.setTexture(_data->m_assetManager.GetTexture("Main Menu Background"));

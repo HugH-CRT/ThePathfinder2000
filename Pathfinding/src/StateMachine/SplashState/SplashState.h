@@ -1,11 +1,15 @@
 /**
 * @file SplashState.h
- *
- * @brief Splash screen of the game
- *
- * @author yoan.laurain@ynov.com
- *
- */
+*
+* @brief Splash screen of the game
+*
+* @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 0.1
+*
+* @date 21/10/2023
+*/
 
 #ifndef SPLASH_STATE_H
 #define SPLASH_STATE_H
@@ -15,6 +19,10 @@
 
 #include <SFML/Graphics.hpp>
 
+/**
+* @class SplashState
+* @brief
+*/
 class SplashState final : public State
 {
 public:
@@ -32,8 +40,6 @@ public:
 	void Update(float dt) override;
 	void SetScales() override;
 	void SetPositions() override {};
-
-	/* Implementation of State class */
 
 private: 
 	GameDataRef m_data;

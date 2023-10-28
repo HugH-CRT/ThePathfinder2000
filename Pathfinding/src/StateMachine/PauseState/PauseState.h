@@ -1,11 +1,15 @@
 /**
 * @file PauseState.h
- *
- * @brief Pause screen of the game
- *
- * @author yoan.laurain@ynov.com
- *
- */
+*
+* @brief Pause screen of the game
+*
+* @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 0.1
+*
+* @date 21/10/2023
+*/
 
 #ifndef PAUSE_STATE_H
 #define PAUSE_STATE_H
@@ -15,6 +19,10 @@
 
 #include <SFML/Graphics.hpp>
 
+/**
+* @class PauseState
+* @brief
+*/
 class PauseState final : public State
 {
 
@@ -34,8 +42,6 @@ public:
 	void SetScales() override;
 	void SetPositions() override;
 	
-	/* Implementation of State class */
-
 private:
 
 	GameDataRef _data;

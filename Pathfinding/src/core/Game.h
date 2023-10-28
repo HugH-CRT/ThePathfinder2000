@@ -1,11 +1,15 @@
 /**
 * @file Game.h
- *
- * @brief Logic of the game
- *
- * @author yoan.laurain@ynov.com
- *
- */
+*
+* @brief Logic of the game
+*
+* @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+* 
+* @copyright TeamRandom (c) 2023
+* @version 0.1
+*
+* @date 21/10/2023
+*/
 
 #ifndef GAME_H
 #define GAME_H
@@ -20,8 +24,11 @@
 #include <SFML/Graphics.hpp>
 
 enum GridPieces : int;
-using namespace std;
 
+/**
+* @struct GameData
+* @brief
+*/
 struct GameData
 {
 	StateMachine machine;
@@ -31,15 +38,23 @@ struct GameData
 };
 
 typedef std::shared_ptr<GameData> GameDataRef;
-typedef pair<int, int> Pair;
-typedef pair<double, pair<int, int> > pPair;
+typedef std::pair<int, int> Pair;
+typedef std::pair<double, std::pair<int, int> > pPair;
 
+/**
+* @struct cell
+* @brief
+*/
 struct cell {
 	int parent_i, parent_j;
 
 	double f, g, h; // f = g + h
 };
 
+/**
+* @class Game
+* @brief 
+*/
 class Game
 {
 public: 

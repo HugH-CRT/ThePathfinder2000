@@ -1,20 +1,34 @@
+/**
+* @file GameState.cpp
+* @brief  
+*
+* @author
+* 
+* @copyright 
+* @version 1.0.0
+* @date 28/10/2023
+*/
 #include "GameState.h"
-#include "../defined.h"
-#include "../PauseState/PauseState.h"
+#include "defined.h"
+#include "PauseState/PauseState.h"
 #include "Game.h"
 
-#include <sstream>
-
+/**
+* @fn GameState
+* @brief  
+* @param data
+*/
 GameState::GameState(GameDataRef data) 
 	: _data(std::move(data)) 
 {
 	
 }
 
-/*
- * Brief : Initialize the state
+/**
+* @fn Init
+* @brief  Initialize the state
  *		- Load & set the textures & set scale & position	
- */
+*/
 void GameState::Init()
 {
 	LoadTextures();
@@ -26,9 +40,10 @@ void GameState::Init()
 	InitGridTiles();
 }
 
-/*
- * Brief : Handle the input of the user
- */
+/**
+* @fn HandleInput
+* @brief Handle the input of the user 
+*/
 void GameState::HandleInput()
 {
 	sf::Event event{};
@@ -136,13 +151,19 @@ void GameState::HandleInput()
 	}
 }
 
+/**
+* @fn Update
+* @brief  
+* @param dt
+*/
 void GameState::Update(float dt)
 {
 }
 
-/*
- * Brief : Set the scale of the sprites
- */
+/**
+* @fn SetScales
+* @brief Set the scale of the sprites 
+*/
 void GameState::SetScales()
 {
 	_background.setScale(SCREEN_WIDTH / _background.getLocalBounds().width,
@@ -158,9 +179,10 @@ void GameState::SetScales()
 	_clearPathButton.setScale(0.5f, 0.5f);
 }
 
-/*
- * Brief : Set the position of the sprites
- */
+/**
+* @fn SetPositions
+* @brief Set the position of the sprites
+*/
 void GameState::SetPositions()
 {
 	_pauseButton.setPosition(SCREEN_WIDTH - _pauseButton.getGlobalBounds().width, _pauseButton.getPosition().y);
@@ -197,11 +219,11 @@ void GameState::SetPositions()
 								_clearPathButton.getGlobalBounds().height / 2);
 }
 
-/*
- * Brief : Draw the sprites
- *
- * @param dt : Delta time
- */
+/**
+* @fn Draw
+* @brief  Draw the sprites
+* @param dt : Delta time
+*/
 void GameState::Draw(float dt)
 {
 	_data->m_window.clear();
@@ -230,9 +252,10 @@ void GameState::Draw(float dt)
 	_data->m_window.display();
 }
 
-/*
- * Brief : Load the textures
- */
+/**
+* @fn LoadTextures
+* @brief Load the textures
+*/
 void GameState::LoadTextures()
 {
 	_data->m_assetManager.LoadTexture("Pause Button", PAUSE_BUTTON);
@@ -253,26 +276,29 @@ void GameState::LoadTextures()
 	_data->m_assetManager.LoadTexture("Clear Path Button", CLEAR_PATH_BUTTON);
 }
 
-/*
- * Brief : Load the fonts
- */
+/**
+* @fn LoadFonts
+* @brief Load the fonts
+*/
 void GameState::LoadFonts()
 {
 	_data->m_assetManager.LoadFont("Robotto Font", FONT); 
 }
 
-/*
- * Brief : Set all of the texts
- */
+/**
+* @fn SetTexts
+* @brief Set all of the texts
+*/
 void GameState::SetTexts()
 {
 	_checkBoxDiagText = sf::Text("Diagonal Movement", _data->m_assetManager.GetFont("Robotto Font"), 20);
 	_checkBoxDebugText = sf::Text("Debug mode", _data->m_assetManager.GetFont("Robotto Font"), 20);
 }
 
-/*
- * Brief : Set all of the textures
- */
+/**
+* @fn SetTextures
+* @brief Set all of the textures
+*/
 void GameState::SetTextures()
 {
 	_background.setTexture(_data->m_assetManager.GetTexture("Game Background"));
@@ -287,10 +313,11 @@ void GameState::SetTextures()
 	_clearPathButton.setTexture(_data->m_assetManager.GetTexture("Clear Path Button"));
 }
 
-/*
- * Brief : Initialize the grid tiles with the empty texture
- *         Initialize the grid array with the empty piece
- */
+/**
+* @fn InitGridTiles
+* @brief  Initialize the grid tiles with the empty texture
+*         Initialize the grid array with the empty piece
+*/
 void GameState::InitGridTiles()
 {
 	for (int x = 0; x < NB_LINES; x++)
@@ -312,15 +339,15 @@ void GameState::InitGridTiles()
 	}
 }
 
-/*
- * Brief : Place an item on the grid
- *
- * @param column : Column of the grid
- * @param row : Row of the grid
- * @param textureName : Name of the texture to place
- * @param itemType : Type of the item to place
- * @param itemContainer : Container to update with the new item if needed
- */
+/**
+* @fn PlaceItem
+* @brief Place an item on the grid
+* @param column : Column of the grid
+* @param row : Row of the grid
+* @param textureName : Name of the texture to place
+* @param itemType : Type of the item to place
+* @param itemContainer : Container to update with the new item if needed
+*/
 void GameState::PlaceItem(const int column, const int row, const std::string& textureName, GridPieces itemType, std::vector<sf::Vector2i>* itemContainer = nullptr)
 {
 	_gridPieces[column - 1][row - 1].setTexture(_data->m_assetManager.GetTexture(textureName));
@@ -342,14 +369,14 @@ void GameState::PlaceItem(const int column, const int row, const std::string& te
 	ClearPath();
 }
 
-/*
- * Brief : Reset an item on the grid
- *
- * @param : column : Column of the grid
- * @param : row : Row of the grid
- * @param : resetType : Type of the item that was previously placed
- * @param : itemContainer : Container of the item to update if needed
- */
+/** 
+* @fn ResetItem
+* @brief Reset an item on the grid
+* @param : column : Column of the grid
+* @param : row : Row of the grid
+* @param : resetType : Type of the item that was previously placed
+* @param : itemContainer : Container of the item to update if needed
+*/
 void GameState::ResetItem(const int column, const int row, const GridPieces resetType, std::vector<sf::Vector2i>* itemContainer)
 {
 	// Reset the texture of the item & the grid array value
@@ -382,12 +409,12 @@ void GameState::ResetItem(const int column, const int row, const GridPieces rese
 	}
 }
 
-/*
- * Brief : Draw the current step of the path
- *
- * @param step : Current step of the path
- * @param isPath : True is we draw the path, false if we draw empty tiles ( use with forward / backward debug )
- */
+/**
+* @fn DrawStepPath
+* @brief Draw the current step of the path  
+* @param step : Current step of the path
+* @param isPath : True is we draw the path, false if we draw empty tiles ( use with forward / backward debug )
+*/
 void GameState::DrawStepPath(const Pair step, const bool isPath)
 {
 	// Prevent from overriding over start end or other items
@@ -398,9 +425,10 @@ void GameState::DrawStepPath(const Pair step, const bool isPath)
 	}
 }
 
-/*
- * Brief : Clear the path with the empty texture & reset the grid array value
- */
+/**
+* @fn ClearPath
+* @brief Clear the path with the empty texture & reset the grid array value
+*/
 void GameState::ClearPath()
 {
 	for (int x = 0; x < NB_LINES; x++)
@@ -417,7 +445,13 @@ void GameState::ClearPath()
 	GetGame()->ClearPath();
 }
 
-// TODO : Refactor this function
+/**
+* @fn PlacePiece
+* @brief  
+* @param Piece
+* 
+* @todo Refactor this function
+*/
 void GameState::PlacePiece(const GridPieces Piece)
 {
 	const sf::Vector2i touchPoint = _data->m_inputManager.GetMousePosition(_data->m_window);

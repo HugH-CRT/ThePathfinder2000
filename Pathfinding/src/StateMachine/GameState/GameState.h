@@ -1,24 +1,29 @@
 /**
 * @file GameState.h
- *
- * @brief Game screen of the game
- *
- * @author yoan.laurain@ynov.com
- *
- */
+*
+* @brief Game screen of the game
+*
+* @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 0.1
+*
+* @date 21/10/2023
+*/
 
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
 #include "State.h"
 #include "Game.h"
-#include "../defined.h"
+#include "defined.h"
 
 #include <SFML/Graphics.hpp>
 
-/*
- *  Brief : Enum of the grid pieces
- */
+/**
+* @enum GridPieces
+* @brief Enum of the grid pieces
+*/
 enum GridPieces
 {
 	EMPTY_PIECE = 0,
@@ -30,6 +35,10 @@ enum GridPieces
 	PORTAL_PIECE = 6
 };
 
+/**
+* @class GameState
+* @brief
+*/
 class GameState final : public State
 {
 

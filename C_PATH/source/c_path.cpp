@@ -1,13 +1,12 @@
 /**
 * @file c_path.cpp
-* @brief
-* 
-* @author hugo.carricart@ynov.com
-* 
-* @copyright TeamRandom (c) 2023
-* @version 0.1
+* @brief  
 *
-* @date 21/10/2023
+* @authors yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 1.0.0
+* @date 28/10/2023
 */
 #include "c_path.h"
 
@@ -81,4 +80,22 @@ std::string C_PATH::DocumentDir()
 #endif 
 
 	return document_path;
+}
+
+/**
+* @fn ProjectDir
+* @brief Retourne au format std::string le chemin de fichier de l'emplacement du projet
+* @return std::string
+*/
+std::string C_PATH::ProjectDir()
+{
+
+	// @todo : A FINIR
+	std::string project_path = std::filesystem::current_path().generic_string();
+
+#if DEBUG_LOG
+	std::cout << "Project Dir : " << project_path << "\n";
+#endif
+
+	return project_path;
 }

@@ -1,10 +1,19 @@
+/**
+* @file defined.h
+* @brief  
+*
+* @authors yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 1.0.0
+* @date 28/10/2023
+*/
 #ifndef DEFINED_H
 #define DEFINED_H
 
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+/// ********************************** RESSOURCES PATH ********************************** ///
 
-#define SPLASH_STATE_SHOW_TIME 3.0
+#define FONT "../../Pathfinding/Resources/Roboto-Black.ttf"
 
 #define SPLASH_SCENE_BACKGROUND_FILEPATH "../../Pathfinding/Resources/BackgroundSplashScene.png"
 
@@ -31,17 +40,22 @@
 #define CHECK_BOX_CHECKED "../../Pathfinding/Resources/CheckBoxChecked.png"
 #define CHECK_BOX_UNCHECKED "../../Pathfinding/Resources/CheckBoxUnchecked.png" 
 
-#define FONT "../../Pathfinding/Resources/Roboto-Black.ttf"
-
-#define TITLE_WINDOW "Pathfinding"
-
 #define FORWARD_ARROW "../../Pathfinding/Resources/ForwardArrow.png"
 #define BACKWARD_ARROW "../../Pathfinding/Resources/BackwardArrow.png"
 
 #define CLEAR_BUTTON "../../Pathfinding/Resources/ClearButton.png"
 #define CLEAR_PATH_BUTTON "../../Pathfinding/Resources/ClearPathButton.png"
 
+/// ********************************** PARAMETRES ********************************** ///
+
+#define TITLE_WINDOW "Pathfinding"
+
 #define NB_LINES 10
 #define NB_COLUMNS 10
+
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
+
+#define SPLASH_STATE_SHOW_TIME 3.0
 
 #endif /* DEFINED_H */

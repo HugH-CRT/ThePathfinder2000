@@ -17,6 +17,11 @@
 
 Game* gGame = nullptr;
 
+/**
+* @fn GetGame
+* @brief  
+* @return 
+*/
 Game* GetGame()
 {
 	return gGame;
@@ -24,6 +29,8 @@ Game* GetGame()
 
 /**
 * @fn main
+* @brief  
+* @return 
 */
 int main() 
 {

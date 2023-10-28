@@ -1,13 +1,12 @@
 /**
 * @file logger.h
-* @brief
-* 
-* @author hugo.carricart@ynov.com	
-* 
+* @brief  
+*
+* @authors yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
 * @copyright TeamRandom (c) 2023
-* @version 0.1
-* 
-* @date 21/10/2023
+* @version 1.0.0
+* @date 28/10/2023
 */
 #ifndef __LOGGER_H__
 #define __LOGGER_H__

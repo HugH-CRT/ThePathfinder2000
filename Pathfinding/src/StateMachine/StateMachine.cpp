@@ -1,18 +1,32 @@
+/**
+* @file StateMachine.cpp
+* @brief  
+*
+* @authors yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 1.0.0
+* @date 28/10/2023
+*/
 #include "StateMachine.h"
 
+/**
+* @fn StateMachine
+* @brief  
+*/
 StateMachine::StateMachine()
+	: _isAdding(false)
+	, _isRemoving(false)
+	, _isReplacing(false)
 {
-	_isAdding = false;
-	_isRemoving = false;
-	_isReplacing = false;
 }
 
-/*
- * Brief : Add a new state to the stack
- *
- * @param newState : the new state to add
- * @param isReplacing : if true, the current state will be replaced by the new one
- */
+/**
+* @fn AddState
+* @brief Add a new state to the stack
+* @param newState : the new state to add
+* @param isReplacing : if true, the current state will be replaced by the new one
+*/
 void StateMachine::AddState(StateRef newState, const bool isReplacing)
 {
 	_isAdding = true;
@@ -20,17 +34,19 @@ void StateMachine::AddState(StateRef newState, const bool isReplacing)
 	_newState = std::move(newState);
 }
 
-/*
- * Brief : Remove the current state
- */
+/**
+* @fn RemoveState
+* @brief Remove the current state 
+*/
 void StateMachine::RemoveState()
 {
 	_isRemoving = true;	
 }
 
-/*
- * Brief : Handle the state changes	 
- */
+/**
+* @fn ProcessStateChanges
+* @brief Handle the state changes	   
+*/
 void StateMachine::ProcessStateChanges()
 {
 	// Remove the current state
@@ -67,9 +83,11 @@ void StateMachine::ProcessStateChanges()
 	}
 }
 
-/*
- * Brief : Return the current state
- */
+/**
+* @fn GetActiveState
+* @brief Return the current state  
+* @return 
+*/
 StateRef& StateMachine::GetActiveState()
 {
 	return _states.top();

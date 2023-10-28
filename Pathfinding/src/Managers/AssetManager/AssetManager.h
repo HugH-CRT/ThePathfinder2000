@@ -1,11 +1,15 @@
 /**
- * @file AssetManager.h
- *
- * @brief Manage the assets of the game
- *
- * @author yoan.laurain@ynov.com
- *
- */
+* @file AssetManager.h
+*
+* @brief Manage the assets of the game
+*
+* @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 0.1
+*
+* @date 21/10/2023
+*/
 
 #ifndef ASSET_MANAGER_H
 #define ASSET_MANAGER_H
@@ -13,6 +17,10 @@
 #include <map>
 #include <SFML/Graphics.hpp>
 
+/**
+* @class AssetManager
+* @brief 
+*/
 class AssetManager
 {
 	

@@ -1,19 +1,33 @@
+/**
+* @file PauseState.cpp
+* @brief  
+*
+* @authors yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 1.0.0
+* @date 28/10/2023
+*/
 #include "PauseState.h"
 #include "defined.h"
 #include "GameState/GameState.h"
 #include "MainMenu/MainMenuState.h"
 
-#include <sstream>
-
+/**
+* @fn PauseState
+* @brief  
+* @param data
+*/
 PauseState::PauseState(GameDataRef data) 
 	: _data(std::move(data))
 {
 }
 
-/*
- * Brief : Initialize the state
- *		- Load & set the textures & set scale & position	
- */
+/**
+* @fn Init
+* @brief Initialize the state
+*        - Load & set the textures & set scale & position	  
+*/
 void PauseState::Init()
 {
 	LoadTextures();
@@ -22,9 +36,10 @@ void PauseState::Init()
 	SetPositions();
 }
 
-/*
- * Brief : Handle the user inputs
- */
+/**
+* @fn HandleInput
+* @brief Handle the user inputs  
+*/
 void PauseState::HandleInput()
 {
 	sf::Event event{};
@@ -53,13 +68,19 @@ void PauseState::HandleInput()
 	}
 }
 
+/**
+* @fn Update
+* @brief  
+* @param dt
+*/
 void PauseState::Update(float dt)
 {
 }
 
-/*
- * Brief : Set the scale of the elements
- */
+/**
+* @fn SetScales
+* @brief Set the scale of the elements
+*/
 void PauseState::SetScales()
 {
 	_resumeButton.setScale(0.1f, 0.1f);
@@ -68,9 +89,10 @@ void PauseState::SetScales()
 						 SCREEN_HEIGHT / _background.getGlobalBounds().height);	
 }
 
-/*
- * Brief : Set the position of the elements
- */
+/**
+* @fn SetPositions
+* @brief Set the position of the elements
+*/
 void PauseState::SetPositions()
 {
 	_resumeButton.setPosition(SCREEN_WIDTH / 2 - _resumeButton.getGlobalBounds().width / 2,
@@ -80,11 +102,11 @@ void PauseState::SetPositions()
 							SCREEN_HEIGHT / 3 * 2 - _homeButton.getGlobalBounds().height / 2);
 }
 
-/*
- * Brief : Draw all the elements of the state
- *
- * @param dt : Delta time
- */
+/**
+* @fn Draw
+* @brief Draw all the elements of the state
+* @param dt : Delta time
+*/
 void PauseState::Draw(float dt)
 {
 	_data->m_window.clear();
@@ -96,9 +118,10 @@ void PauseState::Draw(float dt)
 	_data->m_window.display();
 }
 
-/*
- * Brief : Load all the textures of the state
- */
+/**
+* @fn LoadTextures
+* @brief Load all the textures of the state
+*/
 void PauseState::LoadTextures()
 {
 	_data->m_assetManager.LoadTexture("Pause Background", PAUSE_BACKGROUND_FILEPATH);
@@ -106,9 +129,10 @@ void PauseState::LoadTextures()
 	_data->m_assetManager.LoadTexture("Home Button", HOME_BUTTON);
 }
 
-/*
- * Brief : Set all the textures of the state
- */
+/**
+* @fn SetTextures
+* @brief Set all the textures of the state 
+*/
 void PauseState::SetTextures()
 {
 	_background.setTexture(_data->m_assetManager.GetTexture("Pause Background"));

@@ -1,13 +1,12 @@
 /**
 * @file logger.cpp
-* @brief
-* 
-* @author hugo.carricart@ynov.com
-* 
-* @copyright TeamRandom (c) 2023
-* @version 0.1
+* @brief  
 *
-* @date 21/10/2023
+* @authors yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 1.0.0
+* @date 28/10/2023
 */
 #include "logger.h"
 
@@ -172,8 +171,6 @@ void Logger::Log::addLog(const LOGGER_MESSAGE_TYPE& type, const std::string& log
 	std::string logType = loggerMessageTypeMapper[type];
 
 	std::string filePath = logger_filepath + logger_filename;
-
-	std::cout << filePath << std::endl;
 
 	if (!std::filesystem::exists(filePath)) {}
 

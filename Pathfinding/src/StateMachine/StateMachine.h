@@ -1,11 +1,15 @@
 /**
 * @file StateMachine.h
- *
- * @brief Manage the states of the game
- *
- * @author yoan.laurain@ynov.com
- *
- */
+*
+* @brief Manage the states of the game
+*
+* @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 0.1
+*
+* @date 21/10/2023
+*/
 
 #ifndef STATE_MACHINE_H
 #define STATE_MACHINE_H
@@ -17,6 +21,10 @@
 
 typedef std::unique_ptr<State> StateRef;
 
+/**
+* @class StateMachine
+* @brief
+*/
 class StateMachine
 {
 public: 

@@ -1,17 +1,25 @@
 /**
 * @file InputManager.h
- *
- * @brief Manage the inputs of the game
- *
- * @author yoan.laurain@ynov.com
- *
- */
+*
+* @brief Manage the inputs of the game
+*
+* @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 0.1
+*
+* @date 21/10/2023
+*/
 
 #ifndef INPUT_MANAGER_H
 #define INPUT_MANAGER_H
 
 #include<SFML/Graphics.hpp>
 
+/**
+* @class InputManager
+* @brief
+*/
 class InputManager
 {
 public: 
