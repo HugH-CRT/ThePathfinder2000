@@ -1,3 +1,12 @@
+/**
+* @file SplashState.h
+ *
+ * @brief Splash screen of the game
+ *
+ * @author yoan.laurain@ynov.com
+ *
+ */
+
 #ifndef SPLASH_STATE_H
 #define SPLASH_STATE_H
 
@@ -6,16 +15,25 @@
 
 #include <SFML/Graphics.hpp>
 
-class SplashState : public State
+class SplashState final : public State
 {
 public:
 	explicit SplashState(GameDataRef data);
 
-	void Init();
+	/* Implementation of State class */
+	
+	void Draw(float dt) override;
+	void HandleInput() override;
+	void Init() override;
+	void LoadTextures() override;
+	void LoadFonts() override {}
+	void SetTexts() override{}
+	void SetTextures() override;
+	void Update(float dt) override;
+	void SetScales() override;
+	void SetPositions() override {};
 
-	void HandleInput();
-	void Update(float dt);
-	void Draw(float dt);
+	/* Implementation of State class */
 
 private: 
 	GameDataRef m_data;

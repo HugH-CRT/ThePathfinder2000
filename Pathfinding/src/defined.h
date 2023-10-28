@@ -38,6 +38,9 @@
 #define FORWARD_ARROW "../../Pathfinding/Resources/ForwardArrow.png"
 #define BACKWARD_ARROW "../../Pathfinding/Resources/BackwardArrow.png"
 
+#define CLEAR_BUTTON "../../Pathfinding/Resources/ClearButton.png"
+#define CLEAR_PATH_BUTTON "../../Pathfinding/Resources/ClearPathButton.png"
+
 #define NB_LINES 10
 #define NB_COLUMNS 10
 

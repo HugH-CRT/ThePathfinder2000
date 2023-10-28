@@ -3,47 +3,42 @@
 #include "GameState/GameState.h"
 
 #include <sstream>
-#include <iostream>
 
-MainMenuState::MainMenuState(GameDataRef data) : _data(data)
+MainMenuState::MainMenuState(GameDataRef data) 
+	: _data(std::move(data))
 {
 }
 
+/*
+ * Brief : Initialize the state
+ *		- Load & set the textures & set scale & position	
+ */
 void MainMenuState::Init()
 {
-	this->_data->m_assetManager.LoadTexture("Main Menu Background", MAIN_MENU_BACKGROUND_FILEPATH);
-	this->_data->m_assetManager.LoadTexture("Game Title", MAIN_MENU_TITLE_PATH);
-	this->_data->m_assetManager.LoadTexture("Play Button", MAIN_MENU_PLAY_BUTTON);
-	this->_data->m_assetManager.LoadTexture("Play Button Outer", MAIN_MENU_PLAY_BUTTON_OUTER);
-
-	this->_background.setTexture(this->_data->m_assetManager.GetTexture("Main Menu Background"));
-	this->title.setTexture(this->_data->m_assetManager.GetTexture("Game Title"));
-	this->playButton.setTexture(this->_data->m_assetManager.GetTexture("Play Button"));
-	//this->playButtonOuter.setTexture(this->_data->m_assetManager.GetTexture("Play Button Outer"));
-
-	this->playButton.setPosition((SCREEN_WIDTH / 2) - (this->playButton.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) - (this->playButton.getGlobalBounds().height / 2));
-	//this->playButtonOuter.setPosition((SCREEN_WIDTH / 2) - (this->playButtonOuter.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) - (this->playButtonOuter.getGlobalBounds().height / 2));*/
-
-	
-	this->title.setScale(0.2, 0.2);
-	this->title.setPosition((SCREEN_WIDTH / 2) - (this->title.getGlobalBounds().width / 2), this->title.getGlobalBounds().height * 0.1);	
-	
-	this->_background.setScale(SCREEN_WIDTH / this->_background.getLocalBounds().width, SCREEN_HEIGHT / this->_background.getLocalBounds().height);
+	LoadTextures();
+	SetTextures();
+	SetScales();
+	SetPositions();
 }
 
+/*
+ * Brief : Handle the user inputs
+ */
 void MainMenuState::HandleInput()
 {
-	sf::Event event;
+	sf::Event event{};
 	
-	while ( this->_data->m_window.pollEvent( event ) )
+	while ( _data->m_window.pollEvent( event ) )
 	{
 		if (sf::Event::Closed == event.type)
 		{
-			this->_data->m_window.close();
+			_data->m_window.close();
 		}
-		if (this->_data->m_inputManager.IsSpriteClicked(this->playButton, sf::Mouse::Left, this->_data->m_window))
+		
+		// Start button
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(playButton, _data->m_window))
 		{
-			this->_data->machine.AddState(StateRef(new GameState(_data)), true); 
+			_data->machine.AddState(std::make_unique<GameState>(_data), true); 
 		}
 	}
 }
@@ -52,14 +47,56 @@ void MainMenuState::Update(float dt)
 {
 }
 
+/*
+ * Brief : Set the scale of the elements
+ */
+void MainMenuState::SetScales()
+{
+	title.setScale(0.2f, 0.2f);
+	_background.setScale(SCREEN_WIDTH / _background.getLocalBounds().width,
+						 SCREEN_HEIGHT / _background.getLocalBounds().height);
+}
+
+void MainMenuState::SetPositions()
+{
+	playButton.setPosition(SCREEN_WIDTH / 2 - playButton.getGlobalBounds().width / 2,
+						   SCREEN_HEIGHT / 2 - playButton.getGlobalBounds().height / 2);
+	title.setPosition(SCREEN_WIDTH / 2 - title.getGlobalBounds().width / 2, title.getGlobalBounds().height * 0.1f);	
+}
+
+/*
+ * Brief : Draw all the elements of the state
+ *
+ * @param dt : Delta time
+ */
 void MainMenuState::Draw(float dt)
 {
-	this->_data->m_window.clear();
+	_data->m_window.clear();
 
-	this->_data->m_window.draw(this->_background);
-	this->_data->m_window.draw(this->playButton);
-	//this->_data->m_window.draw(this->playButtonOuter);
-	this->_data->m_window.draw(this->title);
+	_data->m_window.draw(_background);
+	_data->m_window.draw(playButton);
+	_data->m_window.draw(title);
 
-	this->_data->m_window.display();
+	_data->m_window.display();
+}
+
+/*
+ * Brief : Load all the textures of the state
+ */
+void MainMenuState::LoadTextures()
+{
+	_data->m_assetManager.LoadTexture("Main Menu Background", MAIN_MENU_BACKGROUND_FILEPATH);
+	_data->m_assetManager.LoadTexture("Game Title", MAIN_MENU_TITLE_PATH);
+	_data->m_assetManager.LoadTexture("Play Button", MAIN_MENU_PLAY_BUTTON);
+	_data->m_assetManager.LoadTexture("Play Button Outer", MAIN_MENU_PLAY_BUTTON_OUTER);
+}
+
+/*
+ * Brief : Set all the textures of the state
+ */
+void MainMenuState::SetTextures()
+{
+	_background.setTexture(_data->m_assetManager.GetTexture("Main Menu Background"));
+	title.setTexture(_data->m_assetManager.GetTexture("Game Title"));
+	playButton.setTexture(_data->m_assetManager.GetTexture("Play Button"));
 }

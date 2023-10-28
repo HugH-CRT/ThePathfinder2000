@@ -1,3 +1,12 @@
+/**
+* @file GameState.h
+ *
+ * @brief Game screen of the game
+ *
+ * @author yoan.laurain@ynov.com
+ *
+ */
+
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
@@ -7,6 +16,9 @@
 
 #include <SFML/Graphics.hpp>
 
+/*
+ *  Brief : Enum of the grid pieces
+ */
 enum GridPieces
 {
 	EMPTY_PIECE = 0,
@@ -18,87 +30,63 @@ enum GridPieces
 	PORTAL_PIECE = 6
 };
 
-class GameState : public State
+class GameState final : public State
 {
 
 public:
-	GameState(GameDataRef data);
+	explicit GameState(GameDataRef data);
 	
-	void Init();
+	/* ImplGameDataRef e class */
 	
-	void HandleInput();
-	void Update(float dt);
-	void Draw(float dt);
+	void Draw(float dt) override;
+	void HandleInput() override;
+	void Init() override;
+	void LoadTextures() override;
+	void LoadFonts() override;
+	void SetTexts() override;
+	void SetTextures() override;
+	void Update(float dt) override;
+	void SetScales() override;
+	void SetPositions() override;
+	
+	/* Implementation of State class */
+
+	void DrawStepPath(Pair step, bool isPath);
 
 private : 
 
-	void InitGridTiles();
-	void PlacePiece(GridPieces);
-
-	void Play();
-	void SortCheckpointsByDistance(std::vector<sf::Vector2i>& checkpoints, const sf::Vector2i& fromPoint);
-	sf::Vector2i ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, sf::Vector2i& currentPoint);
-	void ProcessFinalPath(sf::Vector2i& currentPoint);
-	float CalculateDistance(const sf::Vector2i& point1, const sf::Vector2i& point2);
-	bool CheckMapValidity();
-
-	void ResetStartPoint(int column, int row);
-	void ResetEndPoint(int column, int row);
-	void ResetWall(int column, int row);	
-	void ResetCheckPoint(int column, int row);
-	void ResetPortal(int column, int row);
-
-	void PlaceStartPoint(int column, int row);
-	void PlaceEndPoint(int column, int row);
-	void PlaceWall(int column, int row);
-	void PlaceCheckPoint(int column, int row);
-	void PlacePortal(int column, int row);
-
-	void CheckPortalPath(sf::Vector2i& currentPoint, sf::Vector2i& nextPoint, std::vector<Pair> basePath);
-
-	sf::Vector2i& GetClosestPortal(sf::Vector2i& point);
-
-	void ClearPath();
-
-	void ForwardDebug();
-	void BackwardDebug();
-
-	void DrawStepPath(Pair step,bool isPath);
 	GameDataRef _data;
 
-	bool StartPlaced;
-	bool EndPlaced;
-	bool UseDiagonal;
-	bool DebugMode;
-
-	int CurrentDebugStep;
-
-	sf::Vector2i LastCellChanged;
-
-	std::vector<sf::Vector2i> CheckPoints;
-	std::vector<sf::Vector2i> Portals;
-
-	sf::Vector2i startingPoint;
-	sf::Vector2i endingPoint;
+#pragma region Sprites 
 
 	sf::Sprite _background;
-	sf::Sprite _pauseButton;
-	sf::Sprite _gridSprite;
-	sf::Sprite _playButton;
-	sf::Sprite _forwardDebug;
 	sf::Sprite _backwardDebug;
-	sf::Sprite _portal;
-
-	sf::Sprite _checkBoxDiagMode;
-	sf::Text _checkBoxDiagText;
-
 	sf::Sprite _checkBoxDebugMode;
-	sf::Text _checkBoxDebugText;
-	
+	sf::Sprite _checkBoxDiagMode;
+	sf::Sprite _forwardDebug;
 	sf::Sprite _gridPieces[NB_LINES][NB_COLUMNS];
-	int _gridArray[NB_LINES][NB_COLUMNS];
+	sf::Sprite _gridSprite;
+	sf::Sprite _pauseButton;
+	sf::Sprite _playButton;
+	sf::Sprite _portal;
+	sf::Sprite _clearButton;
+	sf::Sprite _clearPathButton;
 
-	std::vector<Pair> _path;
+#pragma endregion Sprites
+	
+#pragma region Texts 
+
+	sf::Text _checkBoxDebugText;
+	sf::Text _checkBoxDiagText;
+	
+#pragma endregion Texts
+
+	void InitGridTiles();
+	void ClearPath();
+	void PlaceItem(int column, int row, const std::string& textureName, GridPieces itemType, std::vector<sf::Vector2i>* itemContainer);
+	void ResetItem(int column, int row, GridPieces resetType, std::vector<sf::Vector2i>* itemContainer);
+	
+	void PlacePiece(GridPieces);
 };
 
 #endif /* GAME_STATE_H */

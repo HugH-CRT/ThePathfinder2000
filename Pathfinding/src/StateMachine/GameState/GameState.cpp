@@ -4,162 +4,134 @@
 #include "Game.h"
 
 #include <sstream>
-#include <iostream>
 
 GameState::GameState(GameDataRef data) 
-	: _data(data)
-	, StartPlaced(false)
-	, EndPlaced(false)
-	, UseDiagonal(false)
-	, DebugMode(false)
-	, CurrentDebugStep(0)
-	, _gridArray{ }
+	: _data(std::move(data)) 
 {
-	startingPoint.x = -1;
-	startingPoint.y = -1;
-	endingPoint.x = -1;
-	endingPoint.y = -1;
+	
 }
 
+/*
+ * Brief : Initialize the state
+ *		- Load & set the textures & set scale & position	
+ */
 void GameState::Init()
 {
-	this->_data->m_assetManager.LoadTexture("Pause Button", PAUSE_BUTTON);
-	this->_data->m_assetManager.LoadTexture("Game Background", GAME_BACKGROUND_FILEPATH);
-	this->_data->m_assetManager.LoadTexture("Grid Sprite", EMPTY_TILE);
-	this->_data->m_assetManager.LoadTexture("Wall", WALL);
-	this->_data->m_assetManager.LoadTexture("Path", PATH);
-	this->_data->m_assetManager.LoadTexture("Start Point", START_POINT);
-	this->_data->m_assetManager.LoadTexture("End Point", END_POINT);
-	this->_data->m_assetManager.LoadTexture("Play Button", MAIN_MENU_PLAY_BUTTON);
-	this->_data->m_assetManager.LoadTexture("Check Box Checked", CHECK_BOX_CHECKED);
-	this->_data->m_assetManager.LoadTexture("Check Box Unchecked", CHECK_BOX_UNCHECKED);
-	this->_data->m_assetManager.LoadTexture("CheckPoint", CHECKPOINT);
-	this->_data->m_assetManager.LoadTexture("Portal", PORTAL);
-	this->_data->m_assetManager.LoadTexture("Forward Arrow", FORWARD_ARROW); 
-	this->_data->m_assetManager.LoadTexture("Backward Arrow", BACKWARD_ARROW);
-	
-	this->_data->m_assetManager.LoadFont("Robotto Font", FONT); 
-	
-	_background.setTexture(this->_data->m_assetManager.GetTexture("Game Background"));
-	this->_background.setScale(SCREEN_WIDTH / this->_background.getLocalBounds().width, SCREEN_HEIGHT / this->_background.getLocalBounds().height);
-	
-	_pauseButton.setScale(0.3f, 0.3f);
-	_pauseButton.setTexture(this->_data->m_assetManager.GetTexture("Pause Button"));
-	_pauseButton.setPosition((SCREEN_WIDTH - _pauseButton.getGlobalBounds().width), _pauseButton.getPosition().y);
-
-	_playButton.setScale(0.3f, 0.3f);
-	_playButton.setTexture(this->_data->m_assetManager.GetTexture("Play Button"));
-	_playButton.setPosition(_playButton.getGlobalBounds().width, _playButton.getPosition().y);
-
-	_gridSprite.setTexture(this->_data->m_assetManager.GetTexture("Path"));
-	_gridSprite.setPosition((SCREEN_WIDTH / 2) - (_gridSprite.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) - (_gridSprite.getGlobalBounds().height / 2));
-
-	_checkBoxDiagMode.setScale(0.1f, 0.1f);
-	_checkBoxDiagMode.setTexture(this->_data->m_assetManager.GetTexture("Check Box Unchecked"));
-	_checkBoxDiagMode.setPosition((SCREEN_WIDTH / 4) - _checkBoxDiagMode.getGlobalBounds().width, (SCREEN_HEIGHT / 2) - _checkBoxDiagMode.getGlobalBounds().height );
-
-	_checkBoxDiagText = sf::Text("Diagonal Movement", this->_data->m_assetManager.GetFont("Robotto Font"), 20);
-	_checkBoxDiagText.setPosition((SCREEN_WIDTH / 4) - _checkBoxDiagText.getGlobalBounds().width - _checkBoxDiagMode.getGlobalBounds().width * 2, (SCREEN_HEIGHT / 2) - _checkBoxDiagMode.getGlobalBounds().height);
-
-	_checkBoxDebugMode.setScale(0.1f, 0.1f);
-	_checkBoxDebugMode.setTexture(this->_data->m_assetManager.GetTexture("Check Box Unchecked"));
-	_checkBoxDebugMode.setPosition((SCREEN_WIDTH / 4) - _checkBoxDebugMode.getGlobalBounds().width, (SCREEN_HEIGHT / 2) - _checkBoxDebugMode.getGlobalBounds().height - _checkBoxDiagMode.getGlobalBounds().height);
-
-	_checkBoxDebugText = sf::Text("Debug mode", this->_data->m_assetManager.GetFont("Robotto Font"), 20);
-	_checkBoxDebugText.setPosition((SCREEN_WIDTH / 4) - _checkBoxDebugText.getGlobalBounds().width - _checkBoxDebugMode.getGlobalBounds().width * 2, (SCREEN_HEIGHT / 2) - _checkBoxDebugMode.getGlobalBounds().height - _checkBoxDiagMode.getGlobalBounds().height);
-
-	_backwardDebug.setScale(0.5f, 0.5f);
-	_backwardDebug.setTexture(this->_data->m_assetManager.GetTexture("Backward Arrow"));
-	_backwardDebug.setPosition((SCREEN_WIDTH / 2) - _backwardDebug.getGlobalBounds().width/2, SCREEN_HEIGHT - _backwardDebug.getGlobalBounds().height );
-
-	_forwardDebug.setScale(0.5f, 0.5f);
-	_forwardDebug.setTexture(this->_data->m_assetManager.GetTexture("Forward Arrow"));
-	_forwardDebug.setPosition((SCREEN_WIDTH / 2) + _forwardDebug.getGlobalBounds().width /2  , SCREEN_HEIGHT - _forwardDebug.getGlobalBounds().height);
-
+	LoadTextures();
+	SetTextures();
+	LoadFonts();
+	SetScales();
+	SetTexts();
+	SetPositions();
 	InitGridTiles();
 }
 
+/*
+ * Brief : Handle the input of the user
+ */
 void GameState::HandleInput()
 {
-	sf::Event event;
+	sf::Event event{};
 
-	while (this->_data->m_window.pollEvent(event))
+	while (_data->m_window.pollEvent(event))
 	{
 		if (sf::Event::Closed == event.type)
 		{
-			this->_data->m_window.close();
+			_data->m_window.close();
 		}
 
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code &&this->_data->m_inputManager.IsMouseOverSprite( this->_pauseButton, this->_data->m_window))
+		// Pause the game
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code &&_data->m_inputManager.IsMouseOverSprite( _pauseButton, _data->m_window))
 		{
-			this->_data->machine.AddState(StateRef(new PauseState(_data)), false);
+			_data->machine.AddState(std::make_unique<PauseState>(_data), false);
 		}
 
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_gridSprite, this->_data->m_window))
+		// Left click to place the start point
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_gridSprite, _data->m_window))
 		{
 			PlacePiece(START_PIECE);
 		}
 
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Right == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_gridSprite, this->_data->m_window))
+		// Right click to place the end point
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Right == event.key.code && _data->m_inputManager.IsMouseOverSprite(_gridSprite, _data->m_window))
 		{
 			PlacePiece(END_PIECE);
 		}
 
+		// Press W to place a wall
 		if (sf::Event::KeyReleased == event.type && sf::Keyboard::W == event.key.code)
 		{
-			if (this->_data->m_inputManager.IsMouseOverSprite(this->_gridSprite, this->_data->m_window))
+			if (_data->m_inputManager.IsMouseOverSprite(_gridSprite, _data->m_window))
 			{
 				PlacePiece(WALL_PIECE);
 			}
 		}
-		
+
+		// Press C to place a checkpoint
 		if (sf::Event::KeyReleased == event.type && sf::Keyboard::C == event.key.code)
 		{
-			if (this->_data->m_inputManager.IsMouseOverSprite(this->_gridSprite, this->_data->m_window))
+			if (_data->m_inputManager.IsMouseOverSprite(this->_gridSprite, _data->m_window))
 			{
 				PlacePiece(CHECKPOINT_PIECE);
 			}
 		}
 
+		// Press P to place a portal
 		if (sf::Event::KeyReleased == event.type && sf::Keyboard::P == event.key.code)
 		{
-			if (this->_data->m_inputManager.IsMouseOverSprite(this->_gridSprite, this->_data->m_window))
+			if (_data->m_inputManager.IsMouseOverSprite(_gridSprite, _data->m_window))
 			{
 				PlacePiece(PORTAL_PIECE);
 			}
 		}
 
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_playButton, this->_data->m_window))
+		// Click on play button to start the game
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_playButton, _data->m_window))
 		{
-			Play();
+			ClearPath();
+			GetGame()->Play();
 		}
 
-		if (this->_data->m_inputManager.IsSpriteClicked(this->_checkBoxDiagMode, sf::Mouse::Left, this->_data->m_window))
+		// Check / uncheck the diagonal mode
+		if (_data->m_inputManager.IsSpriteClicked(_checkBoxDiagMode, sf::Mouse::Left, _data->m_window))
 		{
-			UseDiagonal = !UseDiagonal;
-			_checkBoxDiagMode.setTexture(this->_data->m_assetManager.GetTexture(UseDiagonal ? "Check Box Checked" : "Check Box Unchecked"));
+			GetGame()->_UseDiagonal = !GetGame()->_UseDiagonal;
+			_checkBoxDiagMode.setTexture(_data->m_assetManager.GetTexture(GetGame()->_UseDiagonal ? "Check Box Checked" : "Check Box Unchecked"));
 		}
 
-		if (this->_data->m_inputManager.IsSpriteClicked(this->_checkBoxDebugMode, sf::Mouse::Left, this->_data->m_window))
+		// Check / uncheck the debug mode
+		if (_data->m_inputManager.IsSpriteClicked(_checkBoxDebugMode, sf::Mouse::Left, _data->m_window))
 		{
-			DebugMode = !DebugMode;
-			_checkBoxDebugMode.setTexture(this->_data->m_assetManager.GetTexture(DebugMode ? "Check Box Checked" : "Check Box Unchecked"));
+			GetGame()->SetDebugMode(!GetGame()->IsDebugMode());
+			_checkBoxDebugMode.setTexture(_data->m_assetManager.GetTexture(GetGame()->IsDebugMode() ? "Check Box Checked" : "Check Box Unchecked"));
 		}
 
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_forwardDebug, this->_data->m_window))
+		if (GetGame()->IsDebugMode())
 		{
-			if (DebugMode)
+			// Click on the forward arrow to go to the next step
+			if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_forwardDebug, _data->m_window))
 			{
-				ForwardDebug();
+				GetGame()->ForwardDebug();
+			}
+
+			// Click on the backward arrow to go to the previous step
+			if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_backwardDebug, _data->m_window))
+			{
+				GetGame()->BackwardDebug();
 			}
 		}
 
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && this->_data->m_inputManager.IsMouseOverSprite(this->_backwardDebug, this->_data->m_window))
+		// clear button
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_clearButton, _data->m_window))
 		{
-			if (DebugMode)
-			{
-				BackwardDebug();
-			}
+			GetGame()->ResetGame();
+			InitGridTiles();
+		}
+
+		// clear path button
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_clearPathButton, _data->m_window))
+		{
+			ClearPath();
 		}
 	}
 }
@@ -168,69 +140,297 @@ void GameState::Update(float dt)
 {
 }
 
+/*
+ * Brief : Set the scale of the sprites
+ */
+void GameState::SetScales()
+{
+	_background.setScale(SCREEN_WIDTH / _background.getLocalBounds().width,
+	                     SCREEN_HEIGHT / _background.getLocalBounds().height);
+	_pauseButton.setScale(0.3f, 0.3f);
+	_playButton.setScale(0.3f, 0.3f);
+	_checkBoxDiagMode.setScale(0.1f, 0.1f);
+	_checkBoxDebugMode.setScale(0.1f, 0.1f);
+	
+	_backwardDebug.setScale(0.5f, 0.5f);
+	_forwardDebug.setScale(0.5f, 0.5f);
+	_clearButton.setScale(0.5f, 0.5f);
+	_clearPathButton.setScale(0.5f, 0.5f);
+}
+
+/*
+ * Brief : Set the position of the sprites
+ */
+void GameState::SetPositions()
+{
+	_pauseButton.setPosition(SCREEN_WIDTH - _pauseButton.getGlobalBounds().width, _pauseButton.getPosition().y);
+	_playButton.setPosition(_playButton.getGlobalBounds().width, _playButton.getPosition().y);
+	
+	_gridSprite.setPosition(SCREEN_WIDTH / 2 - _gridSprite.getGlobalBounds().width / 2,
+	                        SCREEN_HEIGHT / 2 - _gridSprite.getGlobalBounds().height / 2);
+	
+	_checkBoxDiagMode.setPosition(SCREEN_WIDTH / 4 - _checkBoxDiagMode.getGlobalBounds().width,
+	                              SCREEN_HEIGHT / 2 - _checkBoxDiagMode.getGlobalBounds().height);
+	
+	_checkBoxDiagText.setPosition(
+		SCREEN_WIDTH / 4 - _checkBoxDiagText.getGlobalBounds().width - _checkBoxDiagMode.getGlobalBounds().width * 2,
+		SCREEN_HEIGHT / 2 - _checkBoxDiagMode.getGlobalBounds().height);
+	
+	_checkBoxDebugMode.setPosition(SCREEN_WIDTH / 4 - _checkBoxDebugMode.getGlobalBounds().width,
+	                               SCREEN_HEIGHT / 2 - _checkBoxDebugMode.getGlobalBounds().height - _checkBoxDiagMode.
+	                               getGlobalBounds().height);
+	
+	_checkBoxDebugText.setPosition(
+		SCREEN_WIDTH / 4 - _checkBoxDebugText.getGlobalBounds().width - _checkBoxDebugMode.getGlobalBounds().width * 2,
+		SCREEN_HEIGHT / 2 - _checkBoxDebugMode.getGlobalBounds().height - _checkBoxDiagMode.getGlobalBounds().height);
+	
+	_backwardDebug.setPosition(SCREEN_WIDTH / 2 - _backwardDebug.getGlobalBounds().width / 2,
+	                           SCREEN_HEIGHT - _backwardDebug.getGlobalBounds().height);
+	
+	_forwardDebug.setPosition(SCREEN_WIDTH / 2 + _forwardDebug.getGlobalBounds().width / 2,
+	                          SCREEN_HEIGHT - _forwardDebug.getGlobalBounds().height);
+
+	_clearButton.setPosition(SCREEN_WIDTH / 2 - _clearButton.getGlobalBounds().width / 2,
+							_clearButton.getGlobalBounds().height / 2);
+
+	_clearPathButton.setPosition(SCREEN_WIDTH / 2 + _clearButton.getGlobalBounds().width + _clearPathButton.getGlobalBounds().width / 2,
+								_clearPathButton.getGlobalBounds().height / 2);
+}
+
+/*
+ * Brief : Draw the sprites
+ *
+ * @param dt : Delta time
+ */
 void GameState::Draw(float dt)
 {
 	_data->m_window.clear();
+	
 	_data->m_window.draw(_background);
 	_data->m_window.draw(_gridSprite);
 	_data->m_window.draw(_playButton);
 	_data->m_window.draw(_checkBoxDiagText);
-
-	for (int x = 0; x < NB_LINES; x++)
-	{
-		for (int y = 0; y < NB_COLUMNS; y++)
-		{
-			this->_data->m_window.draw(_gridPieces[x][y]);
-		}
-	}
-	
 	_data->m_window.draw(_forwardDebug);
 	_data->m_window.draw(_backwardDebug);
 	_data->m_window.draw(_checkBoxDebugText);
 	_data->m_window.draw(_checkBoxDebugMode);
 	_data->m_window.draw(_pauseButton);
 	_data->m_window.draw(_checkBoxDiagMode);
+	_data->m_window.draw(_clearButton);
+	_data->m_window.draw(_clearPathButton);
+
+	for (const auto& m_gridPiece : _gridPieces)
+	{
+		for (const auto& y : m_gridPiece)
+		{
+			_data->m_window.draw(y);
+		}
+	}
+	
 	_data->m_window.display();
 }
 
+/*
+ * Brief : Load the textures
+ */
+void GameState::LoadTextures()
+{
+	_data->m_assetManager.LoadTexture("Pause Button", PAUSE_BUTTON);
+	_data->m_assetManager.LoadTexture("Game Background", GAME_BACKGROUND_FILEPATH);
+	_data->m_assetManager.LoadTexture("Grid Sprite", EMPTY_TILE);
+	_data->m_assetManager.LoadTexture("Wall", WALL);
+	_data->m_assetManager.LoadTexture("Path", PATH);
+	_data->m_assetManager.LoadTexture("Start Point", START_POINT);
+	_data->m_assetManager.LoadTexture("End Point", END_POINT);
+	_data->m_assetManager.LoadTexture("Play Button", MAIN_MENU_PLAY_BUTTON);
+	_data->m_assetManager.LoadTexture("Check Box Checked", CHECK_BOX_CHECKED);
+	_data->m_assetManager.LoadTexture("Check Box Unchecked", CHECK_BOX_UNCHECKED);
+	_data->m_assetManager.LoadTexture("CheckPoint", CHECKPOINT);
+	_data->m_assetManager.LoadTexture("Portal", PORTAL);
+	_data->m_assetManager.LoadTexture("Forward Arrow", FORWARD_ARROW);
+	_data->m_assetManager.LoadTexture("Backward Arrow", BACKWARD_ARROW);
+	_data->m_assetManager.LoadTexture("Clear Button", CLEAR_BUTTON);
+	_data->m_assetManager.LoadTexture("Clear Path Button", CLEAR_PATH_BUTTON);
+}
+
+/*
+ * Brief : Load the fonts
+ */
+void GameState::LoadFonts()
+{
+	_data->m_assetManager.LoadFont("Robotto Font", FONT); 
+}
+
+/*
+ * Brief : Set all of the texts
+ */
+void GameState::SetTexts()
+{
+	_checkBoxDiagText = sf::Text("Diagonal Movement", _data->m_assetManager.GetFont("Robotto Font"), 20);
+	_checkBoxDebugText = sf::Text("Debug mode", _data->m_assetManager.GetFont("Robotto Font"), 20);
+}
+
+/*
+ * Brief : Set all of the textures
+ */
+void GameState::SetTextures()
+{
+	_background.setTexture(_data->m_assetManager.GetTexture("Game Background"));
+	_pauseButton.setTexture(_data->m_assetManager.GetTexture("Pause Button"));
+	_playButton.setTexture(_data->m_assetManager.GetTexture("Play Button"));
+	_gridSprite.setTexture(_data->m_assetManager.GetTexture("Path"));
+	_checkBoxDiagMode.setTexture(_data->m_assetManager.GetTexture("Check Box Unchecked"));
+	_backwardDebug.setTexture(_data->m_assetManager.GetTexture("Backward Arrow"));
+	_forwardDebug.setTexture(_data->m_assetManager.GetTexture("Forward Arrow"));
+	_checkBoxDebugMode.setTexture(_data->m_assetManager.GetTexture("Check Box Unchecked"));
+	_clearButton.setTexture(_data->m_assetManager.GetTexture("Clear Button"));
+	_clearPathButton.setTexture(_data->m_assetManager.GetTexture("Clear Path Button"));
+}
+
+/*
+ * Brief : Initialize the grid tiles with the empty texture
+ *         Initialize the grid array with the empty piece
+ */
 void GameState::InitGridTiles()
 {
-	sf::Vector2u tempSpriteSize = this->_data->m_assetManager.GetTexture("Grid Sprite").getSize();
-
 	for (int x = 0; x < NB_LINES; x++)
 	{
 		for (int y = 0; y < NB_COLUMNS; ++y)
 		{
-			float factor = static_cast<float>(1.f) / NB_COLUMNS;
+			const float factor = 1.f / NB_COLUMNS;
 
 			_gridPieces[x][y].setScale(factor, factor);
-			_gridPieces[x][y].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
+			_gridPieces[x][y].setTexture(_data->m_assetManager.GetTexture("Grid Sprite"));
 
-			float positionX = _gridSprite.getPosition().x + ( x * _gridPieces[x][y].getGlobalBounds().width ) + x;
-			float positionY = _gridSprite.getPosition().y + ( y * _gridPieces[x][y].getGlobalBounds().height)+ y;
+			const float positionX = _gridSprite.getPosition().x + ( x * _gridPieces[x][y].getGlobalBounds().width ) + x;
+			const float positionY = _gridSprite.getPosition().y + ( y * _gridPieces[x][y].getGlobalBounds().height)+ y;
 
 			_gridPieces[x][y].setPosition(positionX,positionY);
-
-			_gridArray[x][y] = EMPTY_PIECE;
+			
+			GetGame()->SetGridArrayItem(x, y, EMPTY_PIECE); 
 		}
 	}
 }
 
-void GameState::PlacePiece(GridPieces clickSide)
+/*
+ * Brief : Place an item on the grid
+ *
+ * @param column : Column of the grid
+ * @param row : Row of the grid
+ * @param textureName : Name of the texture to place
+ * @param itemType : Type of the item to place
+ * @param itemContainer : Container to update with the new item if needed
+ */
+void GameState::PlaceItem(const int column, const int row, const std::string& textureName, GridPieces itemType, std::vector<sf::Vector2i>* itemContainer = nullptr)
 {
-	sf::Vector2i touchPoint = this->_data->m_inputManager.GetMousePosition(this->_data->m_window);
+	_gridPieces[column - 1][row - 1].setTexture(_data->m_assetManager.GetTexture(textureName));
+	GetGame()->GetGridArray()[column - 1][row - 1] = itemType;
 
-	sf::FloatRect gridSize = _gridSprite.getGlobalBounds();
-	sf::Vector2f gapOutsideOfGrid = sf::Vector2f((SCREEN_WIDTH - gridSize.width) / 2, (SCREEN_HEIGHT - gridSize.height) / 2);
+	if (itemContainer) {
+		itemContainer->push_back(sf::Vector2i(column - 1, row - 1));
+	}
 
-	sf::Vector2f gridLocalTouchPos = sf::Vector2f(touchPoint.x - gapOutsideOfGrid.x, touchPoint.y - gapOutsideOfGrid.y);
+	sf::Vector2i point(column - 1, row - 1);
+	
+	if (itemType == START_PIECE) {
+		GetGame()->_StartingPoint = point;
+	}
+	else if (itemType == END_PIECE) {
+		GetGame()->_EndingPoint = point;
+	}
 
-	sf::Vector2f gridSectionSize = sf::Vector2f(gridSize.width / NB_COLUMNS, gridSize.height / NB_LINES);
+	ClearPath();
+}
+
+/*
+ * Brief : Reset an item on the grid
+ *
+ * @param : column : Column of the grid
+ * @param : row : Row of the grid
+ * @param : resetType : Type of the item that was previously placed
+ * @param : itemContainer : Container of the item to update if needed
+ */
+void GameState::ResetItem(const int column, const int row, const GridPieces resetType, std::vector<sf::Vector2i>* itemContainer)
+{
+	// Reset the texture of the item & the grid array value
+	_gridPieces[column - 1][row - 1].setTexture(_data->m_assetManager.GetTexture("Grid Sprite"));
+	GetGame()->GetGridArray()[column - 1][row - 1] = EMPTY_PIECE;
+
+	// Remove the item from the container
+	if (itemContainer) {
+		for (int i = 0; i < itemContainer->size(); i++) {
+			if (itemContainer->at(i).x == column - 1 && itemContainer->at(i).y == row - 1) {
+				itemContainer->erase(itemContainer->begin() + i);
+				break;
+			}
+		}
+	}
+
+	// Reset the starting / ending point if needed
+	sf::Vector2i point(- 1, - 1);
+
+	if (resetType == START_PIECE) {
+		GetGame()->_StartingPoint = point;
+	}
+	else if (resetType == END_PIECE) {
+		GetGame()->_EndingPoint = point;
+	}
+
+	if (GetGame()->_path.size() > 0)
+	{
+		ClearPath(); 
+	}
+}
+
+/*
+ * Brief : Draw the current step of the path
+ *
+ * @param step : Current step of the path
+ * @param isPath : True is we draw the path, false if we draw empty tiles ( use with forward / backward debug )
+ */
+void GameState::DrawStepPath(const Pair step, const bool isPath)
+{
+	// Prevent from overriding over start end or other items
+	if ( GetGame()->GetGridArray()[step.first][step.second] ==  EMPTY_PIECE || GetGame()->GetGridArray()[step.first][step.second] == PATH_PIECE )
+	{
+		_gridPieces[step.first][step.second].setTexture(_data->m_assetManager.GetTexture(isPath ? "Path" : "Grid Sprite"));
+		GetGame()->GetGridArray()[step.first][step.second] = PATH_PIECE;
+	}
+}
+
+/*
+ * Brief : Clear the path with the empty texture & reset the grid array value
+ */
+void GameState::ClearPath()
+{
+	for (int x = 0; x < NB_LINES; x++)
+	{
+		for (int y = 0; y < NB_COLUMNS; y++)
+		{
+			if (GetGame()->GetGridArray()[x][y] == PATH_PIECE)
+			{
+				GetGame()->GetGridArray()[x][y] = EMPTY_PIECE;
+				_gridPieces[x][y].setTexture(_data->m_assetManager.GetTexture("Grid Sprite"));
+			}
+		}
+	}
+	GetGame()->ClearPath();
+}
+
+// TODO : Refactor this function
+void GameState::PlacePiece(const GridPieces Piece)
+{
+	const sf::Vector2i touchPoint = _data->m_inputManager.GetMousePosition(_data->m_window);
+
+	const sf::FloatRect gridSize = _gridSprite.getGlobalBounds();
+	const auto gapOutsideOfGrid = sf::Vector2f((SCREEN_WIDTH - gridSize.width) / 2, (SCREEN_HEIGHT - gridSize.height) / 2);
+
+	const auto gridLocalTouchPos = sf::Vector2f(touchPoint.x - gapOutsideOfGrid.x, touchPoint.y - gapOutsideOfGrid.y);
 
 	int column, row;
-	
-	float columnWidth = _gridSprite.getGlobalBounds().width / NB_COLUMNS; 
-	float rowHeight = _gridSprite.getGlobalBounds().height / NB_LINES; 
+
+	const float columnWidth = _gridSprite.getGlobalBounds().width / NB_COLUMNS;
+	const float rowHeight = _gridSprite.getGlobalBounds().height / NB_LINES; 
 
 	for (int c = 1; c <= NB_COLUMNS; c++) {
 		if (gridLocalTouchPos.x < columnWidth * c) {
@@ -246,402 +446,139 @@ void GameState::PlacePiece(GridPieces clickSide)
 		}
 	}
 
-	switch (clickSide) {
+	const bool StartPlaced = GetGame()->_StartingPoint.x != -1 && GetGame()->_StartingPoint.y != -1;
+	const bool EndPlaced = GetGame()->_EndingPoint.x != -1 && GetGame()->_EndingPoint.y != -1;
+
+	sf::Vector2i point( -1, - 1);
+
+	switch (Piece) {
 	case START_PIECE:
-		if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Start Point")) {
-			ResetStartPoint(column, row);
+		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Start Point")) {
+			ResetItem(column, row, START_PIECE, nullptr);
 			break;
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("End Point") && !StartPlaced) {
-			ResetEndPoint(column, row);
+		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("End Point")  ) {
+			ResetItem(column, row, END_PIECE, nullptr);
+			GetGame()->_EndingPoint = point;
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Wall") && !StartPlaced) {
-			ResetWall(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Wall") ) {
+			ResetItem(column, row, WALL_PIECE, nullptr);
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Portal")) {
-			ResetPortal(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
+			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetCheckPoint(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
+			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
 		}
 
 		if (!StartPlaced)
 		{
-			PlaceStartPoint(column, row);
+			PlaceItem(column, row, "Start Point", START_PIECE,nullptr);
 		}
 
 		break;
 
 	case END_PIECE:
-		if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("End Point")) {
-			ResetEndPoint(column, row);
+		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("End Point")) {
+			ResetItem(column, row, END_PIECE, nullptr);
 			break;
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Start Point") && !EndPlaced) {
-			ResetStartPoint(column, row);
+		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Start Point")) {
+			ResetItem(column, row, START_PIECE, nullptr);
+			GetGame()->_StartingPoint = point;
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Wall") && !EndPlaced) {
-			ResetWall(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Wall")) {
+			ResetItem(column, row, WALL_PIECE, nullptr);
+		}
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
+			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
 
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Portal")) {
-			ResetPortal(column, row);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetCheckPoint(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
+			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
+
 		}
 
 		if (!EndPlaced)
 		{
-			PlaceEndPoint(column, row);
+			PlaceItem(column, row, "End Point", END_PIECE, nullptr);
 		}
 
 		break;
 
 	case WALL_PIECE:
-		if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("End Point")) {
-			ResetEndPoint(column, row);
+		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("End Point")) {
+			ResetItem(column, row, END_PIECE, nullptr);
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Start Point")) {
-			ResetStartPoint(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Start Point")) {
+			ResetItem(column, row, START_PIECE, nullptr);
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Wall")) {
-			ResetWall(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Wall")) {
+			ResetItem(column, row, WALL_PIECE, nullptr);
 			break;
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Portal")) {
-			ResetPortal(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
+			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
+
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetCheckPoint(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
+			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
+
 		}
 
-		PlaceWall(column, row);
+		PlaceItem(column, row, "Wall", WALL_PIECE, nullptr);
 		
 		break;
 
 	case CHECKPOINT_PIECE:
-		if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetCheckPoint(column, row);
+		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
+			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
+
 			break;
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Start Point")) {
-			ResetStartPoint(column, row);
+		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Start Point")) {
+			ResetItem(column, row, START_PIECE, nullptr);
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("End Point")) {
-			ResetEndPoint(column, row);		
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("End Point")) {
+			ResetItem(column, row, END_PIECE, nullptr);
+
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Wall")) {
-			ResetWall(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Wall")) {
+			ResetItem(column, row, WALL_PIECE, nullptr);
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Portal")) {
-			ResetPortal(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
+			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
+
 		}
 		
-		PlaceCheckPoint(column, row); 
+		PlaceItem(column, row, "CheckPoint", CHECKPOINT_PIECE, GetGame()->_CheckPoints);
+
 		break;
 
 	case PORTAL_PIECE:
-		if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Portal")) {
-			ResetPortal(column, row);
+		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
+			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
 			break;
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Start Point")) {
-			ResetStartPoint(column, row);
+		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Start Point")) {
+			ResetItem(column, row, START_PIECE, nullptr);
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("End Point")) {
-			ResetEndPoint(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("End Point")) {
+			ResetItem(column, row, END_PIECE, nullptr);
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("Wall")) {
-			ResetWall(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Wall")) {
+			ResetItem(column, row, WALL_PIECE, nullptr);
 		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &this->_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetCheckPoint(column, row);
+		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
+			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
 		}
 
-		PlacePortal(column, row);
+		PlaceItem(column, row, "Portal", PORTAL_PIECE, GetGame()->_Portals);
+
 		break;
 
 	default:
 		break;
 	}
 
-}
-
-void GameState::Play()
-{
-	CurrentDebugStep = -1;
-	_path.clear();
-	std::vector<sf::Vector2i> tempCheckPoints = CheckPoints;
-	sf::Vector2i currentPoint = startingPoint;
-
-	ClearPath();
-
-	if (CheckMapValidity())
-	{
-		for (int i = 0; i < CheckPoints.size(); i++)
-		{
-			SortCheckpointsByDistance(tempCheckPoints, currentPoint);
-			currentPoint = ProcessNextCheckpoint(tempCheckPoints, currentPoint);
-
-			if (currentPoint.x == -1 || currentPoint.y == -1) // No path found to next checkpoint
-			{
-				return;
-			}
-		}		
-
-		ProcessFinalPath(currentPoint);
-	}
-}
-
-void GameState::SortCheckpointsByDistance(std::vector<sf::Vector2i>& checkpoints, const sf::Vector2i& fromPoint)
-{
-	std::sort(checkpoints.begin(), checkpoints.end(), [this, fromPoint](const sf::Vector2i& a, const sf::Vector2i& b) {
-		float distA = CalculateDistance(fromPoint, a);
-		float distB = CalculateDistance(fromPoint, b);
-		return distA < distB;
-		});
-}
-
-sf::Vector2i GameState::ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, sf::Vector2i& currentPoint)
-{
-	sf::Vector2i closestCheckpoint = checkpoints[0];
-
-	int pathLength = _path.size();
-	std::vector<Pair> tempPath;
-
-	GetGame()->AStarAlgorithm(_gridArray, currentPoint, closestCheckpoint, UseDiagonal, tempPath);
-
-	if (pathLength == tempPath.size())
-	{
-		return sf::Vector2i(-1, -1);
-	}
-
-	CheckPortalPath(currentPoint,closestCheckpoint,tempPath);
-
-	if (!DebugMode)
-	{
-		for (int i = 0; i < _path.size(); i++)
-		{
-			DrawStepPath(_path.at(i),true);
-		}
-	}
-
-	checkpoints.erase(checkpoints.begin());
-
-	return closestCheckpoint;
-}
-
-void GameState::ProcessFinalPath(sf::Vector2i& currentPoint)
-{
-	std::vector<Pair> tempPath;
-
-	GetGame()->AStarAlgorithm(_gridArray, currentPoint, endingPoint, UseDiagonal, tempPath);
-
-	CheckPortalPath(currentPoint, endingPoint,tempPath);
-
-	if (!DebugMode)
-	{
-		for (int i = 0; i < _path.size(); i++)
-		{
-			DrawStepPath(_path.at(i),true);
-		}
-	}
-}
-
-float GameState::CalculateDistance(const sf::Vector2i& point1, const sf::Vector2i& point2)
-{
-	float dx = static_cast<float>(point2.x - point1.x);
-	float dy = static_cast<float>(point2.y - point1.y);
-	return sqrt(dx * dx + dy * dy);
-}
-
-bool GameState::CheckMapValidity()
-{
-	return startingPoint.x != -1 && startingPoint.y != -1 && endingPoint.x != -1 && endingPoint.y != -1;
-}
-
-void GameState::ResetStartPoint(int column, int row)
-{
-	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
-	StartPlaced = false;
-	startingPoint = sf::Vector2i(-1, -1);
-	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
-	ClearPath();
-}
-
-void GameState::ResetEndPoint(int column, int row)
-{
-	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
-	EndPlaced = false;
-	endingPoint = sf::Vector2i(-1, -1);
-	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
-	ClearPath();
-}
-
-void GameState::ResetWall(int column, int row)
-{
-	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
-	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
-	ClearPath();
-}
-
-void GameState::ResetCheckPoint(int column, int row)
-{
-	ClearPath();
-	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
-	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
-	
-	for (int i = 0; i < CheckPoints.size(); i++)
-	{
-		if (CheckPoints[i].x == column - 1 && CheckPoints[i].y == row - 1)
-		{
-			CheckPoints.erase(CheckPoints.begin() + i);
-			break;
-		}
-	}
-}
-
-void GameState::ResetPortal(int column, int row)
-{
-	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
-	_gridArray[column - 1][row - 1] = EMPTY_PIECE;
-	ClearPath();
-
-	for (int i = 0; i < Portals.size(); i++)
-	{
-		if (Portals[i].x == column - 1 && Portals[i].y == row - 1)
-		{
-			Portals.erase(Portals.begin() + i);
-			break;
-		}
-	}
-}
-
-void GameState::PlaceStartPoint(int column, int row)
-{
-	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Start Point"));
-	StartPlaced = true;
-	startingPoint = sf::Vector2i(column - 1, row - 1);
-	_gridArray[column - 1][row - 1] = START_PIECE;
-	ClearPath();
-}
-
-void GameState::PlaceEndPoint(int column, int row)
-{
-	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("End Point"));
-	EndPlaced = true;
-	endingPoint = sf::Vector2i(column - 1, row - 1);
-	_gridArray[column - 1][row - 1] = END_PIECE;
-	ClearPath();
-}
-
-void GameState::PlaceWall(int column, int row)
-{
-	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Wall"));
-	_gridArray[column - 1][row - 1] = WALL_PIECE;
-	ClearPath();
-}
-
-void GameState::PlaceCheckPoint(int column, int row)
-{
-	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("CheckPoint"));
-	_gridArray[column - 1][row - 1] = CHECKPOINT_PIECE;
-	CheckPoints.push_back(sf::Vector2i(column - 1, row - 1));
-	ClearPath();
-}
-
-void GameState::PlacePortal(int column, int row)
-{
-	_gridPieces[column - 1][row - 1].setTexture(this->_data->m_assetManager.GetTexture("Portal"));
-	_gridArray[column - 1][row - 1] = PORTAL_PIECE;
-	Portals.push_back(sf::Vector2i(column - 1, row - 1));
-	ClearPath();
-}
-
-void GameState::CheckPortalPath(sf::Vector2i& currentPoint, sf::Vector2i& nextPoint, std::vector<Pair> basePath)
-{
-	if (Portals.size() > 0)
-	{
-		std::vector<Pair> tempPath;
-		GetGame()->AStarAlgorithm(_gridArray, currentPoint, GetClosestPortal(currentPoint), UseDiagonal, tempPath);
-		GetGame()->AStarAlgorithm(_gridArray, nextPoint, GetClosestPortal(nextPoint),UseDiagonal, tempPath);
-
-		if (tempPath.size() < basePath.size())
-		{
-			for (int i = 0; i < tempPath.size(); i++)
-			{
-				_path.push_back(tempPath[i]);			
-			}
-			return;
-		}
-	}
-
-	for (int i = 0; i < basePath.size(); i++)
-	{
-		_path.push_back(basePath[i]);
-	}
-}
-
-sf::Vector2i& GameState::GetClosestPortal(sf::Vector2i& point)
-{
-	float minDistance = 99999;
-	int minIndex = -1;
-	
-	for (int i = 0; i < Portals.size(); i++)
-	{
-		float distance = CalculateDistance(point, Portals[i]);
-
-		if (distance < minDistance)
-		{
-			minDistance = distance;
-			minIndex = i;
-		}
-	}
-
-	return Portals[minIndex];
-}
-
-void GameState::ClearPath()
-{
-	for (int x = 0; x < NB_LINES; x++)
-	{
-		for (int y = 0; y < NB_COLUMNS; y++)
-		{
-			if (_gridArray[x][y] == PATH_PIECE)
-			{
-				_gridArray[x][y] = EMPTY_PIECE;
-				_gridPieces[x][y].setTexture(this->_data->m_assetManager.GetTexture("Grid Sprite"));
-			}
-		}
-	}
-	_path.clear();
-}
-
-void GameState::ForwardDebug()
-{
-	if (_path.empty() || CurrentDebugStep + 1 >= _path.size() )
-	{ 
-		return;
-	}
-
-	CurrentDebugStep++;
-	DrawStepPath(_path.at(CurrentDebugStep),true);
-}
-
-void GameState::BackwardDebug()
-{
-	if (_path.empty() || CurrentDebugStep < 0 )
-	{
-		return;
-	}
-
-	DrawStepPath(_path.at(CurrentDebugStep), false);
-	CurrentDebugStep--;
-}
-
-void GameState::DrawStepPath(Pair step,bool isPath)
-{
-	_gridPieces[step.first][step.second].setTexture(this->_data->m_assetManager.GetTexture(isPath ? "Path" : "Grid Sprite"));
-	_gridArray[step.first][step.second] = PATH_PIECE;
 }

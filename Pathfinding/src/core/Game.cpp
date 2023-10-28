@@ -1,12 +1,39 @@
 #include "Game.h"
 #include "SplashState/SplashState.h"
-#include <set>
 
-Game::Game(int width, int height, std::string title)
+#include <set>
+#include <GameState/GameState.h>
+
+Game::Game(const int width, const int height, const std::string& title) :
+    _UseDiagonal(false)
+    , _DebugMode(false)
+    , _CurrentDebugStep(0)
+    , _gridArray{}
+    , _CheckPoints(new std::vector<sf::Vector2i>)
+    , _Portals(new std::vector<sf::Vector2i>)
 {
+    ResetGame();
+
+    // Start the game with the splash screen
 	m_data->m_window.create(sf::VideoMode(width, height), title, sf::Style::Close | sf::Style::Titlebar);
-	m_data->machine.AddState(StateRef(new SplashState(this->m_data)));
-	Run();
+	m_data->machine.AddState(std::make_unique<SplashState>(m_data));
+}
+
+Game::~Game()
+{
+    delete _CheckPoints;
+    delete _Portals;
+}
+
+#pragma region AStartAlgorithm
+
+std::vector<Pair> Game::AStarAlgorithm(sf::Vector2i startingPoint, sf::Vector2i endingPoint, bool UseDiagonal,
+    std::vector<Pair>& _path)
+{
+    const Pair start = std::make_pair(startingPoint.x, startingPoint.y);
+    const Pair dest = std::make_pair(endingPoint.x, endingPoint.y);
+
+    return aStarSearch(start, dest, UseDiagonal, _path);
 }
 
 void Game::Run()
@@ -32,116 +59,98 @@ void Game::Run()
 
 		while (accumulator >= frameRate)
 		{
-			this->m_data->machine.GetActiveState()->HandleInput();
-			this->m_data->machine.GetActiveState()->Update(frameRate);	
+			m_data->machine.GetActiveState()->HandleInput();
+			m_data->machine.GetActiveState()->Update(frameRate);	
 
 			accumulator -= frameRate;
 		}
 
 		interpolation = accumulator / frameRate;
-		this->m_data->machine.GetActiveState()->Draw(interpolation);
+		m_data->machine.GetActiveState()->Draw(interpolation);
 	}
 }
 
-bool Game::isValid(int row, int col)
+bool Game::IsCellInBoundOfTheGrid(const int row, const int col)
 {
     return (row >= 0) && (row < NB_LINES) && (col >= 0)
         && (col < NB_COLUMNS);
 }
 
-bool Game::isNotAWall(int grid[][NB_COLUMNS], int row, int col)
+bool Game::IsNotAWall(const int row, const int col)
 {
-    if (grid[row][col] != 3)
-        return (true);
-    else
-        return (false);
+    return _gridArray[row][col] != WALL_PIECE;
 }
 
-bool Game::isDestination(int row, int col, Pair dest)
+bool Game::IsDestination(const int row, const int col, const Pair dest)
 {
-    if (row == dest.first && col == dest.second)
-        return (true);
-    else
-        return (false);
+    return row == dest.first && col == dest.second;
 }
 
-double Game::calculateHValue(int row, int col, Pair dest)
+double Game::CalculateHeuristicValue(const int row, const int col, const Pair dest)
 {
-    // Pythagore
-    return ((double)sqrt(
+    return sqrt(
         (row - dest.first) * (row - dest.first)
-        + (col - dest.second) * (col - dest.second)));
+        + (col - dest.second) * (col - dest.second));
 }
 
-std::vector<Pair>  Game::tracePath(cell cellDetails[][NB_COLUMNS], Pair dest, std::vector<Pair>& path)
+/*
+ * Brief : Fill the path vector with the path from the starting point to the ending point
+ */
+std::vector<Pair> Game::tracePath(cell cellDetails[][NB_COLUMNS], const Pair dest,std::vector<Pair>& path)
 {
     int row = dest.first;
     int col = dest.second;
-
-    std::vector<Pair> tempPath;
-
+    
     while (!(cellDetails[row][col].parent_i == row
         && cellDetails[row][col].parent_j == col)) {
 
 		if (row != dest.first || col != dest.second) {
-            tempPath.push_back(make_pair(row, col));
+            path.emplace_back(row, col);
 		}
 
-        int temp_row = cellDetails[row][col].parent_i;
-        int temp_col = cellDetails[row][col].parent_j;
+        const int temp_row = cellDetails[row][col].parent_i;
+        const int temp_col = cellDetails[row][col].parent_j;
         row = temp_row;
         col = temp_col;    
     }
-
-    for (int i = tempPath.size() - 1; i >= 0; i--) {
-		path.push_back(tempPath[i]);
-	}
     
-    // depart
-	//Path.push(make_pair(row, col));
-
+    path.emplace_back(row, col);
+    
 	return path;
 }
 
-std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest, bool UseDiagonal,std::vector<Pair>& path)
+std::vector<Pair> Game::aStarSearch(const Pair startingPoint, const Pair endingPoint, const bool UseDiagonal,std::vector<Pair>& path)
 {
-    std::vector<Pair> Path;
-    
     // If the start is out of range
-    if (isValid(src.first, src.second) == false) {
+    if (IsCellInBoundOfTheGrid(startingPoint.first, startingPoint.second) == false) {
         printf("Source is invalid\n");
-        return Path;
+        return path;
     }
 
     // If the destination is out of range
-    if (isValid(dest.first, dest.second) == false) {
+    if (IsCellInBoundOfTheGrid(endingPoint.first, endingPoint.second) == false) {
         printf("Destination is invalid\n");
-        return Path;
+        return path;
     }
 
     // Either the source or the destination is blocked
-    if (isNotAWall(grid, src.first, src.second) == false
-        || isNotAWall(grid, dest.first, dest.second)
+    if (IsNotAWall(startingPoint.first, startingPoint.second) == false
+        || IsNotAWall( endingPoint.first, endingPoint.second)
         == false) {
         printf("Source or the destination is blocked\n");
-        return Path;
+        return path;
     }
 
     // If the destination cell is the same as source cell
-    if (isDestination(src.first, src.second, dest)
+    if (IsDestination(startingPoint.first, startingPoint.second,endingPoint)
         == true) {
         printf("We are already at the destination\n");
-        return Path;
+        return path;
     }
 
-    // Create a closed list and initialise it to false which
-    // means that no cell has been included yet This closed
-    // list is implemented as a boolean 2D array
     bool closedList[NB_LINES][NB_COLUMNS];
     memset(closedList, false, sizeof(closedList));
 
-    // Declare a 2D array of structure to hold the details
-    // of that cell
     cell cellDetails[NB_LINES][NB_COLUMNS];
 
     int i, j;
@@ -158,7 +167,7 @@ std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest,
     }
 
     // Initialising the parameters of the starting node
-    i = src.first, j = src.second;
+    i = startingPoint.first, j = startingPoint.second;
     cellDetails[i][j].f = 0.0;
     cellDetails[i][j].g = 0.0;
     cellDetails[i][j].h = 0.0;
@@ -172,9 +181,9 @@ std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest,
 
     bool foundDest = false;
 
-    // Définir les mouvements possibles       
-    std::vector<int> dx = { -1, 1, 0, 0 };
-    std::vector<int> dy = { 0, 0, 1, -1 };
+    // Available movements   
+    std::vector dx = { -1, 1, 0, 0 };
+    std::vector dy = { 0, 0, 1, -1 };
 
     if (UseDiagonal)
     {
@@ -191,22 +200,21 @@ std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest,
 
     while (!openList.empty()) {
         
-        // Extraire le nœud de la liste ouverte avec le coût "f" le plus bas
+        // Extraire le nï¿½ud de la liste ouverte avec le coï¿½t "f" le plus bas
         pPair p = *openList.begin();
         openList.erase(openList.begin());
 
         int i = p.second.first;
         int j = p.second.second;
 
-        // Vérifier si c'est la destination
-        if (isDestination(i, j, dest)) {
+        // Vï¿½rifier si c'est la destination
+        if (IsDestination(i, j,endingPoint)) {
             printf("The destination cell is found\n");
             
-            return tracePath(cellDetails, dest,path);
-
+            return tracePath(cellDetails,endingPoint,path);
         }
 
-        // Marquer le nœud actuel comme visité
+        // Marquer le nï¿½ud actuel comme visitï¿½
         closedList[i][j] = true;
 
         // Parcourir les voisins
@@ -214,9 +222,9 @@ std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest,
             int ni = i + dx[k];
             int nj = j + dy[k];
 
-            if (isValid(ni, nj) && !closedList[ni][nj] && isNotAWall(grid, ni, nj)) {
+            if (IsCellInBoundOfTheGrid(ni, nj) && !closedList[ni][nj] && IsNotAWall(ni, nj)) {
                 double gNew = cellDetails[i][j].g + ((k < 4) ? 1.0 : 1.414);
-                double hNew = calculateHValue(ni, nj, dest);
+                double hNew = CalculateHeuristicValue(ni, nj,endingPoint);
                 double fNew = gNew + hNew;
 
                 if (cellDetails[ni][nj].f == FLT_MAX || cellDetails[ni][nj].f > fNew) {
@@ -233,15 +241,354 @@ std::vector<Pair> Game::aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest,
 
     // When the destination cell is not found due to blockages)
     if (foundDest == false)
+    {
         printf("Failed to find the Destination Cell\n");
+    }
 
-	return Path;
+	return path;
 }
 
-std::vector<Pair> Game::AStarAlgorithm(int gridArray[NB_LINES][NB_COLUMNS], sf::Vector2i startingPoint, sf::Vector2i endingPoint,bool UseDiagonal, std::vector<Pair>& path)
-{
-	Pair src = make_pair(startingPoint.x, startingPoint.y);
-	Pair dest = make_pair(endingPoint.x, endingPoint.y);
+#pragma endregion AStartAlgorithm
 
-    return aStarSearch(gridArray, src, dest, UseDiagonal,path);
+void Game::Play()
+{
+    _CurrentDebugStep = -1;
+    std::vector<sf::Vector2i> tempCheckPoints = *_CheckPoints;
+    sf::Vector2i currentPoint = _StartingPoint;
+
+    ClearPath();
+
+    if (CheckMapValidity()) // Check if the starting point and the ending point are set
+    {
+        bool AllCheckPointsReached = true;
+        
+        for (int i = 0; i < _CheckPoints->size(); i++) // Loop through all the checkpoints
+        {
+            currentPoint = ProcessNextCheckpoint(tempCheckPoints, currentPoint); // Get the next checkpoint and path to it
+            
+            if (currentPoint.x == -1 || currentPoint.y == -1) // No path found to next checkpoint
+            {
+                AllCheckPointsReached = false;
+                _path.clear();
+                return;
+            }
+        }
+
+        if ( AllCheckPointsReached ) // Go to the ending point
+        {
+            ProcessFinalPath(currentPoint);
+        }
+    }
+}
+
+/*
+ * Brief : Process the next checkpoint, Draw the shortest path from the current point to the next checkpoint
+ *
+ * @param checkpoints : All remaining checkpoints to reach
+ * @param currentPoint : the current point we are at
+ *
+ * @return the next place to start from
+ */
+sf::Vector2i Game::ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, const sf::Vector2i& currentPoint)
+{
+    std::vector<Pair> tempPath; // hold the path to the next checkpoint
+    
+    sf::Vector2i closestCheckPoint = PathToClosestCheckPoint(currentPoint,checkpoints, tempPath);
+
+    // At this point tempPath hold or not the path to the next checkpoint using the A* algorithm
+
+    // We know check way trough portal and change the path if it is shorter
+    CheckPortalPath(currentPoint, closestCheckPoint, tempPath); 
+
+    if (!tempPath.empty()) // remove checkpoint if reached by any way
+    {
+        RemoveCheckPoint(closestCheckPoint, checkpoints);
+        return closestCheckPoint;
+    }
+        
+    return {-1,-1};
+}
+
+/*
+ * Draw the final path from the current point to the ending point
+ *
+ * @param currentPoint : the current point
+ */
+void Game::ProcessFinalPath(const sf::Vector2i& currentPoint)
+{
+    std::vector<Pair> tempPath;
+
+    GetGame()->AStarAlgorithm( _EndingPoint,currentPoint,_UseDiagonal, tempPath);
+
+    sf::Vector2i closestPortal = CheckPortalPath(currentPoint, _EndingPoint, tempPath);
+
+    if ( !tempPath.empty() || closestPortal.x != -1 && closestPortal.y != -1)
+    {
+        DrawPath();
+    }
+}
+
+/*
+ * Brief : Verify if the starting point and the ending point are set
+ */
+bool Game::CheckMapValidity()
+{
+    return _StartingPoint.x != -1 && _StartingPoint.y != -1 && _EndingPoint.x != -1 && _EndingPoint.y != -1;
+}
+
+/*
+ * Brief : Check if the path through a portal is shorter than the base path
+ */
+sf::Vector2i Game::CheckPortalPath(const sf::Vector2i& currentPoint, const sf::Vector2i& nextPoint, std::vector<Pair>& basePath)
+{
+    if (!_Portals->empty())
+    {
+        std::vector<Pair> tempPath; 
+
+        const sf::Vector2i closestPortalStart = PathToClosestPortal(currentPoint,tempPath); 
+        
+        std::reverse(tempPath.begin(), tempPath.end());
+
+        const sf::Vector2i closestPortalNextPoint = PathToClosestPortal(nextPoint,tempPath);
+
+        const bool PointFound = closestPortalStart.x != -1 && closestPortalStart.y != -1 && closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1; 
+  
+        if ( PointFound && (tempPath.size() < basePath.size() || basePath.empty() )  && !tempPath.empty())
+        {
+            for (auto i : tempPath)
+            {
+                _path.push_back(i);
+                basePath.push_back(i);
+            }
+            
+            if ( closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1)
+            {
+                return closestPortalNextPoint;
+            }
+            return closestPortalStart;
+        }
+    }
+    
+    for (auto i : basePath)
+    {
+        _path.push_back(i);
+    }
+        
+    return {-1, -1};
+}
+
+/*
+ * Brief : Get the path to the closest portal from a point using the A* algorithm
+ *
+ * @param point : the point from which we want to find the closest portal
+ * @param finalPath : the path to the closest portal we are building
+ *
+ * @return the closest portal to the point
+ */
+sf::Vector2i Game::PathToClosestPortal(const sf::Vector2i& point,std::vector<Pair>& finalPath)
+{
+    float minDistance =  std::numeric_limits<float>::max();
+    int minIndex = -1;
+
+    std::vector<Pair> tempPath;
+    
+    for (int i = 0; i < _Portals->size(); i++)
+    {
+        std::vector<Pair> fPath;
+        const sf::Vector2i currentPoint = _Portals->at(i);
+        GetGame()->AStarAlgorithm( point,currentPoint, _UseDiagonal, fPath);
+
+        // If the path is shorter than the current shortest path
+        if (fPath.size() < minDistance && !fPath.empty())
+        {
+            minDistance = fPath.size();
+            minIndex = i;
+            fPath.pop_back();// remove portal as we want to tp not go over it
+            tempPath = fPath;
+        }
+    }
+
+    if ( minIndex != -1 ) // if a path was found
+    {
+        for (auto i : tempPath) // add the path to the final path
+        {
+            finalPath.push_back(i);
+        }
+        return _Portals->at(minIndex); // return the closest portal
+    }
+    return {-1, -1};
+}
+
+/*
+ * Brief : Get the path to the closest checkpoint from a point using the A* algorithm
+ *
+ * @param point : the point from which we want to find the closest checkpoint
+ * @param checkpoints : the checkpoints we want to check
+ * @param finalPath : the path to the closest checkpoint we are building
+ *
+ * @return the closest checkpoint to the point
+ */
+sf::Vector2i Game::PathToClosestCheckPoint(const sf::Vector2i& point,std::vector<sf::Vector2i>& checkpoints, std::vector<Pair>& finalPath)
+{
+    const sf::Vector2i closestCheckPoint = GetClosestCheckPoint(point,checkpoints);
+    
+    GetGame()->AStarAlgorithm( closestCheckPoint, point, _UseDiagonal, finalPath);
+
+    if (!finalPath.empty()) // Path found ( portal not included )
+    {
+        finalPath.pop_back(); // remove checkpoint as we dont want to go over it
+    }
+    
+    return closestCheckPoint;
+}
+
+/*
+ * Brief : Initialize the grid array with empty pieces
+ */
+void Game::InitGridArray()
+{
+    for (auto& i : _gridArray)
+    {
+        for (int& j : i)
+        {
+            j = EMPTY_PIECE;
+        }
+    }
+}
+
+/*
+ * Brief : Draw the path on the grid
+ */
+void Game::DrawPath()
+{
+    if (!_DebugMode)
+    {
+        for (const auto& i : _path)
+        {
+            dynamic_cast<GameState*>(m_data->machine.GetActiveState().get())->DrawStepPath(i, true);
+        }
+    }
+}
+
+/*
+ * Brief : Remove a checkpoint from the checkpoints vector
+ */
+void Game::RemoveCheckPoint(const sf::Vector2i& point, std::vector<sf::Vector2i>& checkpoints)
+{
+    for ( auto it = checkpoints.begin(); it != checkpoints.end(); ++it )
+    {
+        if ( *it == point )
+        {
+            checkpoints.erase(it);
+            break;
+        }
+    }
+}
+
+/*
+ * Brief : Get the closest checkpoint from a point using pythagore means no matters the obstacles
+ *
+ * @param point : the point from which we want to find the closest checkpoint
+ * @param checkpoints : the checkpoints we want to check
+ *
+ * @return the closest checkpoint to the point
+ */
+sf::Vector2i Game::GetClosestCheckPoint(const sf::Vector2i& point, std::vector<sf::Vector2i>& checkpoints)
+{
+    float minDistance = std::numeric_limits<float>::max();
+    const sf::Vector2i* closestCheckPoint = nullptr;
+
+    for (const auto& checkPoint : checkpoints)
+    {
+        const float distance = sqrt(static_cast<float>((checkPoint.x - point.x) * (checkPoint.x - point.x) +
+                                       (checkPoint.y - point.y) * (checkPoint.y - point.y)));
+
+        if (distance < minDistance)
+        {
+            minDistance = distance;
+            closestCheckPoint = &checkPoint;
+        }
+    }
+
+    if (closestCheckPoint)
+    {
+        return *closestCheckPoint;
+    }
+    
+    return {-1, -1};
+}
+
+/*
+ * Brief : Draw the next step of the path
+ */
+void Game::ForwardDebug()
+{
+    if (_path.empty() || _CurrentDebugStep + 1 >= _path.size())
+    {
+        return;
+    }
+
+    _CurrentDebugStep++;
+    dynamic_cast<GameState*>(m_data->machine.GetActiveState().get())->DrawStepPath(_path.at(_CurrentDebugStep), true);
+}
+
+/*
+ * Brief : Draw the previous step of the path
+ */
+void Game::BackwardDebug()
+{
+    if (_path.empty() || _CurrentDebugStep < 0)
+    {
+        return;
+    }
+
+    dynamic_cast<GameState*>(m_data->machine.GetActiveState().get())->DrawStepPath(_path.at(_CurrentDebugStep), false);
+    _CurrentDebugStep--;
+}
+
+/*
+ * Brief : Clear the path and the debug step
+ */
+void Game::ClearPath()
+{
+    _path.clear();
+    _CurrentDebugStep = -1;
+}
+
+void Game::ResetGame()
+{
+    _StartingPoint = {-1,-1};
+    _EndingPoint = {-1,-1};
+    
+    InitGridArray();
+
+    _CheckPoints->clear();
+    _Portals->clear();
+    _CurrentDebugStep = -1;
+    _path.clear();
+}
+
+void Game::SetDebugMode(bool debugMode)
+{
+    if ( debugMode )
+    {
+        _CurrentDebugStep = _path.size() - 1;
+    }
+
+    _DebugMode = debugMode;
+}
+
+void Game::SetGridArrayItem(const int column, const int row, const GridPieces piece)
+{
+    if ( column < 0 || column >= NB_COLUMNS || row < 0 || row >= NB_LINES)
+    {
+        return;
+    }
+    
+    _gridArray[column][row] = piece;
+}
+
+bool Game::IsDebugMode() const
+{
+    return _DebugMode;
 }

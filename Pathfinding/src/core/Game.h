@@ -1,3 +1,12 @@
+/**
+* @file Game.h
+ *
+ * @brief Logic of the game
+ *
+ * @author yoan.laurain@ynov.com
+ *
+ */
+
 #ifndef GAME_H
 #define GAME_H
 
@@ -10,6 +19,7 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 
+enum GridPieces : int;
 using namespace std;
 
 struct GameData
@@ -21,7 +31,6 @@ struct GameData
 };
 
 typedef std::shared_ptr<GameData> GameDataRef;
-
 typedef pair<int, int> Pair;
 typedef pair<double, pair<int, int> > pPair;
 
@@ -34,31 +43,79 @@ struct cell {
 class Game
 {
 public: 
-	explicit Game(int width = 1280, int height = 720, std::string title = "DefaultTitle");
+	explicit Game(int width = 1280, int height = 720, const std::string& title = "DefaultTitle");
+	~Game();
 
-	std::vector<Pair> AStarAlgorithm(int gridArray[NB_LINES][NB_COLUMNS], sf::Vector2i startingPoint, sf::Vector2i endingPoint, bool UseDiagonal, std::vector<Pair>& _path);
+	std::vector<Pair> AStarAlgorithm(sf::Vector2i startingPoint, sf::Vector2i endingPoint, bool UseDiagonal, std::vector<Pair>& _path);
 
+	void Run();
+	
 private: 
 
 	const float frameRate = 1.0f / 60.0f;
 	sf::Clock m_clock;
 
 	GameDataRef m_data = std::make_shared<GameData>();
+	bool _DebugMode;
 
-	void Run();	
+	int _gridArray[NB_LINES][NB_COLUMNS];
 
-	bool isValid(int row, int col);
+#pragma region AStartAlgorithm
 
-	bool isNotAWall(int grid[][NB_COLUMNS], int row, int col);
+	bool IsCellInBoundOfTheGrid(int row, int col);
 
-	bool isDestination(int row, int col, Pair dest);
+	bool IsNotAWall(int row, int col);
 
-	double calculateHValue(int row, int col, Pair dest);
+	bool IsDestination(int row, int col, Pair dest);
 
-	std::vector<Pair> tracePath(cell cellDetails[][NB_COLUMNS], Pair dest,std::vector<Pair>& path);
+	double CalculateHeuristicValue(int row, int col, Pair dest);
 
-	std::vector<Pair> aStarSearch(int grid[][NB_COLUMNS], Pair src, Pair dest, bool UseDiagonal,std::vector<Pair>& path);
+	std::vector<Pair> tracePath(cell cellDetails[][NB_COLUMNS], Pair dest, std::vector<Pair>& path);
 
+#pragma endregion AStartAlgorithm
+	
+	sf::Vector2i ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints, const sf::Vector2i& currentPoint);
+	void ProcessFinalPath(const sf::Vector2i& currentPoint);
+	bool CheckMapValidity();
+
+	sf::Vector2i  CheckPortalPath(const sf::Vector2i& currentPoint, const sf::Vector2i& nextPoint, std::vector<Pair>& basePath);
+	sf::Vector2i PathToClosestPortal(const sf::Vector2i& point,std::vector<Pair>& finalPath);
+	sf::Vector2i PathToClosestCheckPoint(const sf::Vector2i& point,std::vector<sf::Vector2i>& checkpoints,std::vector<Pair>& finalPath);
+
+	std::vector<Pair> aStarSearch(Pair startingPoint, Pair endingPoint,bool UseDiagonal, std::vector<Pair>& path);
+	
+	void InitGridArray();
+	void DrawPath();
+	sf::Vector2i GetClosestCheckPoint(const sf::Vector2i& point, std::vector<sf::Vector2i>& checkpoints);
+	void RemoveCheckPoint(const sf::Vector2i& point, std::vector<sf::Vector2i>& checkpoints);
+
+public : 
+	void Play();
+	void ForwardDebug();
+	void BackwardDebug();
+	void ClearPath();
+	void ResetGame();
+	
+	bool _UseDiagonal;
+
+	int _CurrentDebugStep;
+
+	std::vector<sf::Vector2i>* _CheckPoints;
+	std::vector<sf::Vector2i>* _Portals;
+
+	sf::Vector2i _StartingPoint;
+	sf::Vector2i _EndingPoint;
+
+	std::vector<Pair> _path;
+	
+	bool IsDebugMode() const;
+
+	int(&GetGridArray())[NB_LINES][NB_COLUMNS]{
+		return _gridArray;
+	}
+	
+	void SetDebugMode(bool debugMode);
+	void SetGridArrayItem(int column, int row, GridPieces piece);
 };
 
 Game* GetGame();
