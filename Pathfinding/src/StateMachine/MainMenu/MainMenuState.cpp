@@ -11,6 +11,8 @@
 #include "MainMenuState.h"
 #include "defined.h"
 #include "GameState/GameState.h"
+#include "UI/UIWidget.h"
+#include "UI/MainMenuWidget.h"
 
 #include <sstream>
 
@@ -24,6 +26,14 @@ MainMenuState::MainMenuState(GameDataRef data)
 {
 }
 
+MainMenuState::~MainMenuState()
+{
+	if (_MainMenuUi != nullptr) {
+		delete _MainMenuUi;
+		_MainMenuUi = nullptr;
+	}
+}
+
 /**
 * @fn Init
 * @brief  Initialize the state
@@ -35,6 +45,7 @@ void MainMenuState::Init()
 	SetTextures();
 	SetScales();
 	SetPositions();
+	_MainMenuUi = new MainMenuWidget(SCREEN_WIDTH, SCREEN_HEIGHT, _data);
 }
 
 /**
@@ -101,7 +112,9 @@ void MainMenuState::Draw(float dt)
 	_data->m_window.clear();
 
 	_data->m_window.draw(_background);
-	_data->m_window.draw(playButton);
+	_MainMenuUi->draw(_data->m_window);
+
+	//_data->m_window.draw(playButton);
 	_data->m_window.draw(title);
 
 	_data->m_window.display();
