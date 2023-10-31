@@ -24,3 +24,13 @@ GameDataRef UIWidget::GetGameDataRef() const
 {
 	return m_data;
 }
+
+int UIWidget::GetWidth() const
+{
+	return m_width;
+}
+
+int UIWidget::GetHeight() const
+{
+	return m_height;
+}

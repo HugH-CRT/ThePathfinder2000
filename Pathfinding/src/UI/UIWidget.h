@@ -19,6 +19,8 @@ public:
 	virtual void draw(sf::RenderWindow& window) = 0;
 
 	GameDataRef GetGameDataRef() const;
+	int GetWidth() const;
+	int GetHeight() const;
 
 	template<typename Element>
 	Element* addElement(std::string nameElement) {

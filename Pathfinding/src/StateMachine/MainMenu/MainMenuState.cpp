@@ -86,9 +86,6 @@ void MainMenuState::Update(float dt)
 */
 void MainMenuState::SetScales()
 {
-	title.setScale(0.2f, 0.2f);
-	_background.setScale(SCREEN_WIDTH / _background.getLocalBounds().width,
-						 SCREEN_HEIGHT / _background.getLocalBounds().height);
 }
 
 /**
@@ -97,9 +94,6 @@ void MainMenuState::SetScales()
 */
 void MainMenuState::SetPositions()
 {
-	playButton.setPosition(SCREEN_WIDTH / 2 - playButton.getGlobalBounds().width / 2,
-						   SCREEN_HEIGHT / 2 - playButton.getGlobalBounds().height / 2);
-	title.setPosition(SCREEN_WIDTH / 2 - title.getGlobalBounds().width / 2, title.getGlobalBounds().height * 0.1f);	
 }
 
 /**
@@ -111,11 +105,7 @@ void MainMenuState::Draw(float dt)
 {
 	_data->m_window.clear();
 
-	_data->m_window.draw(_background);
 	_MainMenuUi->draw(_data->m_window);
-
-	//_data->m_window.draw(playButton);
-	_data->m_window.draw(title);
 
 	_data->m_window.display();
 }
@@ -138,7 +128,4 @@ void MainMenuState::LoadTextures()
 */
 void MainMenuState::SetTextures()
 {
-	_background.setTexture(_data->m_assetManager.GetTexture("Main Menu Background"));
-	title.setTexture(_data->m_assetManager.GetTexture("Game Title"));
-	playButton.setTexture(_data->m_assetManager.GetTexture("Play Button"));
 }
