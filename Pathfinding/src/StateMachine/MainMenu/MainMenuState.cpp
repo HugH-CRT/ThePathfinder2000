@@ -11,9 +11,9 @@
 #include "MainMenuState.h"
 #include "defined.h"
 #include "GameState/GameState.h"
-#include "UI/UIWidget.h"
-#include "UI/MainMenuWidget.h"
-
+#include "macro.h"
+#include "UI/Widget/MainMenuWidget.h"
+#include "SFML/System/Vector2.hpp"
 #include <sstream>
 
 /**
@@ -28,10 +28,7 @@ MainMenuState::MainMenuState(GameDataRef data)
 
 MainMenuState::~MainMenuState()
 {
-	if (_MainMenuUi != nullptr) {
-		delete _MainMenuUi;
-		_MainMenuUi = nullptr;
-	}
+	DELETE_PTR(_MainMenuWidget);
 }
 
 /**
@@ -45,7 +42,8 @@ void MainMenuState::Init()
 	SetTextures();
 	SetScales();
 	SetPositions();
-	_MainMenuUi = new MainMenuWidget(SCREEN_WIDTH, SCREEN_HEIGHT, _data);
+	
+	_MainMenuWidget = new MainMenuWidget(sf::Vector2f(static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT)), _data);
 }
 
 /**
@@ -105,7 +103,7 @@ void MainMenuState::Draw(float dt)
 {
 	_data->m_window.clear();
 
-	_MainMenuUi->draw(_data->m_window);
+	_MainMenuWidget->Draw(_data->m_window);
 
 	_data->m_window.display();
 }

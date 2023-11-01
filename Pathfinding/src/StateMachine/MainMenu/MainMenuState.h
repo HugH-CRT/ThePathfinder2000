@@ -45,7 +45,7 @@ public:
 private: 
 		
 	GameDataRef _data;
-	class UIWidget* _MainMenuUi = nullptr;
+	class UIWidget* _MainMenuWidget = nullptr;
 	
 	sf::Sprite _background;
 	sf::Sprite playButton;
