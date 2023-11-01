@@ -22,12 +22,14 @@ void UIImage::SetScale(float scaleX, float scaleY)
 {
 	UIElement::SetScale(scaleX, scaleY);
 	_sprite.setScale(scaleX, scaleY);
+	_size = sf::Vector2f(_sprite.getGlobalBounds().width, _sprite.getGlobalBounds().height);
 }
 
 void UIImage::SetTexture(sf::Texture& texture)
 {
 	_sprite.setTexture(texture);
-	SetScale(_size.x / _sprite.getGlobalBounds().width, _size.y / _sprite.getGlobalBounds().height);
+	_size.x = _sprite.getGlobalBounds().width;
+	_size.y = _sprite.getGlobalBounds().height;
 }
 
 void UIImage::SetColor(sf::Color& color)

@@ -33,5 +33,4 @@ void UIElement::SetScale(float scaleX, float scaleY)
 		parentSize = _parentElement->_size;
 	}
 	_scale = sf::Vector2f(scaleX, scaleY);
-	_size = sf::Vector2f(parentSize.x + (_size.x * _scale.x), parentSize.y + (_size.y * _scale.y));
 }
