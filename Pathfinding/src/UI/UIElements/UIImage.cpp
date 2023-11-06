@@ -37,7 +37,13 @@ void UIImage::SetColor(sf::Color& color)
 	_sprite.setColor(color);
 }
 
+sf::Vector2f UIImage::GetSpriteSize() const
+{
+	return sf::Vector2f(_sprite.getGlobalBounds().width, _sprite.getGlobalBounds().height);
+}
+
 void UIImage::Draw(sf::RenderWindow& window) const
 {
 	window.draw(_sprite);
 }
+

@@ -1,6 +1,4 @@
 #include "UIElement.h"
-#include <SFML/Graphics/Sprite.hpp>
-#include "UIElement.h"
 
 UIElement::UIElement(sf::Vector2f size) : _size(size), _position(0, 0), _parentElement(nullptr), _scale(1.f,1.f)
 {
@@ -12,6 +10,11 @@ UIElement::UIElement(UIElement& parent, sf::Vector2f size, std::string& name) : 
 
 UIElement::~UIElement()
 {	
+}
+
+void UIElement::SetParent(UIElement& parent)
+{
+	_parentElement = &parent;
 }
 
 void UIElement::SetPosition(float positionX, float positionY)

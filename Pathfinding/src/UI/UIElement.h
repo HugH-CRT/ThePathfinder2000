@@ -22,6 +22,7 @@ public:
 
 	virtual void Draw(sf::RenderWindow& window) const = 0;
 
+	virtual void SetParent(UIElement& parent);
 	virtual void SetPosition(float positionX, float positionY);
 	virtual void SetScale(float scaleX, float scaleY);
 };

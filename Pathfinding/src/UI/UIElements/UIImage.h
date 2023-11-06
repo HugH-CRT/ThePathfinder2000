@@ -19,6 +19,8 @@ public:
 
 	void SetTexture(sf::Texture& texture);
 	void SetColor(sf::Color& color);
+
+	sf::Vector2f GetSpriteSize() const;
 private:
 	sf::Sprite _sprite;
 	sf::Color _imageColor;
