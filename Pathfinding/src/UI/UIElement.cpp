@@ -37,3 +37,8 @@ void UIElement::SetScale(float scaleX, float scaleY)
 	}
 	_scale = sf::Vector2f(scaleX, scaleY);
 }
+
+void UIElement::HandleEvents(sf::Event& event, sf::RenderWindow& window)
+{
+	UIEventListener::HandleEvents(event, window);
+}

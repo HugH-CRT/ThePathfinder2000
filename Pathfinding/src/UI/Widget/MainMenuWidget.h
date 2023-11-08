@@ -10,6 +10,8 @@ public:
 	MainMenuWidget(UIElement& parent, sf::Vector2f size, std::string& name);
 
 	virtual ~MainMenuWidget() override;
+
+	void StartGame();
 };
 
 #endif /* MAIN_MENU_WIDGET_H */

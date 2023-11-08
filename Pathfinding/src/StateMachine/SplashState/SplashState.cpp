@@ -11,6 +11,9 @@
 #include "SplashState.h"
 #include "defined.h"
 #include "MainMenu/MainMenuState.h"
+#include "UI/UIElements/UIWidget.h"
+#include "macro.h"
+#include "UI/Widget/SplashWidget.h"
 
 /**
 * @fn SplashState
@@ -20,6 +23,11 @@
 SplashState::SplashState(GameDataRef data) 
 	: m_data(std::move(data))
 {
+}
+
+SplashState::~SplashState()
+{
+	DELETE_PTR(m_slashWidget);
 }
 
 /**
@@ -32,6 +40,8 @@ void SplashState::Init()
 	LoadTextures();
 	SetTextures();
 	SetScales();
+
+	m_slashWidget = new SplashWidget(sf::Vector2f(static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT)), m_data);
 }
 
 /**
@@ -71,8 +81,6 @@ void SplashState::Update(float dt)
 */
 void SplashState::SetScales()
 {
-	m_background.setScale(SCREEN_WIDTH / m_background.getLocalBounds().width,
-						  SCREEN_HEIGHT / m_background.getLocalBounds().height);
 }
 
 /**
@@ -84,7 +92,7 @@ void SplashState::Draw(float dt)
 {
 	m_data->m_window.clear();
 
-	m_data->m_window.draw(m_background);
+	m_slashWidget->Draw(m_data->m_window);
 	
 	m_data->m_window.display();
 }
@@ -104,5 +112,4 @@ void SplashState::LoadTextures()
 */
 void SplashState::SetTextures()
 {
-	m_background.setTexture(m_data->m_assetManager.GetTexture("Splash State Background"));
 }

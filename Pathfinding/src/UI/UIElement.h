@@ -1,11 +1,13 @@
 #ifndef UI_ELEMENT_H
 #define UI_ELEMENT_H
 
+#include "UIElement.h"
 #include <SFML/Graphics.hpp>
-#include <string>
-#include <vector>
+#include "UI/Events/UIEventListener.h"
 
-class UIElement
+#include <string>
+
+class UIElement : public UIEventListener
 {
 public:
 	sf::Vector2f _size;
@@ -25,6 +27,7 @@ public:
 	virtual void SetParent(UIElement& parent);
 	virtual void SetPosition(float positionX, float positionY);
 	virtual void SetScale(float scaleX, float scaleY);
+	void HandleEvents(sf::Event& event, sf::RenderWindow& window) override;
 };
 
 #endif /* UI_ELEMENT_H */

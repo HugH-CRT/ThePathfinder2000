@@ -60,3 +60,15 @@ void UIButton::SetBackgroundImage(sf::Texture& texture)
 		_size = _backgroundImage->GetSpriteSize();
 	}
 }
+
+void UIButton::HandleEvents(sf::Event& event, sf::RenderWindow& window)
+{
+	if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code)
+	{
+		sf::IntRect tempRect(_position.x, _position.y, _size.x, _size.y);
+		if (tempRect.contains(sf::Mouse::getPosition(window)))
+		{
+			OnClickEvent();
+		}
+	}
+}

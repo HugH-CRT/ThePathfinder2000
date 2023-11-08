@@ -3,6 +3,10 @@
 #include "UI/UIElements/UIButton.h"
 #include "Game.h"
 
+#include <iostream>
+
+#include "GameState/GameState.h"
+
 MainMenuWidget::MainMenuWidget(sf::Vector2f size, GameDataRef& gameDataRef) : UIWidget(size, gameDataRef)
 {
 	UIImage* backgroundImage = addElement<UIImage>("background image");
@@ -17,6 +21,7 @@ MainMenuWidget::MainMenuWidget(sf::Vector2f size, GameDataRef& gameDataRef) : UI
 	UIButton* btnPlayGame = addElement<UIButton>("play button");
 	btnPlayGame->SetBackgroundImage(_gameDataRef.get()->m_assetManager.GetTexture("Play Button"));
 	btnPlayGame->SetPosition(((_size.x / 2) - (btnPlayGame->_size.x / 2)), (size.y / 2 ) - (btnPlayGame->_size.y / 2));
+	btnPlayGame->BindOnClick(this, &MainMenuWidget::StartGame);
 }
 
 MainMenuWidget::MainMenuWidget(UIElement& parent, sf::Vector2f size, std::string& name) : UIWidget(parent, size, name)
@@ -25,4 +30,9 @@ MainMenuWidget::MainMenuWidget(UIElement& parent, sf::Vector2f size, std::string
 
 MainMenuWidget::~MainMenuWidget()
 {
+}
+
+void MainMenuWidget::StartGame()
+{
+	_gameDataRef->machine.AddState(std::make_unique<GameState>(_gameDataRef), true);
 }

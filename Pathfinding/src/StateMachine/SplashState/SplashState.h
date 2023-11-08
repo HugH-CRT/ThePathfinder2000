@@ -27,6 +27,7 @@ class SplashState final : public State
 {
 public:
 	explicit SplashState(GameDataRef data);
+	virtual ~SplashState() override;
 
 	/* Implementation of State class */
 	
@@ -46,7 +47,7 @@ private:
 
 	sf::Clock m_clock;
 
-	sf::Sprite m_background;
+	class UIWidget* m_slashWidget;
 };
 
 #endif /* SPLASH_STATE_H */ 

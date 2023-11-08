@@ -60,12 +60,8 @@ void MainMenuState::HandleInput()
 		{
 			_data->m_window.close();
 		}
-		
-		// Start button
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(playButton, _data->m_window))
-		{
-			_data->machine.AddState(std::make_unique<GameState>(_data), true); 
-		}
+
+		_MainMenuWidget->HandleEvents(event, _data->m_window);
 	}
 }
 

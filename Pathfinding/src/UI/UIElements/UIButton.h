@@ -1,9 +1,13 @@
 #ifndef UI_BUTTON_H
 #define UI_BUTTON_H
 
-#include "UI/UIElement.h"
+#include <functional>
 
-class UIButton : public UIElement
+#include "UIImage.h"
+#include "UI/UIElement.h"
+#include "UI/Events/UIEvent.h"
+
+class UIButton final : public UIElement, public UIEvent
 {
 public:
 	explicit UIButton(sf::Vector2f size);
@@ -18,8 +22,19 @@ public:
 	void SetBackgroundColor(sf::Color& color) const;
 	void SetBackgroundImage(sf::Texture& texture);
 
+	template<typename C>
+	void BindOnClick(C* ctx, void(C::* fn)());
+	void HandleEvents(sf::Event& event, sf::RenderWindow& window) override;
+
 private:
 	class UIImage* _backgroundImage;
+	std::function<void()> OnClickEvent;
 };
+
+template <typename C>
+void UIButton::BindOnClick(C* ctx, void(C::* fn)())
+{
+	OnClickEvent = std::bind_front(fn, ctx);
+}
 
 #endif /* UI_BUTTON_H */

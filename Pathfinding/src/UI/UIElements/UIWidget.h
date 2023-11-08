@@ -14,7 +14,7 @@ public:
 
 	virtual ~UIWidget() override;
 	virtual void Draw(sf::RenderWindow& window) const override;
-	
+
 	template<typename Element>
 	Element* addElement(std::string nameElement) {
 		if (!std::is_base_of<UIElement, Element>()) {
@@ -25,6 +25,8 @@ public:
 		_childElements.push_back(element);
 		return element;
 	}
+
+	void HandleEvents(sf::Event& event, sf::RenderWindow& window) override;
 
 private:
 	std::vector<UIElement*> _childElements;
