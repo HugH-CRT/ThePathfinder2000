@@ -45,7 +45,7 @@ public:
 private: 
 		
 	GameDataRef _data;
-	class UIWidget* _MainMenuWidget = nullptr;
+	std::unique_ptr<class MainMenuWidget> _MainMenuWidget = nullptr;
 	
 	sf::Sprite _background;
 	sf::Sprite playButton;

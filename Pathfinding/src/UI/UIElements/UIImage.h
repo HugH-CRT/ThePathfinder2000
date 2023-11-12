@@ -5,7 +5,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Color.hpp>
 
-class UIImage : public UIElement
+class UIImage final : public UIElement
 {
 public:
 	explicit UIImage(sf::Vector2f size);
@@ -18,6 +18,7 @@ public:
 	virtual void Draw(sf::RenderWindow& window) const override;
 
 	void SetTexture(sf::Texture& texture);
+	void SwitchTexture(sf::Texture& newTexture);
 	void SetColor(sf::Color& color);
 
 	sf::Vector2f GetSpriteSize() const;

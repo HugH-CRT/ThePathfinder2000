@@ -32,6 +32,11 @@ void UIImage::SetTexture(sf::Texture& texture)
 	_size.y = _sprite.getGlobalBounds().height;
 }
 
+void UIImage::SwitchTexture(sf::Texture& newTexture)
+{
+	_sprite.setTexture(newTexture);
+}
+
 void UIImage::SetColor(sf::Color& color)
 {
 	_sprite.setColor(color);

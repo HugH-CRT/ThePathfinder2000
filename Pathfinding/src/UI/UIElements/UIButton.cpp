@@ -63,12 +63,26 @@ void UIButton::SetBackgroundImage(sf::Texture& texture)
 
 void UIButton::HandleEvents(sf::Event& event, sf::RenderWindow& window)
 {
-	if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code)
+	sf::IntRect tempRect(_position.x, _position.y, _size.x, _size.y);
+	if (tempRect.contains(sf::Mouse::getPosition(window)))
 	{
-		sf::IntRect tempRect(_position.x, _position.y, _size.x, _size.y);
-		if (tempRect.contains(sf::Mouse::getPosition(window)))
+		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code)
 		{
-			OnClickEvent();
+			if(OnClickEvent)
+			{
+				OnClickEvent();
+			}
 		}
+
+		if(!_isHover && OnHoverEvent)
+		{
+			_isHover = true;
+			OnHoverEvent();
+		}
+
+	}else if(_isHover&& OnUnHoverEvent)
+	{
+		_isHover = false;
+		OnUnHoverEvent();
 	}
 }

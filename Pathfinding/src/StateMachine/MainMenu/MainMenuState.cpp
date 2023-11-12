@@ -11,7 +11,6 @@
 #include "MainMenuState.h"
 #include "defined.h"
 #include "GameState/GameState.h"
-#include "macro.h"
 #include "UI/Widget/MainMenuWidget.h"
 #include "SFML/System/Vector2.hpp"
 #include <sstream>
@@ -28,7 +27,6 @@ MainMenuState::MainMenuState(GameDataRef data)
 
 MainMenuState::~MainMenuState()
 {
-	DELETE_PTR(_MainMenuWidget);
 }
 
 /**
@@ -43,7 +41,7 @@ void MainMenuState::Init()
 	SetScales();
 	SetPositions();
 	
-	_MainMenuWidget = new MainMenuWidget(sf::Vector2f(static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT)), _data);
+	_MainMenuWidget = std::make_unique<MainMenuWidget>(sf::Vector2f(static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT)), _data);
 }
 
 /**
@@ -114,6 +112,10 @@ void MainMenuState::LoadTextures()
 	_data->m_assetManager.LoadTexture("Game Title", MAIN_MENU_TITLE_PATH);
 	_data->m_assetManager.LoadTexture("Play Button", MAIN_MENU_PLAY_BUTTON);
 	_data->m_assetManager.LoadTexture("Play Button Outer", MAIN_MENU_PLAY_BUTTON_OUTER);
+
+	_data->m_assetManager.LoadTexture("Check Box Checked", CHECK_BOX_CHECKED);
+	_data->m_assetManager.LoadTexture("Check Box Unchecked", CHECK_BOX_UNCHECKED);
+	_data->m_assetManager.LoadFont("Robotto Font", FONT);
 }
 
 /**

@@ -15,26 +15,54 @@ public:
 
 	virtual ~UIButton() override;
 
-	virtual void SetPosition(float positionX, float positionY) override;
-	virtual void SetScale(float scaleX, float scaleY) override;
-	virtual void Draw(sf::RenderWindow& window) const override;
+	void SetPosition(float positionX, float positionY) override;
+	void SetScale(float scaleX, float scaleY) override;
+	void Draw(sf::RenderWindow& window) const override;
 
 	void SetBackgroundColor(sf::Color& color) const;
 	void SetBackgroundImage(sf::Texture& texture);
 
 	template<typename C>
 	void BindOnClick(C* ctx, void(C::* fn)());
+	template<typename C>
+	void BindOnHover(C* ctx, void(C::* fn)());
+	template<typename C>
+	void BindOnUnHover(C* ctx, void(C::* fn)());
 	void HandleEvents(sf::Event& event, sf::RenderWindow& window) override;
 
 private:
 	class UIImage* _backgroundImage;
 	std::function<void()> OnClickEvent;
+	std::function<void()> OnHoverEvent;
+	std::function<void()> OnUnHoverEvent;
+	bool _isHover = false;
 };
 
 template <typename C>
 void UIButton::BindOnClick(C* ctx, void(C::* fn)())
 {
-	OnClickEvent = std::bind_front(fn, ctx);
+	if(!OnClickEvent)
+	{
+		OnClickEvent = std::bind_front(fn, ctx);
+	}
+}
+
+template <typename C>
+void UIButton::BindOnHover(C* ctx, void(C::* fn)())
+{
+	if(!OnHoverEvent)
+	{
+		OnHoverEvent = std::bind_front(fn, ctx);
+	}
+}
+
+template <typename C>
+void UIButton::BindOnUnHover(C* ctx, void(C::* fn)())
+{
+	if(!OnUnHoverEvent)
+	{
+		OnUnHoverEvent = std::bind_front(fn, ctx);
+	}
 }
 
 #endif /* UI_BUTTON_H */

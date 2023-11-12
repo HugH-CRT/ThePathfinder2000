@@ -12,7 +12,6 @@
 #include "defined.h"
 #include "MainMenu/MainMenuState.h"
 #include "UI/UIElements/UIWidget.h"
-#include "macro.h"
 #include "UI/Widget/SplashWidget.h"
 
 /**
@@ -27,7 +26,6 @@ SplashState::SplashState(GameDataRef data)
 
 SplashState::~SplashState()
 {
-	DELETE_PTR(m_slashWidget);
 }
 
 /**
@@ -41,7 +39,7 @@ void SplashState::Init()
 	SetTextures();
 	SetScales();
 
-	m_slashWidget = new SplashWidget(sf::Vector2f(static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT)), m_data);
+	_slashWidget = std::make_unique<SplashWidget>(sf::Vector2f(static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT)), m_data);
 }
 
 /**
@@ -92,7 +90,7 @@ void SplashState::Draw(float dt)
 {
 	m_data->m_window.clear();
 
-	m_slashWidget->Draw(m_data->m_window);
+	_slashWidget->Draw(m_data->m_window);
 	
 	m_data->m_window.display();
 }

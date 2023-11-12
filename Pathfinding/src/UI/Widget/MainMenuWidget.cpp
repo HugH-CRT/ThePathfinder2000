@@ -2,9 +2,6 @@
 #include "UI/UIElements/UIImage.h"
 #include "UI/UIElements/UIButton.h"
 #include "Game.h"
-
-#include <iostream>
-
 #include "GameState/GameState.h"
 
 MainMenuWidget::MainMenuWidget(sf::Vector2f size, GameDataRef& gameDataRef) : UIWidget(size, gameDataRef)

@@ -9,5 +9,4 @@
 *
 * @date 21/10/2023
 */
-
 #define DELETE_PTR(ptr) if(ptr != nullptr) { delete ptr; ptr = nullptr; }

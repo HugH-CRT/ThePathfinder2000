@@ -9,9 +9,11 @@
 * @date 28/10/2023
 */
 #include "GameState.h"
+
 #include "defined.h"
 #include "PauseState/PauseState.h"
 #include "Game.h"
+#include "UI/Widget/GameWidget.h"
 
 /**
 * @fn GameState
@@ -38,6 +40,8 @@ void GameState::Init()
 	SetTexts();
 	SetPositions();
 	InitGridTiles();
+
+	_gameWidget = std::make_unique<GameWidget>(sf::Vector2f(static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT)), _data);
 }
 
 /**
@@ -55,11 +59,7 @@ void GameState::HandleInput()
 			_data->m_window.close();
 		}
 
-		// Pause the game
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code &&_data->m_inputManager.IsMouseOverSprite( _pauseButton, _data->m_window))
-		{
-			_data->machine.AddState(std::make_unique<PauseState>(_data), false);
-		}
+		_gameWidget->HandleEvents(event, _data->m_window);
 
 		// Left click to place the start point
 		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_gridSprite, _data->m_window))
@@ -99,55 +99,6 @@ void GameState::HandleInput()
 				PlacePiece(PORTAL_PIECE);
 			}
 		}
-
-		// Click on play button to start the game
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_playButton, _data->m_window))
-		{
-			ClearPath();
-			GetGame()->Play();
-		}
-
-		// Check / uncheck the diagonal mode
-		if (_data->m_inputManager.IsSpriteClicked(_checkBoxDiagMode, sf::Mouse::Left, _data->m_window))
-		{
-			GetGame()->_UseDiagonal = !GetGame()->_UseDiagonal;
-			_checkBoxDiagMode.setTexture(_data->m_assetManager.GetTexture(GetGame()->_UseDiagonal ? "Check Box Checked" : "Check Box Unchecked"));
-		}
-
-		// Check / uncheck the debug mode
-		if (_data->m_inputManager.IsSpriteClicked(_checkBoxDebugMode, sf::Mouse::Left, _data->m_window))
-		{
-			GetGame()->SetDebugMode(!GetGame()->IsDebugMode());
-			_checkBoxDebugMode.setTexture(_data->m_assetManager.GetTexture(GetGame()->IsDebugMode() ? "Check Box Checked" : "Check Box Unchecked"));
-		}
-
-		if (GetGame()->IsDebugMode())
-		{
-			// Click on the forward arrow to go to the next step
-			if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_forwardDebug, _data->m_window))
-			{
-				GetGame()->ForwardDebug();
-			}
-
-			// Click on the backward arrow to go to the previous step
-			if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_backwardDebug, _data->m_window))
-			{
-				GetGame()->BackwardDebug();
-			}
-		}
-
-		// clear button
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_clearButton, _data->m_window))
-		{
-			GetGame()->ResetGame();
-			InitGridTiles();
-		}
-
-		// clear path button
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_clearPathButton, _data->m_window))
-		{
-			ClearPath();
-		}
 	}
 }
 
@@ -166,17 +117,6 @@ void GameState::Update(float dt)
 */
 void GameState::SetScales()
 {
-	_background.setScale(SCREEN_WIDTH / _background.getLocalBounds().width,
-	                     SCREEN_HEIGHT / _background.getLocalBounds().height);
-	_pauseButton.setScale(0.3f, 0.3f);
-	_playButton.setScale(0.3f, 0.3f);
-	_checkBoxDiagMode.setScale(0.1f, 0.1f);
-	_checkBoxDebugMode.setScale(0.1f, 0.1f);
-	
-	_backwardDebug.setScale(0.5f, 0.5f);
-	_forwardDebug.setScale(0.5f, 0.5f);
-	_clearButton.setScale(0.5f, 0.5f);
-	_clearPathButton.setScale(0.5f, 0.5f);
 }
 
 /**
@@ -185,38 +125,8 @@ void GameState::SetScales()
 */
 void GameState::SetPositions()
 {
-	_pauseButton.setPosition(SCREEN_WIDTH - _pauseButton.getGlobalBounds().width, _pauseButton.getPosition().y);
-	_playButton.setPosition(_playButton.getGlobalBounds().width, _playButton.getPosition().y);
-	
 	_gridSprite.setPosition(SCREEN_WIDTH / 2 - _gridSprite.getGlobalBounds().width / 2,
 	                        SCREEN_HEIGHT / 2 - _gridSprite.getGlobalBounds().height / 2);
-	
-	_checkBoxDiagMode.setPosition(SCREEN_WIDTH / 4 - _checkBoxDiagMode.getGlobalBounds().width,
-	                              SCREEN_HEIGHT / 2 - _checkBoxDiagMode.getGlobalBounds().height);
-	
-	_checkBoxDiagText.setPosition(
-		SCREEN_WIDTH / 4 - _checkBoxDiagText.getGlobalBounds().width - _checkBoxDiagMode.getGlobalBounds().width * 2,
-		SCREEN_HEIGHT / 2 - _checkBoxDiagMode.getGlobalBounds().height);
-	
-	_checkBoxDebugMode.setPosition(SCREEN_WIDTH / 4 - _checkBoxDebugMode.getGlobalBounds().width,
-	                               SCREEN_HEIGHT / 2 - _checkBoxDebugMode.getGlobalBounds().height - _checkBoxDiagMode.
-	                               getGlobalBounds().height);
-	
-	_checkBoxDebugText.setPosition(
-		SCREEN_WIDTH / 4 - _checkBoxDebugText.getGlobalBounds().width - _checkBoxDebugMode.getGlobalBounds().width * 2,
-		SCREEN_HEIGHT / 2 - _checkBoxDebugMode.getGlobalBounds().height - _checkBoxDiagMode.getGlobalBounds().height);
-	
-	_backwardDebug.setPosition(SCREEN_WIDTH / 2 - _backwardDebug.getGlobalBounds().width / 2,
-	                           SCREEN_HEIGHT - _backwardDebug.getGlobalBounds().height);
-	
-	_forwardDebug.setPosition(SCREEN_WIDTH / 2 + _forwardDebug.getGlobalBounds().width / 2,
-	                          SCREEN_HEIGHT - _forwardDebug.getGlobalBounds().height);
-
-	_clearButton.setPosition(SCREEN_WIDTH / 2 - _clearButton.getGlobalBounds().width / 2,
-							_clearButton.getGlobalBounds().height / 2);
-
-	_clearPathButton.setPosition(SCREEN_WIDTH / 2 + _clearButton.getGlobalBounds().width + _clearPathButton.getGlobalBounds().width / 2,
-								_clearPathButton.getGlobalBounds().height / 2);
 }
 
 /**
@@ -227,19 +137,10 @@ void GameState::SetPositions()
 void GameState::Draw(float dt)
 {
 	_data->m_window.clear();
-	
-	_data->m_window.draw(_background);
+
+	_gameWidget->Draw(_data->m_window);
+
 	_data->m_window.draw(_gridSprite);
-	_data->m_window.draw(_playButton);
-	_data->m_window.draw(_checkBoxDiagText);
-	_data->m_window.draw(_forwardDebug);
-	_data->m_window.draw(_backwardDebug);
-	_data->m_window.draw(_checkBoxDebugText);
-	_data->m_window.draw(_checkBoxDebugMode);
-	_data->m_window.draw(_pauseButton);
-	_data->m_window.draw(_checkBoxDiagMode);
-	_data->m_window.draw(_clearButton);
-	_data->m_window.draw(_clearPathButton);
 
 	for (const auto& m_gridPiece : _gridPieces)
 	{
@@ -291,8 +192,6 @@ void GameState::LoadFonts()
 */
 void GameState::SetTexts()
 {
-	_checkBoxDiagText = sf::Text("Diagonal Movement", _data->m_assetManager.GetFont("Robotto Font"), 20);
-	_checkBoxDebugText = sf::Text("Debug mode", _data->m_assetManager.GetFont("Robotto Font"), 20);
 }
 
 /**
@@ -301,16 +200,7 @@ void GameState::SetTexts()
 */
 void GameState::SetTextures()
 {
-	_background.setTexture(_data->m_assetManager.GetTexture("Game Background"));
-	_pauseButton.setTexture(_data->m_assetManager.GetTexture("Pause Button"));
-	_playButton.setTexture(_data->m_assetManager.GetTexture("Play Button"));
 	_gridSprite.setTexture(_data->m_assetManager.GetTexture("Path"));
-	_checkBoxDiagMode.setTexture(_data->m_assetManager.GetTexture("Check Box Unchecked"));
-	_backwardDebug.setTexture(_data->m_assetManager.GetTexture("Backward Arrow"));
-	_forwardDebug.setTexture(_data->m_assetManager.GetTexture("Forward Arrow"));
-	_checkBoxDebugMode.setTexture(_data->m_assetManager.GetTexture("Check Box Unchecked"));
-	_clearButton.setTexture(_data->m_assetManager.GetTexture("Clear Button"));
-	_clearPathButton.setTexture(_data->m_assetManager.GetTexture("Clear Path Button"));
 }
 
 /**
@@ -425,6 +315,23 @@ void GameState::DrawStepPath(const Pair step, const bool isPath)
 	}
 }
 
+void GameState::PauseGame()
+{
+	_data->machine.AddState(std::make_unique<PauseState>(_data), false);
+}
+
+void GameState::Start()
+{
+	ClearPath();
+	GetGame()->Play();
+}
+
+void GameState::ClearAll()
+{
+	GetGame()->ResetGame();
+	InitGridTiles();
+}
+
 /**
 * @fn ClearPath
 * @brief Clear the path with the empty texture & reset the grid array value
@@ -443,6 +350,32 @@ void GameState::ClearPath()
 		}
 	}
 	GetGame()->ClearPath();
+}
+
+void GameState::DiagonalMode()
+{
+	GetGame()->_UseDiagonal = !GetGame()->_UseDiagonal;
+}
+
+void GameState::DebugMode()
+{
+	GetGame()->SetDebugMode(!GetGame()->IsDebugMode());
+}
+
+void GameState::ForwardDebug()
+{
+	if (GetGame()->IsDebugMode())
+	{
+		GetGame()->ForwardDebug();
+	}
+}
+
+void GameState::BackwardDebug()
+{
+	if (GetGame()->IsDebugMode())
+	{
+		GetGame()->BackwardDebug();
+	}
 }
 
 /**

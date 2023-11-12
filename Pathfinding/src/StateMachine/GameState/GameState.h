@@ -19,6 +19,7 @@
 #include "defined.h"
 
 #include <SFML/Graphics.hpp>
+#include <memory>
 
 /**
 * @enum GridPieces
@@ -43,6 +44,7 @@ class GameState final : public State
 {
 
 public:
+	GameState();
 	explicit GameState(GameDataRef data);
 	
 	/* ImplGameDataRef e class */
@@ -62,36 +64,29 @@ public:
 
 	void DrawStepPath(Pair step, bool isPath);
 
+	void PauseGame();
+	void Start();
+	void ClearAll();
+	void ClearPath();
+	void DiagonalMode();
+	void DebugMode();
+	void ForwardDebug();
+	void BackwardDebug();
+
 private : 
 
 	GameDataRef _data;
+	std::unique_ptr<class UIWidget> _gameWidget;
 
 #pragma region Sprites 
 
-	sf::Sprite _background;
-	sf::Sprite _backwardDebug;
-	sf::Sprite _checkBoxDebugMode;
-	sf::Sprite _checkBoxDiagMode;
-	sf::Sprite _forwardDebug;
 	sf::Sprite _gridPieces[NB_LINES][NB_COLUMNS];
 	sf::Sprite _gridSprite;
-	sf::Sprite _pauseButton;
-	sf::Sprite _playButton;
 	sf::Sprite _portal;
-	sf::Sprite _clearButton;
-	sf::Sprite _clearPathButton;
 
 #pragma endregion Sprites
-	
-#pragma region Texts 
-
-	sf::Text _checkBoxDebugText;
-	sf::Text _checkBoxDiagText;
-	
-#pragma endregion Texts
 
 	void InitGridTiles();
-	void ClearPath();
 	void PlaceItem(int column, int row, const std::string& textureName, GridPieces itemType, std::vector<sf::Vector2i>* itemContainer);
 	void ResetItem(int column, int row, GridPieces resetType, std::vector<sf::Vector2i>* itemContainer);
 	

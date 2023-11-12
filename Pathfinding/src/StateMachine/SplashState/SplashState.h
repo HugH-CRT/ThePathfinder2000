@@ -16,6 +16,7 @@
 
 #include "State.h"
 #include "Game.h"
+#include "UI/UIElements/UIWidget.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -47,7 +48,7 @@ private:
 
 	sf::Clock m_clock;
 
-	class UIWidget* m_slashWidget;
+	std::unique_ptr<UIWidget> _slashWidget;
 };
 
 #endif /* SPLASH_STATE_H */ 
