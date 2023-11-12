@@ -112,10 +112,6 @@ void MainMenuState::LoadTextures()
 	_data->m_assetManager.LoadTexture("Game Title", MAIN_MENU_TITLE_PATH);
 	_data->m_assetManager.LoadTexture("Play Button", MAIN_MENU_PLAY_BUTTON);
 	_data->m_assetManager.LoadTexture("Play Button Outer", MAIN_MENU_PLAY_BUTTON_OUTER);
-
-	_data->m_assetManager.LoadTexture("Check Box Checked", CHECK_BOX_CHECKED);
-	_data->m_assetManager.LoadTexture("Check Box Unchecked", CHECK_BOX_UNCHECKED);
-	_data->m_assetManager.LoadFont("Robotto Font", FONT);
 }
 
 /**
