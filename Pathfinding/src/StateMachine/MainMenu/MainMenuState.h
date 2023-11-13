@@ -27,7 +27,7 @@ class MainMenuState final : public State
 {
 public: 
 	explicit MainMenuState(GameDataRef data);
-	~MainMenuState();
+	virtual ~MainMenuState() override;
 
 	/* Implementation of State class */
 	
