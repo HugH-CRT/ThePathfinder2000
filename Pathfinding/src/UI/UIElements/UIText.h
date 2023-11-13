@@ -12,9 +12,9 @@ public:
 	UIText(UIElement& parent, sf::Vector2f size, std::string& name);
 
 	virtual ~UIText() override;
-	virtual void Draw(sf::RenderWindow& window) const;
-	virtual void SetPosition(float positionX, float positionY) override;
-	virtual void SetScale(float scaleX, float scaleY) override;
+	void Draw(sf::RenderWindow& window) const override;
+	void SetPosition(float positionX, float positionY) override;
+	void SetScale(float scaleX, float scaleY) override;
 
 	void SetString(std::string text);
 	void SetFontSize(unsigned size);

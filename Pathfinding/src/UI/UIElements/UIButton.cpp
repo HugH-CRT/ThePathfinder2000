@@ -1,20 +1,18 @@
 #include "UIButton.h"
 #include "UIImage.h"
-#include "macro.h"
 
-UIButton::UIButton(sf::Vector2f size) : UIElement(size), _backgroundImage(new UIImage(_size))
+UIButton::UIButton(sf::Vector2f size) : UIElement(size), _backgroundImage(std::make_unique<UIImage>(size))
 {
 	_backgroundImage->SetParent(*this);
 }
 
-UIButton::UIButton(UIElement& parent, sf::Vector2f size, std::string& name) : UIElement(parent, size, name), _backgroundImage(new UIImage(_size))
+UIButton::UIButton(UIElement& parent, sf::Vector2f size, std::string& name) : UIElement(parent, size, name), _backgroundImage(std::make_unique<UIImage>(size))
 {
 	_backgroundImage->SetParent(*this);
 }
 
 UIButton::~UIButton()
 {
-	DELETE_PTR(_backgroundImage);
 }
 
 void UIButton::SetPosition(float positionX, float positionY)

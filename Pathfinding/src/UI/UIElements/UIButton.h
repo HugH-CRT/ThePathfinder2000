@@ -7,7 +7,7 @@
 #include "UI/UIElement.h"
 #include "UI/Events/UIEvent.h"
 
-class UIButton final : public UIElement, public UIEvent
+class UIButton : public UIElement, public UIEvent
 {
 public:
 	explicit UIButton(sf::Vector2f size);
@@ -31,7 +31,7 @@ public:
 	void HandleEvents(sf::Event& event, sf::RenderWindow& window) override;
 
 private:
-	class UIImage* _backgroundImage;
+	std::unique_ptr<UIImage> _backgroundImage;
 	std::function<void()> OnClickEvent;
 	std::function<void()> OnHoverEvent;
 	std::function<void()> OnUnHoverEvent;

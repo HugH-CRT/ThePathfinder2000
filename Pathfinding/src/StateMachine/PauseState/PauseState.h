@@ -16,9 +16,6 @@
 
 #include "State.h"
 #include "Game.h"
-#include "UI/Widget/PauseWidget.h"
-
-#include <SFML/Graphics.hpp>
 #include <memory>
 /**
 * @class PauseState
@@ -50,7 +47,7 @@ private:
 
 	GameDataRef _data;
 
-	std::unique_ptr<PauseWidget> _pauseWidget;
+	std::unique_ptr<class UIWidget> _pauseWidget;
 };
 
 #endif /* PAUSE_STATE_H */

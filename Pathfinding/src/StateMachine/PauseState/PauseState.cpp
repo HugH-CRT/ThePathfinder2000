@@ -12,6 +12,7 @@
 #include "defined.h"
 #include "GameState/GameState.h"
 #include "MainMenu/MainMenuState.h"
+#include "UI/Widget/PauseWidget.h"
 
 /**
 * @fn PauseState

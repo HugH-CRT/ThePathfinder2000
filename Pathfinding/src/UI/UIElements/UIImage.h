@@ -13,9 +13,9 @@ public:
 
 	virtual ~UIImage() override;
 
-	virtual void SetPosition(float positionX, float positionY) override;
-	virtual void SetScale(float scaleX, float scaleY) override;
-	virtual void Draw(sf::RenderWindow& window) const override;
+	void SetPosition(float positionX, float positionY) override;
+	void SetScale(float scaleX, float scaleY) override;
+	void Draw(sf::RenderWindow& window) const override;
 
 	void SetTexture(sf::Texture& texture);
 	void SwitchTexture(sf::Texture& newTexture);

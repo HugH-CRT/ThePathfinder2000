@@ -2,9 +2,8 @@
 #define UI_ELEMENT_H
 
 #include "UIElement.h"
-#include <SFML/Graphics.hpp>
 #include "UI/Events/UIEventListener.h"
-
+#include <SFML/Graphics.hpp>
 #include <string>
 
 class UIElement : public UIEventListener
