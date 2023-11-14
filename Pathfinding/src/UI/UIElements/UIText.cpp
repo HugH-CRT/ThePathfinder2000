@@ -32,7 +32,7 @@ void UIText::SetScale(float scaleX, float scaleY)
 	_size = sf::Vector2f(_text.getGlobalBounds().width, _text.getGlobalBounds().height);
 }
 
-void UIText::SetString(std::string text)
+void UIText::SetString(std::string& text)
 {
 	_text.setString(text);
 	_size = sf::Vector2f(_text.getGlobalBounds().width, _text.getGlobalBounds().height);

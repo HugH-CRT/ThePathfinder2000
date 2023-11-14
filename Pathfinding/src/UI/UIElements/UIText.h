@@ -16,7 +16,7 @@ public:
 	void SetPosition(float positionX, float positionY) override;
 	void SetScale(float scaleX, float scaleY) override;
 
-	void SetString(std::string text);
+	void SetString(std::string& text);
 	void SetFontSize(unsigned size);
 	void SetFont(sf::Font& font);
 
