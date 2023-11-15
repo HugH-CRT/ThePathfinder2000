@@ -16,7 +16,6 @@ public:
 	UIElement* _parentElement = nullptr;
 	std::string _name;
 
-public:
 	explicit UIElement(sf::Vector2f size);
 	UIElement(UIElement& parent, sf::Vector2f size, std::string& name);
 	virtual ~UIElement();

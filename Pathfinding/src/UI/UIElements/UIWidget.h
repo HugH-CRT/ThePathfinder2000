@@ -12,8 +12,8 @@ public:
 	UIWidget(sf::Vector2f size, GameDataRef& gameDataRef);
 	UIWidget(UIElement& parent, sf::Vector2f size, std::string& name);
 
-	virtual ~UIWidget() override;
-	virtual void Draw(sf::RenderWindow& window) const override;
+	~UIWidget() override;
+	void Draw(sf::RenderWindow& window) const override;
 
 	template<typename Element>
 	Element* addElement(std::string nameElement) {

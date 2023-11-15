@@ -48,20 +48,26 @@ void UICheckbox::InitTexture(sf::Texture& uncheckedTexture, sf::Texture& checked
 	_size = newSize;
 }
 
-UIText& UICheckbox::GetText() const
+UIText& UICheckbox::GetText()
 {
 	if(_text)
 	{
 		return *_text;
 	}
+
+	UIText _emptyText = UIText{ sf::Vector2f{0,0} };
+	return _emptyText;
 }
 
-UIImage& UICheckbox::GetSprite() const
+UIImage& UICheckbox::GetSprite()
 {
 	if(_sprite)
 	{
 		return *_sprite;
 	}
+
+	UIImage _emptySprite = UIImage{ sf::Vector2f{0,0} };
+	return _emptySprite;
 }
 
 void UICheckbox::SetPosition(float positionX, float positionY)

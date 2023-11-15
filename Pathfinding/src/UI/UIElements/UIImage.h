@@ -11,7 +11,7 @@ public:
 	explicit UIImage(sf::Vector2f size);
 	UIImage(UIElement& parent, sf::Vector2f size, std::string& name);
 
-	virtual ~UIImage() override;
+	~UIImage() override;
 
 	void SetPosition(float positionX, float positionY) override;
 	void SetScale(float scaleX, float scaleY) override;

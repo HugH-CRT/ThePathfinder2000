@@ -16,12 +16,12 @@ class UICheckbox : public UIElement, public UIEvent
 public:
 	explicit UICheckbox(sf::Vector2f size);
 	UICheckbox(UIElement& parent, sf::Vector2f size, std::string& name);
-	virtual ~UICheckbox() override;
+	~UICheckbox() override;
 
 	void Init(sf::Texture& uncheckedTexture, sf::Texture& checkedTexture, std::string text, sf::Font& font);
 	void InitTexture(sf::Texture& uncheckedTexture, sf::Texture& checkedTexture);
-	UIText& GetText() const;
-	UIImage& GetSprite() const;
+	UIText& GetText();
+	UIImage& GetSprite();
 
 	void SetPosition(float positionX, float positionY) override;
 	void SetScale(float scaleX, float scaleY) override;

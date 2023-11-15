@@ -9,7 +9,7 @@ public:
 	GameWidget(sf::Vector2f size, GameDataRef& gameDataRef);
 	GameWidget(UIElement& parent, sf::Vector2f size, std::string& name);
 
-	virtual ~GameWidget() override;
+	~GameWidget() override;
 };
 
 #endif /* GAME_WDIGET_H */

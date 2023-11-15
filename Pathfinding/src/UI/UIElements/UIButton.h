@@ -13,7 +13,7 @@ public:
 	explicit UIButton(sf::Vector2f size);
 	UIButton(UIElement& parent, sf::Vector2f size, std::string& name);
 
-	virtual ~UIButton() override;
+	~UIButton() override;
 
 	void SetPosition(float positionX, float positionY) override;
 	void SetScale(float scaleX, float scaleY) override;

@@ -11,7 +11,7 @@ public:
 	explicit UIText(sf::Vector2f size);
 	UIText(UIElement& parent, sf::Vector2f size, std::string& name);
 
-	virtual ~UIText() override;
+	~UIText() override;
 	void Draw(sf::RenderWindow& window) const override;
 	void SetPosition(float positionX, float positionY) override;
 	void SetScale(float scaleX, float scaleY) override;

@@ -9,7 +9,7 @@ public:
 	SplashWidget(const sf::Vector2f& size, GameDataRef& gameDataRef);
 	SplashWidget(UIElement& parent, const sf::Vector2f& size, std::string& name);
 
-	virtual ~SplashWidget() override;
+	~SplashWidget() override;
 };
 
 #endif /* SPLASH_WIDGET_H */

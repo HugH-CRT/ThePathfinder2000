@@ -9,7 +9,7 @@ public:
 	MainMenuWidget(sf::Vector2f size, GameDataRef& gameDataRef);
 	MainMenuWidget(UIElement& parent, sf::Vector2f size, std::string& name);
 
-	virtual ~MainMenuWidget() override;
+	~MainMenuWidget() override;
 
 	void StartGame();
 };

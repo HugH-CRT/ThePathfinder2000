@@ -25,7 +25,7 @@ class SplashState final : public State
 {
 public:
 	explicit SplashState(GameDataRef data);
-	virtual ~SplashState() override;
+	~SplashState() override;
 
 	/* Implementation of State class */
 	
