@@ -17,8 +17,6 @@
 #include "State.h"
 #include "Game.h"
 
-#include <SFML/Graphics.hpp>
-
 /**
 * @class SplashState
 * @brief
@@ -27,6 +25,7 @@ class SplashState final : public State
 {
 public:
 	explicit SplashState(GameDataRef data);
+	~SplashState() override;
 
 	/* Implementation of State class */
 	
@@ -46,7 +45,7 @@ private:
 
 	sf::Clock m_clock;
 
-	sf::Sprite m_background;
+	std::unique_ptr<class UIWidget> _slashWidget;
 };
 
 #endif /* SPLASH_STATE_H */ 

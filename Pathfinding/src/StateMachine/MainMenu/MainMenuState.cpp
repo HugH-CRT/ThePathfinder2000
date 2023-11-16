@@ -11,7 +11,8 @@
 #include "MainMenuState.h"
 #include "defined.h"
 #include "GameState/GameState.h"
-
+#include "UI/Widget/MainMenuWidget.h"
+#include "SFML/System/Vector2.hpp"
 #include <sstream>
 
 /**
@@ -21,6 +22,10 @@
 */
 MainMenuState::MainMenuState(GameDataRef data) 
 	: _data(std::move(data))
+{
+}
+
+MainMenuState::~MainMenuState()
 {
 }
 
@@ -35,6 +40,8 @@ void MainMenuState::Init()
 	SetTextures();
 	SetScales();
 	SetPositions();
+	
+	_MainMenuWidget = std::make_unique<MainMenuWidget>(sf::Vector2f(static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT)), _data);
 }
 
 /**
@@ -51,12 +58,8 @@ void MainMenuState::HandleInput()
 		{
 			_data->m_window.close();
 		}
-		
-		// Start button
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(playButton, _data->m_window))
-		{
-			_data->machine.AddState(std::make_unique<GameState>(_data), true); 
-		}
+
+		_MainMenuWidget->HandleEvents(event, _data->m_window);
 	}
 }
 
@@ -75,9 +78,6 @@ void MainMenuState::Update(float dt)
 */
 void MainMenuState::SetScales()
 {
-	title.setScale(0.2f, 0.2f);
-	_background.setScale(SCREEN_WIDTH / _background.getLocalBounds().width,
-						 SCREEN_HEIGHT / _background.getLocalBounds().height);
 }
 
 /**
@@ -86,9 +86,6 @@ void MainMenuState::SetScales()
 */
 void MainMenuState::SetPositions()
 {
-	playButton.setPosition(SCREEN_WIDTH / 2 - playButton.getGlobalBounds().width / 2,
-						   SCREEN_HEIGHT / 2 - playButton.getGlobalBounds().height / 2);
-	title.setPosition(SCREEN_WIDTH / 2 - title.getGlobalBounds().width / 2, title.getGlobalBounds().height * 0.1f);	
 }
 
 /**
@@ -100,9 +97,7 @@ void MainMenuState::Draw(float dt)
 {
 	_data->m_window.clear();
 
-	_data->m_window.draw(_background);
-	_data->m_window.draw(playButton);
-	_data->m_window.draw(title);
+	_MainMenuWidget->Draw(_data->m_window);
 
 	_data->m_window.display();
 }
@@ -125,7 +120,4 @@ void MainMenuState::LoadTextures()
 */
 void MainMenuState::SetTextures()
 {
-	_background.setTexture(_data->m_assetManager.GetTexture("Main Menu Background"));
-	title.setTexture(_data->m_assetManager.GetTexture("Game Title"));
-	playButton.setTexture(_data->m_assetManager.GetTexture("Play Button"));
 }

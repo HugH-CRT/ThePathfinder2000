@@ -12,6 +12,7 @@
 #include "defined.h"
 #include "GameState/GameState.h"
 #include "MainMenu/MainMenuState.h"
+#include "UI/Widget/PauseWidget.h"
 
 /**
 * @fn PauseState
@@ -34,6 +35,8 @@ void PauseState::Init()
 	SetTextures();
 	SetScales();
 	SetPositions();
+
+	_pauseWidget = std::make_unique<PauseWidget>(sf::Vector2f(static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT)), _data);
 }
 
 /**
@@ -50,21 +53,8 @@ void PauseState::HandleInput()
 		{
 			_data->m_window.close();
 		}
-		
-		// Resume button
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->
-			m_inputManager.IsMouseOverSprite(_resumeButton, _data->m_window))
-		{
-			_data->machine.RemoveState();
-		}
 
-		// Home button
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->
-			m_inputManager.IsMouseOverSprite(_homeButton, _data->m_window))
-		{
-			_data->machine.RemoveState();
-			_data->machine.AddState(std::make_unique<MainMenuState>(_data), true);
-		}
+		_pauseWidget->HandleEvents(event, _data->m_window);
 	}
 }
 
@@ -83,10 +73,6 @@ void PauseState::Update(float dt)
 */
 void PauseState::SetScales()
 {
-	_resumeButton.setScale(0.1f, 0.1f);
-	_homeButton.setScale(0.1f, 0.1f);
-	_background.setScale(SCREEN_WIDTH / _background.getGlobalBounds().width,
-						 SCREEN_HEIGHT / _background.getGlobalBounds().height);	
 }
 
 /**
@@ -95,11 +81,17 @@ void PauseState::SetScales()
 */
 void PauseState::SetPositions()
 {
-	_resumeButton.setPosition(SCREEN_WIDTH / 2 - _resumeButton.getGlobalBounds().width / 2,
-							  SCREEN_HEIGHT / 3 - _resumeButton.getGlobalBounds().height / 2);
-	
-	_homeButton.setPosition(SCREEN_WIDTH / 2 - _homeButton.getGlobalBounds().width / 2,
-							SCREEN_HEIGHT / 3 * 2 - _homeButton.getGlobalBounds().height / 2);
+}
+
+void PauseState::ResumeState()
+{
+	_data->machine.RemoveState();
+}
+
+void PauseState::BackToHome()
+{
+	_data->machine.RemoveState();
+	_data->machine.AddState(std::make_unique<MainMenuState>(_data), true);
 }
 
 /**
@@ -111,9 +103,7 @@ void PauseState::Draw(float dt)
 {
 	_data->m_window.clear();
 
-	_data->m_window.draw(_background);
-	_data->m_window.draw(_resumeButton);
-	_data->m_window.draw(_homeButton);
+	_pauseWidget->Draw(_data->m_window);
 
 	_data->m_window.display();
 }
@@ -135,7 +125,4 @@ void PauseState::LoadTextures()
 */
 void PauseState::SetTextures()
 {
-	_background.setTexture(_data->m_assetManager.GetTexture("Pause Background"));
-	_resumeButton.setTexture(_data->m_assetManager.GetTexture("Resume Button"));
-	_homeButton.setTexture(_data->m_assetManager.GetTexture("Home Button"));
 }

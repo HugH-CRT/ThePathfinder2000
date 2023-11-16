@@ -27,6 +27,7 @@ class MainMenuState final : public State
 {
 public: 
 	explicit MainMenuState(GameDataRef data);
+	~MainMenuState() override;
 
 	/* Implementation of State class */
 	
@@ -44,6 +45,7 @@ public:
 private: 
 		
 	GameDataRef _data;
+	std::unique_ptr<class UIWidget> _MainMenuWidget;
 	
 	sf::Sprite _background;
 	sf::Sprite playButton;
