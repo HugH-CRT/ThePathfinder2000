@@ -13,38 +13,38 @@
 
 /// ********************************** RESSOURCES PATH ********************************** ///
 
-#define FONT "../../Pathfinding/Resources/Roboto-Black.ttf"
+#define FONT "../../Pathfinding/rsc/Roboto-Black.ttf"
 
-#define SPLASH_SCENE_BACKGROUND_FILEPATH "../../Pathfinding/Resources/BackgroundSplashScene.png"
+#define SPLASH_SCENE_BACKGROUND_FILEPATH "../../Pathfinding/rsc/BackgroundSplashScene.png"
 
-#define MAIN_MENU_BACKGROUND_FILEPATH "../../Pathfinding/Resources/BackgroundMainMenu.png"
-#define MAIN_MENU_TITLE_PATH "../../Pathfinding/Resources/PathfinderLogo.png"
-#define MAIN_MENU_PLAY_BUTTON "../../Pathfinding/Resources/PlayButton.png"
-#define MAIN_MENU_PLAY_BUTTON_OUTER "../../Pathfinding/Resources/CloseButtonLogo.png"
+#define MAIN_MENU_BACKGROUND_FILEPATH "../../Pathfinding/rsc/BackgroundMainMenu.png"
+#define MAIN_MENU_TITLE_PATH "../../Pathfinding/rsc/PathfinderLogo.png"
+#define MAIN_MENU_PLAY_BUTTON "../../Pathfinding/rsc/PlayButton.png"
+#define MAIN_MENU_PLAY_BUTTON_OUTER "../../Pathfinding/rsc/CloseButtonLogo.png"
 
-#define GAME_BACKGROUND_FILEPATH "../../Pathfinding/Resources/BackgroundGame.png"
-#define PAUSE_BUTTON "../../Pathfinding/Resources/PauseButton.png"
+#define GAME_BACKGROUND_FILEPATH "../../Pathfinding/rsc/BackgroundGame.png"
+#define PAUSE_BUTTON "../../Pathfinding/rsc/PauseButton.png"
 
-#define PAUSE_BACKGROUND_FILEPATH "../../Pathfinding/Resources/BackgroundPause.png"
-#define RESUME_BUTTON "../../Pathfinding/Resources/ResumeButton.png"
-#define HOME_BUTTON "../../Pathfinding/Resources/HomeButton.png"
+#define PAUSE_BACKGROUND_FILEPATH "../../Pathfinding/rsc/BackgroundPause.png"
+#define RESUME_BUTTON "../../Pathfinding/rsc/ResumeButton.png"
+#define HOME_BUTTON "../../Pathfinding/rsc/HomeButton.png"
 
-#define START_POINT "../../Pathfinding/Resources/StartPoint.png"
-#define END_POINT "../../Pathfinding/Resources/EndPoint.png"
-#define WALL "../../Pathfinding/Resources/Wall.png"
-#define PATH "../../Pathfinding/Resources/Path.png"
-#define EMPTY_TILE "../../Pathfinding/Resources/EmptyTile.png"
-#define CHECKPOINT "../../Pathfinding/Resources/CheckPoint.png"
-#define PORTAL "../../Pathfinding/Resources/Portal.png"
+#define START_POINT "../../Pathfinding/rsc/StartPoint.png"
+#define END_POINT "../../Pathfinding/rsc/EndPoint.png"
+#define WALL "../../Pathfinding/rsc/Wall.png"
+#define PATH "../../Pathfinding/rsc/Path.png"
+#define EMPTY_TILE "../../Pathfinding/rsc/EmptyTile.png"
+#define CHECKPOINT "../../Pathfinding/rsc/CheckPoint.png"
+#define PORTAL "../../Pathfinding/rsc/Portal.png"
 
-#define CHECK_BOX_CHECKED "../../Pathfinding/Resources/CheckBoxChecked.png"
-#define CHECK_BOX_UNCHECKED "../../Pathfinding/Resources/CheckBoxUnchecked.png" 
+#define CHECK_BOX_CHECKED "../../Pathfinding/rsc/CheckBoxChecked.png"
+#define CHECK_BOX_UNCHECKED "../../Pathfinding/rsc/CheckBoxUnchecked.png" 
 
-#define FORWARD_ARROW "../../Pathfinding/Resources/ForwardArrow.png"
-#define BACKWARD_ARROW "../../Pathfinding/Resources/BackwardArrow.png"
+#define FORWARD_ARROW "../../Pathfinding/rsc/ForwardArrow.png"
+#define BACKWARD_ARROW "../../Pathfinding/rsc/BackwardArrow.png"
 
-#define CLEAR_BUTTON "../../Pathfinding/Resources/ClearButton.png"
-#define CLEAR_PATH_BUTTON "../../Pathfinding/Resources/ClearPathButton.png"
+#define CLEAR_BUTTON "../../Pathfinding/rsc/ClearButton.png"
+#define CLEAR_PATH_BUTTON "../../Pathfinding/rsc/ClearPathButton.png"
 
 /// ********************************** PARAMETRES ********************************** ///
 
