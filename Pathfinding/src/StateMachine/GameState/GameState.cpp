@@ -20,7 +20,7 @@
 * @brief  
 * @param data
 */
-GameState::GameState(GameDataRef data) 
+GameState::GameState(GameDataRef data)
 	: _data(std::move(data)) 
 {
 	

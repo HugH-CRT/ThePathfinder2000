@@ -1,3 +1,16 @@
+/**
+* @file UICHeckBox.h
+*
+* @brief 
+* 
+* @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 0.1
+*
+* @date 21/10/2023
+*/
+
 #ifndef UI_CHECKBOX_H
 #define UI_CHECKBOX_H
 
@@ -15,7 +28,8 @@ class UICheckbox : public UIElement, public UIEvent
 {
 public:
 	explicit UICheckbox(sf::Vector2f size);
-	UICheckbox(UIElement& parent, sf::Vector2f size, std::string& name);
+	explicit UICheckbox(UIElement& parent, sf::Vector2f size, std::string& name);
+
 	~UICheckbox() override;
 
 	void Init(sf::Texture& uncheckedTexture, sf::Texture& checkedTexture, std::string text, sf::Font& font);

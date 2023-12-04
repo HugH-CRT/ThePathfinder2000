@@ -45,10 +45,18 @@ typedef std::pair<double, std::pair<int, int> > pPair;
 * @struct cell
 * @brief
 */
-struct cell {
+struct cell 
+{
 	int parent_i, parent_j;
 
 	double f, g, h; // f = g + h
+};
+
+struct grid
+{
+	int lines;
+	int columns;
+	GridPieces pieces;
 };
 
 /**
@@ -64,6 +72,9 @@ public:
 	std::vector<Pair> AStarAlgorithm(sf::Vector2i startingPoint, sf::Vector2i endingPoint, bool UseDiagonal, std::vector<Pair>& _path);
 
 	void Run();
+
+	int nb_lines = 10;
+	int nb_columns = 10;
 	
 private: 
 
@@ -125,7 +136,9 @@ public :
 	
 	bool IsDebugMode() const;
 
-	int(&GetGridArray())[NB_LINES][NB_COLUMNS]{
+	// c quoi cette merde ? 
+	int(&GetGridArray())[NB_LINES][NB_COLUMNS]
+	{
 		return _gridArray;
 	}
 	

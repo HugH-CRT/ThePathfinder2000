@@ -1,3 +1,16 @@
+/**
+* @file UIImage.h
+*
+* @brief
+*
+* @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
+*
+* @copyright TeamRandom (c) 2023
+* @version 0.1
+*
+* @date 21/10/2023
+*/
+
 #ifndef UI_IMAGE_H
 #define UI_IMAGE_H
 
@@ -9,7 +22,7 @@ class UIImage final : public UIElement
 {
 public:
 	explicit UIImage(sf::Vector2f size);
-	UIImage(UIElement& parent, sf::Vector2f size, std::string& name);
+	explicit UIImage(UIElement& parent, sf::Vector2f size, std::string& name);
 
 	~UIImage() override;
 
@@ -22,6 +35,7 @@ public:
 	void SetColor(sf::Color& color);
 
 	sf::Vector2f GetSpriteSize() const;
+
 private:
 	sf::Sprite _sprite;
 	sf::Color _imageColor;
