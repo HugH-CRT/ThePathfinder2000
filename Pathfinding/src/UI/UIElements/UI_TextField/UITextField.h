@@ -38,6 +38,8 @@ public:
 
     void SetNumericsOnly(bool check);
     void SetFont(sf::Font& font);
+    void SetMaxChar(unsigned int maxChars);
+    void SetSizeChar(int size);
     std::string GetText() const;
 
     void HandleEvents(sf::Event& event, sf::RenderWindow& window) override;

@@ -54,6 +54,16 @@ void UITextField::SetFont(sf::Font& font)
 	_drawText.setFont(font);
 }
 
+void UITextField::SetMaxChar(unsigned int maxChars)
+{
+	_size = maxChars;
+}
+
+void UITextField::SetSizeChar(int size)
+{
+	_drawText.setCharacterSize(size);
+}
+
 std::string UITextField::GetText() const
 {
 	return _text;
@@ -88,12 +98,14 @@ void UITextField::HandleEvents(sf::Event& event, sf::RenderWindow& window)
 				// Check if event.text.unicode between 48 and 57 // numerics only
 				if (event.text.unicode >= 48 && event.text.unicode <= 57)
 				{
-					_text += static_cast<char>(event.text.unicode);
+					if(_text.size() < _size)
+						_text += static_cast<char>(event.text.unicode);
 				}
 			}
 			else
 			{
-				_text += static_cast<char>(event.text.unicode);
+				if (_text.size() < _size)
+					_text += static_cast<char>(event.text.unicode);
 			}
 		}
 		

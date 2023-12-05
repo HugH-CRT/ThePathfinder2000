@@ -72,10 +72,12 @@ GameWidget::GameWidget(sf::Vector2f size, GameDataRef& gameDataRef)
 	clearPathButton->BindOnClick(_currentState, &GameState::ClearPath);
 
 	// TEST
-	UITextField* inputXGrid = addElement<UITextField>("input x grid"); 
-	inputXGrid->SetScale(0.1f, 0.1f);
+	UITextField* inputXGrid = addElement<UITextField>("input x grid");
+	inputXGrid->SetScale(0.05f, 0.05f);
 	inputXGrid->SetPosition(5.f, 50.f);
 	inputXGrid->SetFont(_gameDataRef.get()->m_assetManager.GetFont("Robotto Font"));
+	inputXGrid->SetMaxChar(2);
+	inputXGrid->SetSizeChar(400);
 	inputXGrid->SetNumericsOnly(true);
 	//
 }
