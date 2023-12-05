@@ -1,11 +1,13 @@
 #include "GameWidget.h"
 
 #include "GameState/GameState.h"
-#include "UI/UIElements/UIImage.h"
-#include "UI/UIElements/UIButton.h"
-#include "UI/UIElements/UICheckbox.h"
+#include "UIElements/UI_Image/UIImage.h"
+#include "UIElements/UI_Button/UIButton.h"
+#include "UIElements/UI_CheckBox/UICheckbox.h"
+#include "UIElements/UI_TextField/UITextField.h"
 
-GameWidget::GameWidget(sf::Vector2f size, GameDataRef& gameDataRef) : UIWidget(size, gameDataRef)
+GameWidget::GameWidget(sf::Vector2f size, GameDataRef& gameDataRef) 
+	: UIWidget(size, gameDataRef)
 {
 	GameState* _currentState = reinterpret_cast<GameState*>(_gameDataRef.get()->machine.GetActiveState().get());
 
@@ -68,9 +70,17 @@ GameWidget::GameWidget(sf::Vector2f size, GameDataRef& gameDataRef) : UIWidget(s
 	clearPathButton->SetScale(.5f, .5f);
 	clearPathButton->SetPosition(_size.x / 2 + clearAllButton->_size.x + clearPathButton->_size.x / 2, clearPathButton->_size.y / 2);
 	clearPathButton->BindOnClick(_currentState, &GameState::ClearPath);
+
+	// TEST
+	UITextField* inputXGrid = addElement<UITextField>("input x grid"); 
+	inputXGrid->SetScale(0.1f, 0.1f);
+	inputXGrid->SetPosition(5.f, 50.f);
+	inputXGrid->SetFont(_gameDataRef.get()->m_assetManager.GetFont("Robotto Font"));
+	//
 }
 
-GameWidget::GameWidget(UIElement& parent, sf::Vector2f size, std::string& name) : UIWidget(parent, size, name)
+GameWidget::GameWidget(UIElement* parent, sf::Vector2f size, std::string& name) 
+	: UIWidget(parent, size, name)
 {
 }
 

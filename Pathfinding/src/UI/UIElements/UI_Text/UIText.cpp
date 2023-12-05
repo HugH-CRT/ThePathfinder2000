@@ -1,11 +1,13 @@
-#include "UI/UIElements/UIText.h"
+#include "UIText.h"
 
-UIText::UIText(sf::Vector2f size) : UIElement(size)
+UIText::UIText(sf::Vector2f size) 
+	: UIElement(size)
 {
 	SetFontSize(20);
 }
 
-UIText::UIText(UIElement& parent, sf::Vector2f size, std::string& name) : UIElement(parent, size, name)
+UIText::UIText(UIElement* parent, sf::Vector2f size, std::string& name) 
+	: UIElement(parent, size, name)
 {
 	SetFontSize(20);
 }

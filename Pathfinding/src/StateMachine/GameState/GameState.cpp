@@ -13,7 +13,7 @@
 #include "defined.h"
 #include "PauseState/PauseState.h"
 #include "Game.h"
-#include "UI/Widget/GameWidget.h"
+#include "Widget/GameWidget/GameWidget.h"
 
 /**
 * @fn GameState

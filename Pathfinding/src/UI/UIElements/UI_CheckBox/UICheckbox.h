@@ -14,12 +14,14 @@
 #ifndef UI_CHECKBOX_H
 #define UI_CHECKBOX_H
 
-#include "UI/UIElement.h"
-#include "UI/UIElements/UIText.h"
-#include "UIImage.h"
-#include "UI/Events/UIEvent.h"
+#include "UIElements/UIElement.h"
+#include "UIElements/UI_Text/UIText.h"
+#include "UIElements/UI_Image/UIImage.h"
+#include "Events/UIEvent.h"
+
 #include "SFML/Graphics/Texture.hpp"
 #include "SFML/Graphics/Font.hpp"
+
 #include <memory>
 #include <string>
 #include <functional>
@@ -28,7 +30,7 @@ class UICheckbox : public UIElement, public UIEvent
 {
 public:
 	explicit UICheckbox(sf::Vector2f size);
-	explicit UICheckbox(UIElement& parent, sf::Vector2f size, std::string& name);
+	explicit UICheckbox(UIElement* parent, sf::Vector2f size, std::string& name);
 
 	~UICheckbox() override;
 

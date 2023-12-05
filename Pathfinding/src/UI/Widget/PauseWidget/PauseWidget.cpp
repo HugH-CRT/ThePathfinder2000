@@ -1,10 +1,11 @@
 #include "PauseWidget.h"
 
 #include "PauseState/PauseState.h"
-#include "UI/UIElements/UIImage.h"
-#include "UI/UIElements/UIButton.h"
+#include "UIElements/UI_Image/UIImage.h"
+#include "UIElements/UI_Button/UIButton.h"
 
-PauseWidget::PauseWidget(sf::Vector2f size, GameDataRef& gameDataRef) : UIWidget(size, gameDataRef)
+PauseWidget::PauseWidget(sf::Vector2f size, GameDataRef& gameDataRef) 
+	: UIWidget(size, gameDataRef)
 {
 	PauseState* pauseState = reinterpret_cast<PauseState*>(_gameDataRef.get()->machine.GetActiveState().get());
 
@@ -25,7 +26,8 @@ PauseWidget::PauseWidget(sf::Vector2f size, GameDataRef& gameDataRef) : UIWidget
 	homeButton->BindOnClick(pauseState, &PauseState::BackToHome);
 }
 
-PauseWidget::PauseWidget(UIElement& parent, sf::Vector2f size, std::string& name) : UIWidget(parent, size, name)
+PauseWidget::PauseWidget(UIElement* parent, sf::Vector2f size, std::string& name)
+	: UIWidget(parent, size, name)
 {
 }
 

@@ -11,7 +11,7 @@
 #include "MainMenuState.h"
 #include "defined.h"
 #include "GameState/GameState.h"
-#include "UI/Widget/MainMenuWidget.h"
+#include "Widget/MainMenuWidget/MainMenuWidget.h"
 #include "SFML/System/Vector2.hpp"
 #include <sstream>
 

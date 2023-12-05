@@ -1,10 +1,16 @@
-#include "UI/UIElements/UICheckbox.h"
+#include "UICheckbox.h"
 
-UICheckbox::UICheckbox(sf::Vector2f size) : UIElement(size), _text(std::make_unique<UIText>(_size)), _sprite(std::make_unique<UIImage>(_size))
+UICheckbox::UICheckbox(sf::Vector2f size) 
+	: UIElement(size)
+	, _text(std::make_unique<UIText>(_size))
+	, _sprite(std::make_unique<UIImage>(_size))
 {
 }
 
-UICheckbox::UICheckbox(UIElement& parent, sf::Vector2f size, std::string& name) : UIElement(parent, size, name), _text(std::make_unique<UIText>(_size)), _sprite(std::make_unique<UIImage>(_size))
+UICheckbox::UICheckbox(UIElement* parent, sf::Vector2f size, std::string& name)
+	: UIElement(parent, size, name)
+	, _text(std::make_unique<UIText>(_size))
+	, _sprite(std::make_unique<UIImage>(_size))
 {
 }
 
@@ -14,11 +20,11 @@ UICheckbox::~UICheckbox()
 
 void UICheckbox::Init(sf::Texture& uncheckedTexture, sf::Texture& checkedTexture, std::string text, sf::Font& font)
 {
-	_text->SetParent(*this);
+	_text->SetParent(this);
 	_text->SetFont(font);
 	_text->SetString(text);
 
-	_sprite->SetParent(*this);
+	_sprite->SetParent(this);
 	InitTexture(uncheckedTexture, checkedTexture);
 }
 
@@ -113,8 +119,6 @@ void UICheckbox::Draw(sf::RenderWindow& window) const
 	{
 		_text->Draw(window);
 	}
-
-	
 }
 
 void UICheckbox::HandleEvents(sf::Event& event, sf::RenderWindow& window)
@@ -140,7 +144,8 @@ void UICheckbox::SwitchState()
 	if(_isChecked)
 	{
 		_sprite->SwitchTexture(_checkedTexture);
-	}else
+	}
+	else
 	{
 		_sprite->SwitchTexture(_uncheckedTexture);
 	}

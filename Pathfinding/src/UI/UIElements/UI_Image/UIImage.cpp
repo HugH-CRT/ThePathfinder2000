@@ -1,10 +1,12 @@
 #include "UIImage.h"
 
-UIImage::UIImage(sf::Vector2f size) : UIElement(size)
+UIImage::UIImage(sf::Vector2f size)
+	: UIElement(size)
 {
 }
 
-UIImage::UIImage(UIElement& parent, sf::Vector2f size, std::string& name) : UIElement(parent, size, name)
+UIImage::UIImage(UIElement* parent, sf::Vector2f size, std::string& name)
+	: UIElement(parent, size, name)
 {
 }
 

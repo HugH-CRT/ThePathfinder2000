@@ -15,9 +15,9 @@
 #define UI_BUTTON_H
 
 
-#include "UIImage.h"
-#include "UI/UIElement.h"
-#include "UI/Events/UIEvent.h"
+#include "UIElements/UI_Image/UIImage.h"
+#include "UIElements/UIElement.h"
+#include "Events/UIEvent.h"
 
 #include <functional>
 
@@ -25,7 +25,7 @@ class UIButton : public UIElement, public UIEvent
 {
 public:
 	explicit UIButton(sf::Vector2f size);
-	explicit UIButton(UIElement& parent, sf::Vector2f size, std::string& name);
+	explicit UIButton(UIElement* parent, sf::Vector2f size, std::string& name);
 
 	~UIButton() override;
 

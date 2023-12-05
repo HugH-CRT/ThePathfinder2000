@@ -15,7 +15,8 @@
 #define UI_ELEMENT_H
 
 #include "UIElement.h"
-#include "UI/Events/UIEventListener.h"
+#include "Events/UIEventListener.h"
+
 #include <SFML/Graphics.hpp>
 #include <string>
 
@@ -23,13 +24,13 @@ class UIElement : public UIEventListener
 {
 public:
 	explicit UIElement(sf::Vector2f size);
-	explicit UIElement(UIElement& parent, sf::Vector2f size, std::string& name);
+	explicit UIElement(UIElement* parent, sf::Vector2f size, std::string& name);
 
 	virtual ~UIElement();
 
 	virtual void Draw(sf::RenderWindow& window) const = 0;
 
-	virtual void SetParent(UIElement& parent);
+	virtual void SetParent(UIElement* parent);
 	virtual void SetPosition(float positionX, float positionY);
 	virtual void SetScale(float scaleX, float scaleY);
 	void HandleEvents(sf::Event& event, sf::RenderWindow& window) override;

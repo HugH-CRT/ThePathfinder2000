@@ -1,14 +1,16 @@
 #include "UIButton.h"
-#include "UIImage.h"
+// #include "UIElements/UI_Image/UIImage.h"
 
 UIButton::UIButton(sf::Vector2f size) : UIElement(size), _backgroundImage(std::make_unique<UIImage>(size))
 {
-	_backgroundImage->SetParent(*this);
+	_backgroundImage->SetParent(this);
 }
 
-UIButton::UIButton(UIElement& parent, sf::Vector2f size, std::string& name) : UIElement(parent, size, name), _backgroundImage(std::make_unique<UIImage>(size))
+UIButton::UIButton(UIElement* parent, sf::Vector2f size, std::string& name) 
+	: UIElement(parent, size, name)
+	, _backgroundImage(std::make_unique<UIImage>(size))
 {
-	_backgroundImage->SetParent(*this);
+	_backgroundImage->SetParent(this);
 }
 
 UIButton::~UIButton()

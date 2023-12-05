@@ -11,8 +11,8 @@
 #include "SplashState.h"
 #include "defined.h"
 #include "MainMenu/MainMenuState.h"
-#include "UI/UIElements/UIWidget.h"
-#include "UI/Widget/SplashWidget.h"
+#include "Widget/UIWidget.h"
+#include "Widget/SplashWidget/SplashWidget.h"
 
 /**
 * @fn SplashState

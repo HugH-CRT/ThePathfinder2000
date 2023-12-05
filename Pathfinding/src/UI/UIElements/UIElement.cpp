@@ -1,10 +1,19 @@
 #include "UIElement.h"
 
-UIElement::UIElement(sf::Vector2f size) : _size(size), _position(0, 0), _parentElement(nullptr), _scale(1.f,1.f)
+UIElement::UIElement(sf::Vector2f size) 
+	: _size(size)
+	, _position(0, 0)
+	, _parentElement(nullptr)
+	, _scale(1.f,1.f)
 {
 }
 
-UIElement::UIElement(UIElement& parent, sf::Vector2f size, std::string& name) : _parentElement(&parent), _size(size), _name(name), _position(0,0), _scale(1.f, 1.f)
+UIElement::UIElement(UIElement* parent, sf::Vector2f size, std::string& name) 
+	: _parentElement(parent)
+	, _size(size)
+	, _name(name)
+	, _position(0,0)
+	, _scale(1.f, 1.f)
 {
 }
 
@@ -12,16 +21,17 @@ UIElement::~UIElement()
 {	
 }
 
-void UIElement::SetParent(UIElement& parent)
+void UIElement::SetParent(UIElement* parent)
 {
-	_parentElement = &parent;
+	_parentElement = parent;
 }
 
 void UIElement::SetPosition(float positionX, float positionY)
 {
 	sf::Vector2f parentPosition{ 0,0 };
 	sf::Vector2f parentSize{ 0, 0 };
-	if (&_parentElement) {
+	if (_parentElement) 
+	{
 		parentPosition = _parentElement->_position;
 		parentSize = _parentElement->_size;
 	}

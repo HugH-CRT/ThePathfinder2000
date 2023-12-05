@@ -14,7 +14,7 @@
 #ifndef UI_TEXT_H
 #define UI_TEXT_H
 
-#include "UI/UIElement.h"
+#include "UIElements/UIElement.h"
 #include "SFML/Graphics/Text.hpp"
 #include <string>
 
@@ -22,7 +22,7 @@ class UIText : public UIElement
 {
 public:
 	explicit UIText(sf::Vector2f size);
-	explicit UIText(UIElement& parent, sf::Vector2f size, std::string& name);
+	explicit UIText(UIElement* parent, sf::Vector2f size, std::string& name);
 
 	~UIText() override;
 

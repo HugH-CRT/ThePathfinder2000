@@ -14,7 +14,8 @@
 #ifndef UI_IMAGE_H
 #define UI_IMAGE_H
 
-#include "UI\UIElement.h"
+#include "UIElements/UIElement.h"
+
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Color.hpp>
 
@@ -22,7 +23,7 @@ class UIImage final : public UIElement
 {
 public:
 	explicit UIImage(sf::Vector2f size);
-	explicit UIImage(UIElement& parent, sf::Vector2f size, std::string& name);
+	explicit UIImage(UIElement* parent, sf::Vector2f size, std::string& name);
 
 	~UIImage() override;
 

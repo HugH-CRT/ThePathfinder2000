@@ -14,7 +14,7 @@
 #ifndef UI_WIDGET_H
 #define UI_WIDGET_H
 
-#include "UI/UIElement.h"
+#include "UIElements/UIElement.h"
 #include "Game.h"
 
 class UIWidget : public UIElement
@@ -23,7 +23,7 @@ public:
 	GameDataRef _gameDataRef;
 
 	explicit UIWidget(sf::Vector2f size, GameDataRef& gameDataRef);
-	explicit UIWidget(UIElement& parent, sf::Vector2f size, std::string& name);
+	explicit UIWidget(UIElement* parent, sf::Vector2f size, std::string& name);
 
 	~UIWidget() override;
 	void Draw(sf::RenderWindow& window) const override;
@@ -36,7 +36,7 @@ public:
 			return nullptr;
 		}
 
-		Element* element = new Element(*this, _size, nameElement);
+		Element* element = new Element(this, _size, nameElement);
 		_childElements.push_back(element);
 		return element;
 	}
@@ -46,4 +46,5 @@ public:
 private:
 	std::vector<UIElement*> _childElements;
 };
+
 #endif /* UI_WIDGET_H */
