@@ -36,6 +36,7 @@ public:
     void SetPosition(float positionX, float positionY) override;
     void SetScale(float scaleX, float scaleY) override;
 
+    void SetNumericsOnly(bool check);
     void SetFont(sf::Font& font);
     std::string GetText() const;
 
@@ -50,6 +51,7 @@ private:
     std::string _text;
     sf::RectangleShape _rect;
     bool _hasFocus = false;
+    bool _numericsOnly = false;
 
 };
 

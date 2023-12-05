@@ -76,6 +76,7 @@ GameWidget::GameWidget(sf::Vector2f size, GameDataRef& gameDataRef)
 	inputXGrid->SetScale(0.1f, 0.1f);
 	inputXGrid->SetPosition(5.f, 50.f);
 	inputXGrid->SetFont(_gameDataRef.get()->m_assetManager.GetFont("Robotto Font"));
+	inputXGrid->SetNumericsOnly(true);
 	//
 }
 

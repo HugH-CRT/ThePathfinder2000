@@ -44,6 +44,11 @@ void UITextField::SetScale(float scaleX, float scaleY)
 	_drawText.setScale(scaleX, scaleY);
 }
 
+void UITextField::SetNumericsOnly(bool check)
+{
+	_numericsOnly = check;
+}
+
 void UITextField::SetFont(sf::Font& font)
 {
 	_drawText.setFont(font);
@@ -64,14 +69,32 @@ void UITextField::HandleEvents(sf::Event& event, sf::RenderWindow& window)
 
 	if (event.type == sf::Event::TextEntered && _hasFocus) 
 	{
-		if (event.text.unicode == 8 && !_text.empty()) 
+		if (!_numericsOnly)
+		{
+			if (event.text.unicode == 13 && !_text.empty()) // Carriage Return
+			{
+				_text += "\r\n";
+			}
+		}
+
+		if (event.text.unicode == 8 && !_text.empty()) // Backspace
 		{ 
 			_text.pop_back();
 		}
-		else if (event.text.unicode < 128) 
+		else if (event.text.unicode < 128 && event.text.unicode != 13) 
 		{
-			_text += static_cast<char>(event.text.unicode);
-			std::cout << " t : " << _text << "\n"; 
+			if (_numericsOnly)
+			{
+				// Check if event.text.unicode between 48 and 57 // numerics only
+				if (event.text.unicode >= 48 && event.text.unicode <= 57)
+				{
+					_text += static_cast<char>(event.text.unicode);
+				}
+			}
+			else
+			{
+				_text += static_cast<char>(event.text.unicode);
+			}
 		}
 		
 		_drawText.setString(_text);
