@@ -23,7 +23,7 @@ typedef std::unique_ptr<State> StateRef;
 
 /**
 * @class StateMachine
-* @brief
+* @brief Manage the states of the game
 */
 class StateMachine
 {
@@ -31,7 +31,7 @@ public:
 	StateMachine();
 	StateMachine(const StateMachine&) = delete;
 	StateMachine& operator=(const StateMachine&) = delete;
-	~StateMachine() { }
+	~StateMachine() = default;
 
 	void AddState(StateRef newState, bool isReplacing = true);
 	void ProcessStateChanges();

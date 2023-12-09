@@ -16,8 +16,8 @@
 
 /**
 * @fn PauseState
-* @brief  
-* @param data
+* @brief Constructor of the PauseState class
+* @param data : shared pointer on the game data
 */
 PauseState::PauseState(GameDataRef data) 
 	: _data(std::move(data))
@@ -60,8 +60,8 @@ void PauseState::HandleInput()
 
 /**
 * @fn Update
-* @brief  
-* @param dt
+* @brief Update the state
+* @param dt : Delta time
 */
 void PauseState::Update(float dt)
 {
@@ -83,11 +83,19 @@ void PauseState::SetPositions()
 {
 }
 
+/**
+ * @fn ResumeState
+ * @brief Resume the state
+ */
 void PauseState::ResumeState()
 {
 	_data->machine.RemoveState();
 }
 
+/**
+ * @fn BackToHome
+ * @brief Back to the home state
+ */
 void PauseState::BackToHome()
 {
 	_data->machine.RemoveState();

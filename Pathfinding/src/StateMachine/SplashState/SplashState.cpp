@@ -16,17 +16,15 @@
 
 /**
 * @fn SplashState
-* @brief  
-* @param data
+* @brief Constructor of the SplashState class
+* @param data : shared pointer on the game data
 */
 SplashState::SplashState(GameDataRef data) 
 	: m_data(std::move(data))
 {
 }
 
-SplashState::~SplashState()
-{
-}
+SplashState::~SplashState() = default;
 
 /**
 * @fn Init
@@ -63,7 +61,7 @@ void SplashState::HandleInput()
 * @fn Update
 * @brief Update the state
 *	     Switch to the main menu state after a certain time
-* @param dt
+* @param dt : delta time
 */
 void SplashState::Update(float dt)
 {
@@ -84,7 +82,7 @@ void SplashState::SetScales()
 /**
 * @fn Draw
 * @brief Draw the elements of the state 
-* @param dt
+* @param dt : delta time
 */
 void SplashState::Draw(float dt)
 {

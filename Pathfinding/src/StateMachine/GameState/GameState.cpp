@@ -2,23 +2,25 @@
 * @file GameState.cpp
 * @brief  
 *
-* @author
+* @authors yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
 * 
 * @copyright 
 * @version 1.0.0
 * @date 28/10/2023
 */
-#include "GameState.h"
 
+#include "GameState.h"
 #include "defined.h"
 #include "PauseState/PauseState.h"
 #include "Game.h"
 #include "UI/Widget/GameWidget.h"
 
+GameState::GameState() = default;
+
 /**
 * @fn GameState
-* @brief  
-* @param data
+* @brief Constructor
+* @param data : Game data reference
 */
 GameState::GameState(GameDataRef data) 
 	: _data(std::move(data)) 
@@ -61,51 +63,14 @@ void GameState::HandleInput()
 
 		_gameWidget->HandleEvents(event, _data->m_window);
 
-		// Left click to place the start point
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Left == event.key.code && _data->m_inputManager.IsMouseOverSprite(_gridSprite, _data->m_window))
-		{
-			PlacePiece(START_PIECE);
-		}
-
-		// Right click to place the end point
-		if (sf::Event::MouseButtonReleased == event.type && sf::Mouse::Right == event.key.code && _data->m_inputManager.IsMouseOverSprite(_gridSprite, _data->m_window))
-		{
-			PlacePiece(END_PIECE);
-		}
-
-		// Press W to place a wall
-		if (sf::Event::KeyReleased == event.type && sf::Keyboard::W == event.key.code)
-		{
-			if (_data->m_inputManager.IsMouseOverSprite(_gridSprite, _data->m_window))
-			{
-				PlacePiece(WALL_PIECE);
-			}
-		}
-
-		// Press C to place a checkpoint
-		if (sf::Event::KeyReleased == event.type && sf::Keyboard::C == event.key.code)
-		{
-			if (_data->m_inputManager.IsMouseOverSprite(this->_gridSprite, _data->m_window))
-			{
-				PlacePiece(CHECKPOINT_PIECE);
-			}
-		}
-
-		// Press P to place a portal
-		if (sf::Event::KeyReleased == event.type && sf::Keyboard::P == event.key.code)
-		{
-			if (_data->m_inputManager.IsMouseOverSprite(_gridSprite, _data->m_window))
-			{
-				PlacePiece(PORTAL_PIECE);
-			}
-		}
+		_data->m_inputManager.HandleKeyDown(event,_gridSprite, *this);
 	}
 }
 
 /**
 * @fn Update
-* @brief  
-* @param dt
+* @brief Update the state
+* @param dt : Delta time
 */
 void GameState::Update(float dt)
 {
@@ -262,10 +227,10 @@ void GameState::PlaceItem(const int column, const int row, const std::string& te
 /** 
 * @fn ResetItem
 * @brief Reset an item on the grid
-* @param : column : Column of the grid
-* @param : row : Row of the grid
-* @param : resetType : Type of the item that was previously placed
-* @param : itemContainer : Container of the item to update if needed
+* @param column : Column of the grid
+* @param row : Row of the grid
+* @param resetType : Type of the item that was previously placed
+* @param itemContainer : Container of the item to update if needed
 */
 void GameState::ResetItem(const int column, const int row, const GridPieces resetType, std::vector<sf::Vector2i>* itemContainer)
 {
@@ -293,7 +258,7 @@ void GameState::ResetItem(const int column, const int row, const GridPieces rese
 		GetGame()->_EndingPoint = point;
 	}
 
-	if (GetGame()->_path.size() > 0)
+	if (!GetGame()->_path.empty())
 	{
 		ClearPath(); 
 	}
@@ -315,17 +280,29 @@ void GameState::DrawStepPath(const Pair step, const bool isPath)
 	}
 }
 
+/**
+ * @fn PauseGame
+ * @brief Pause the game
+ */
 void GameState::PauseGame()
 {
 	_data->machine.AddState(std::make_unique<PauseState>(_data), false);
 }
 
+/**
+ * @fn Start
+ * @brief Start the game, clear the path & play the game
+ */
 void GameState::Start()
 {
 	ClearPath();
 	GetGame()->Play();
 }
 
+/**
+ * @fn ClearAll
+ * @brief  Clear the grid with the empty texture & reset the grid array value
+ */
 void GameState::ClearAll()
 {
 	GetGame()->ResetGame();
@@ -352,16 +329,28 @@ void GameState::ClearPath()
 	GetGame()->ClearPath();
 }
 
+/**
+ * @fn DiagonalMode
+ * @brief Enable / Disable the diagonal mode
+ */
 void GameState::DiagonalMode()
 {
 	GetGame()->_UseDiagonal = !GetGame()->_UseDiagonal;
 }
 
+/**
+ * @fn DebugMode
+ * @brief Enable / Disable the debug mode
+ */
 void GameState::DebugMode()
 {
 	GetGame()->SetDebugMode(!GetGame()->IsDebugMode());
 }
 
+/**
+ * @fn ForwardDebug
+ * @brief Go to the next step of the debug
+ */
 void GameState::ForwardDebug()
 {
 	if (GetGame()->IsDebugMode())
@@ -370,6 +359,10 @@ void GameState::ForwardDebug()
 	}
 }
 
+/**
+ * @fn BackwardDebug
+ * @brief Go to the previous step of the debug
+ */
 void GameState::BackwardDebug()
 {
 	if (GetGame()->IsDebugMode())
@@ -380,7 +373,7 @@ void GameState::BackwardDebug()
 
 /**
 * @fn PlacePiece
-* @brief  
+* @brief Place a piece on the grid
 * @param Piece
 * 
 * @todo Refactor this function
@@ -394,7 +387,7 @@ void GameState::PlacePiece(const GridPieces Piece)
 
 	const auto gridLocalTouchPos = sf::Vector2f(touchPoint.x - gapOutsideOfGrid.x, touchPoint.y - gapOutsideOfGrid.y);
 
-	int column, row;
+	int column = 0, row  = 0;
 
 	const float columnWidth = _gridSprite.getGlobalBounds().width / NB_COLUMNS;
 	const float rowHeight = _gridSprite.getGlobalBounds().height / NB_LINES; 
@@ -548,4 +541,9 @@ void GameState::PlacePiece(const GridPieces Piece)
 		break;
 	}
 
+}
+
+GameDataRef GameState::GetGameData() const
+{
+	return _data;
 }

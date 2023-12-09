@@ -21,15 +21,15 @@ using namespace std;
 /**
 * @fn Game
 * @brief Default constructor
-* @param width
-* @param height
-* @param title
+* @param width width of the window
+* @param height height of the window
+* @param title title of the window
 */
 Game::Game(const int width, const int height, const std::string& title) :
-    _UseDiagonal(false)
-    , _DebugMode(false)
-    , _CurrentDebugStep(0)
+    _DebugMode(false)
     , _gridArray{}
+    , _UseDiagonal(false)
+    , _CurrentDebugStep(0)
     , _CheckPoints(new std::vector<sf::Vector2i>)
     , _Portals(new std::vector<sf::Vector2i>)
 {
@@ -42,7 +42,7 @@ Game::Game(const int width, const int height, const std::string& title) :
 
 /**
 * @fn ~Game
-* @brief 
+* @brief Default destructor
 */
 Game::~Game()
 {
@@ -54,12 +54,12 @@ Game::~Game()
 
 /**
 * @fn AStarAlgorithm
-* @brief  
-* @param startingPoint
-* @param endingPoint
-* @param UseDiagonal
-* @param _path
-* @return 
+* @brief Find the path to the ending point 
+* @param startingPoint the starting point of the path
+* @param endingPoint the ending point of the path
+* @param UseDiagonal if we can use diagonal
+* @param _path the path to the ending point as reference to fill
+* @return the path from the starting point to the ending point if found
 */
 std::vector<Pair> Game::AStarAlgorithm(sf::Vector2i startingPoint, sf::Vector2i endingPoint, bool UseDiagonal,
     std::vector<Pair>& _path)
@@ -72,7 +72,7 @@ std::vector<Pair> Game::AStarAlgorithm(sf::Vector2i startingPoint, sf::Vector2i 
 
 /**
 * @fn Run
-* @brief
+* @brief Run the game loop, process the state changes, handle the input, update the state and draw the state
 */
 void Game::Run()
 {
@@ -110,10 +110,10 @@ void Game::Run()
 
 /**
 * @fn IsCellInBoundOfTheGrid
-* @brief  
-* @param row
-* @param col
-* @return 
+* @brief Check if the cell is in the grid
+* @param row row of the cell
+* @param col column of the cell
+* @return true if the cell is in the grid, false otherwise
 */
 bool Game::IsCellInBoundOfTheGrid(const int row, const int col)
 {
@@ -123,10 +123,10 @@ bool Game::IsCellInBoundOfTheGrid(const int row, const int col)
 
 /**
 * @fn IsNotAWall
-* @brief  
-* @param row
-* @param col
-* @return 
+* @brief Check if the cell is not a wall 
+* @param row row of the cell
+* @param col column of the cell
+* @return true if the cell is not a wall, false otherwise 
 */
 bool Game::IsNotAWall(const int row, const int col)
 {
@@ -135,11 +135,11 @@ bool Game::IsNotAWall(const int row, const int col)
 
 /**
 * @fn IsDestination
-* @brief  
-* @param row
-* @param col
-* @param dest
-* @return 
+* @brief Check if the cell is the destination
+* @param row row of the cell
+* @param col column of the cell
+* @param dest destination
+* @return true if the cell is the destination, false otherwise
 */
 bool Game::IsDestination(const int row, const int col, const Pair dest)
 {
@@ -148,11 +148,11 @@ bool Game::IsDestination(const int row, const int col, const Pair dest)
 
 /**
 * @fn CalculateHeuristicValue
-* @brief  
-* @param row
-* @param col
-* @param dest
-* @return 
+* @brief Calculate the heuristic value of the cell
+* @param row row of the cell
+* @param col column of the cell
+* @param dest destination
+* @return the heuristic value of the cell
 */
 double Game::CalculateHeuristicValue(const int row, const int col, const Pair dest)
 {
@@ -164,9 +164,9 @@ double Game::CalculateHeuristicValue(const int row, const int col, const Pair de
 /**
 * @fn tracePath
 * @brief Fill the path vector with the path from the starting point to the ending point
-* @param cellDetails
-* @param dest
-* @param path
+* @param cellDetails the details of the cell
+* @param dest the destination
+* @param path the path to the ending point as reference to fill
 */
 std::vector<Pair> Game::tracePath(cell cellDetails[][NB_COLUMNS], const Pair dest,std::vector<Pair>& path)
 {
@@ -193,11 +193,11 @@ std::vector<Pair> Game::tracePath(cell cellDetails[][NB_COLUMNS], const Pair des
 
 /**
 * @fn aStarSearch
-* @brief
-* @param startingPoint
-* @param endingPoint
-* @param UseDiagonal
-* @param path
+* @brief Find the path to the ending point using the A* algorithm
+* @param startingPoint the starting point of the path
+* @param endingPoint the ending point of the path
+* @param UseDiagonal if we can use diagonal
+* @param path the path to the ending point as reference to fill
 */
 std::vector<Pair> Game::aStarSearch(const Pair startingPoint, const Pair endingPoint, const bool UseDiagonal,std::vector<Pair>& path)
 {
@@ -332,7 +332,7 @@ std::vector<Pair> Game::aStarSearch(const Pair startingPoint, const Pair endingP
 
 /**
 * @fn Play
-* @brief
+* @brief Find the path to the ending point
 */
 void Game::Play()
 {
@@ -416,6 +416,7 @@ void Game::ProcessFinalPath(const sf::Vector2i& currentPoint)
 /**
 * @fn CheckMapValidity
 * @brief Verify if the starting point and the ending point are set
+* @return true if the starting point and the ending point are set, false otherwise
 */
 bool Game::CheckMapValidity()
 {
@@ -425,9 +426,10 @@ bool Game::CheckMapValidity()
 /**
 * @fn CheckPortalPath
 * @brief Check if the path through a portal is shorter than the base path
-* @param currentPoint
-* @param nextPoint
-* @param basePath
+* @param currentPoint : the current point
+* @param nextPoint : the next point
+* @param basePath : the base path
+* @return the next point to start from
 */
 sf::Vector2i Game::CheckPortalPath(const sf::Vector2i& currentPoint, const sf::Vector2i& nextPoint, std::vector<Pair>& basePath)
 {
@@ -567,8 +569,8 @@ void Game::DrawPath()
 /**
 * @fn RemoveCheckPoint
 * @brief Remove a checkpoint from the checkpoints vector
-* @param point
-* @param checkpoints
+* @param point : the point to remove
+* @param checkpoints : the checkpoints vector
 */
 void Game::RemoveCheckPoint(const sf::Vector2i& point, std::vector<sf::Vector2i>& checkpoints)
 {
@@ -658,7 +660,7 @@ void Game::ClearPath()
 
 /**
 * @fn ResetGame
-* @brief  
+* @brief Clear the path, the debug step, the checkpoints and the portals  
 */
 void Game::ResetGame()
 {
@@ -675,8 +677,8 @@ void Game::ResetGame()
 
 /**
 * @fn SetDebugMode
-* @brief  
-* @param debugMode
+* @brief Set the debug mode 
+* @param debugMode true if we want to set the debug mode, false otherwise
 */
 void Game::SetDebugMode(bool debugMode)
 {
@@ -690,10 +692,10 @@ void Game::SetDebugMode(bool debugMode)
 
 /**
 * @fn SetGridArrayItem
-* @brief  
-* @param column
-* @param row
-* @param piece
+* @brief Set the grid array item  
+* @param column : the column of the item
+* @param row : the row of the item
+* @param piece : the piece to set
 */
 void Game::SetGridArrayItem(const int column, const int row, const GridPieces piece)
 {
@@ -707,8 +709,8 @@ void Game::SetGridArrayItem(const int column, const int row, const GridPieces pi
 
 /**
 * @fn IsDebugMode
-* @brief  
-* @return 
+* @brief Check if the debug mode is set 
+* @return true if the debug mode is set, false otherwise
 */
 bool Game::IsDebugMode() const
 {

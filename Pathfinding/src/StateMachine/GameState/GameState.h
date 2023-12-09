@@ -38,7 +38,7 @@ enum GridPieces
 
 /**
 * @class GameState
-* @brief
+* @brief Game screen of the game
 */
 class GameState final : public State
 {
@@ -73,6 +73,10 @@ public:
 	void ForwardDebug();
 	void BackwardDebug();
 
+	void PlacePiece(GridPieces);
+
+	GameDataRef GetGameData() const;
+
 private : 
 
 	GameDataRef _data;
@@ -90,7 +94,7 @@ private :
 	void PlaceItem(int column, int row, const std::string& textureName, GridPieces itemType, std::vector<sf::Vector2i>* itemContainer);
 	void ResetItem(int column, int row, GridPieces resetType, std::vector<sf::Vector2i>* itemContainer);
 	
-	void PlacePiece(GridPieces);
+
 };
 
 #endif /* GAME_STATE_H */

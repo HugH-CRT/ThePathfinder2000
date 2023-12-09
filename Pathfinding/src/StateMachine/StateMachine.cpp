@@ -12,12 +12,12 @@
 
 /**
 * @fn StateMachine
-* @brief  
+* @brief Constructor
 */
 StateMachine::StateMachine()
-	: _isAdding(false)
-	, _isRemoving(false)
-	, _isReplacing(false)
+	: _isRemoving(false)
+	  , _isAdding(false)
+	  , _isReplacing(false)
 {
 }
 
@@ -86,7 +86,7 @@ void StateMachine::ProcessStateChanges()
 /**
 * @fn GetActiveState
 * @brief Return the current state  
-* @return 
+* @return the current state
 */
 StateRef& StateMachine::GetActiveState()
 {
