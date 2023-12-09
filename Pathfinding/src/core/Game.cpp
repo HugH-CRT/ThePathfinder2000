@@ -354,7 +354,7 @@ void Game::Play()
             {
                 AllCheckPointsReached = false;
                 _path.clear();
-                return;
+                break;
             }
         }
 
@@ -396,18 +396,22 @@ sf::Vector2i Game::ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints,
 
 /**
 * @fn ProcessFinalPath
-* @brief Draw the final path from the current point to the ending point
-* @param currentPoint : the current point
+* @brief Draws the final path from the current point to the ending point using the A* algorithm.
+* @param currentPoint : The current point from which the path is generated.
 */
 void Game::ProcessFinalPath(const sf::Vector2i& currentPoint)
 {
+    // Temporary path storage for A* algorithm result
     std::vector<Pair> tempPath;
 
-    GetGame()->AStarAlgorithm( _EndingPoint,currentPoint,_UseDiagonal, tempPath);
+    // Run A* algorithm to find the path from current point to the ending point
+    GetGame()->AStarAlgorithm(_EndingPoint, currentPoint, _UseDiagonal, tempPath);
 
+    // Check for the presence of a portal along the path
     sf::Vector2i closestPortal = CheckPortalPath(currentPoint, _EndingPoint, tempPath);
 
-    if ( !tempPath.empty() || closestPortal.x != -1 && closestPortal.y != -1)
+    // If there is a valid path or a portal connection, draw the path
+    if (!tempPath.empty() || (closestPortal.x != -1 && closestPortal.y != -1))
     {
         DrawPath();
     }
@@ -425,47 +429,53 @@ bool Game::CheckMapValidity()
 
 /**
 * @fn CheckPortalPath
-* @brief Check if the path through a portal is shorter than the base path
-* @param currentPoint : the current point
-* @param nextPoint : the next point
-* @param basePath : the base path
-* @return the next point to start from
+* @brief Checks if the path through a portal is shorter than the base path and updates the base path accordingly.
+* @param currentPoint : The current point.
+* @param nextPoint : The next point.
+* @param basePath : The base path to be compared and updated.
+* @return The next point to start from after considering portal paths.
 */
 sf::Vector2i Game::CheckPortalPath(const sf::Vector2i& currentPoint, const sf::Vector2i& nextPoint, std::vector<Pair>& basePath)
 {
     if (!_Portals->empty())
     {
-        std::vector<Pair> tempPath; 
+        std::vector<Pair> tempPath;
 
-        const sf::Vector2i closestPortalStart = PathToClosestPortal(currentPoint,tempPath); 
+        // Find the path to the closest portal from the current point
+        const sf::Vector2i closestPortalStart = PathToClosestPortal(currentPoint, tempPath);
         
         std::reverse(tempPath.begin(), tempPath.end());
 
-        const sf::Vector2i closestPortalNextPoint = PathToClosestPortal(nextPoint,tempPath);
+        // Find the path to the closest portal from the next point
+        const sf::Vector2i closestPortalNextPoint = PathToClosestPortal(nextPoint, tempPath);
 
-        const bool PointFound = closestPortalStart.x != -1 && closestPortalStart.y != -1 && closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1; 
-  
-        if ( PointFound && (tempPath.size() < basePath.size() || basePath.empty() )  && !tempPath.empty())
+        // Check if valid paths to both portals are found
+        const bool PointFound = closestPortalStart.x != -1 && closestPortalStart.y != -1 &&
+                                closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1;
+
+        // Compare the lengths of paths through portals with the base path
+        if (PointFound && (tempPath.size() < basePath.size() || basePath.empty()) && !tempPath.empty())
         {
-            for (auto i : tempPath)
+            // Update the base path with the shorter path through portals
+            for (const auto& i : tempPath)
             {
                 _path.push_back(i);
                 basePath.push_back(i);
             }
-            
-            if ( closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1)
-            {
-                return closestPortalNextPoint;
-            }
-            return closestPortalStart;
+
+            // Return the appropriate point to start from after considering portal paths
+            return (closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1) ?
+                closestPortalNextPoint : closestPortalStart;
         }
     }
-    
-    for (auto i : basePath)
+
+    // If no valid paths through portals are found, update the base path without changes
+    for (const auto& i : basePath)
     {
         _path.push_back(i);
     }
-        
+
+    // Return an invalid point to indicate no significant change in the starting point
     return {-1, -1};
 }
 

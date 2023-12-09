@@ -373,174 +373,114 @@ void GameState::BackwardDebug()
 
 /**
 * @fn PlacePiece
-* @brief Place a piece on the grid
-* @param Piece
-* 
-* @todo Refactor this function
+* @brief Place a game piece on the grid based on the user's input.
+* @param piece : The type of game piece to place.
 */
-void GameState::PlacePiece(const GridPieces Piece)
+void GameState::PlacePiece(const GridPieces piece)
 {
-	const sf::Vector2i touchPoint = _data->m_inputManager.GetMousePosition(_data->m_window);
+    // Get the mouse position in the game window
+    const sf::Vector2i touchPoint = _data->m_inputManager.GetMousePosition(_data->m_window);
+    const sf::FloatRect gridSize = _gridSprite.getGlobalBounds();
 
-	const sf::FloatRect gridSize = _gridSprite.getGlobalBounds();
-	const auto gapOutsideOfGrid = sf::Vector2f((SCREEN_WIDTH - gridSize.width) / 2, (SCREEN_HEIGHT - gridSize.height) / 2);
+    // Calculate the gap outside of the grid
+    const auto gapOutsideOfGrid = sf::Vector2f((SCREEN_WIDTH - gridSize.width) / 2, (SCREEN_HEIGHT - gridSize.height) / 2);
 
-	const auto gridLocalTouchPos = sf::Vector2f(touchPoint.x - gapOutsideOfGrid.x, touchPoint.y - gapOutsideOfGrid.y);
+    // Calculate the local touch position within the grid
+    const auto gridLocalTouchPos = sf::Vector2f(touchPoint.x - gapOutsideOfGrid.x, touchPoint.y - gapOutsideOfGrid.y);
 
-	int column = 0, row  = 0;
+    // Determine the column and row based on the touch position
+    int column = GetColumnFromPosition(gridLocalTouchPos.x);
+    int row = GetRowFromPosition(gridLocalTouchPos.y);
 
+    // Information about different types of game pieces
+    const std::vector<PieceInfo> pieceInfos = {
+        PieceInfo{"Start Point", START_PIECE, &GetGame()->_StartingPoint, nullptr},
+        PieceInfo{"End Point", END_PIECE, &GetGame()->_EndingPoint, nullptr},
+        PieceInfo{"Wall", WALL_PIECE, nullptr, nullptr},
+        PieceInfo{"Portal", PORTAL_PIECE, nullptr, GetGame()->_Portals},
+        PieceInfo{"CheckPoint", CHECKPOINT_PIECE, nullptr, GetGame()->_CheckPoints}
+    };
+
+    // Check if the clicked position already has a piece and reset it
+    for (const auto& info : pieceInfos) {
+        if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture(info.textureName)) {
+            ResetItem(column, row, info.type, info.container);
+            if (info.type == START_PIECE || info.type == END_PIECE) {
+                break;
+            }
+        }
+    }
+
+    // Place the new piece if the position is valid and no piece is already there
+    for (const auto& info : pieceInfos) {
+        if (piece == info.type && !IsPiecePlaced(info.type, column, row)) {
+            PlaceItem(column, row, info.textureName, info.type, info.container);
+            break;
+        }
+    }
+}
+
+/**
+* @fn GetColumnFromPosition
+* @brief Gets the column index on the grid based on the given x-coordinate position.
+* @param xPosition : The x-coordinate position.
+* @return The column index.
+*/
+int GameState::GetColumnFromPosition(float xPosition) const
+{
 	const float columnWidth = _gridSprite.getGlobalBounds().width / NB_COLUMNS;
-	const float rowHeight = _gridSprite.getGlobalBounds().height / NB_LINES; 
+    
+	// Calculate and return the column index
+	return static_cast<int>(xPosition / columnWidth) + 1;
+}
 
-	for (int c = 1; c <= NB_COLUMNS; c++) {
-		if (gridLocalTouchPos.x < columnWidth * c) {
-			column = c;
-			break;
-		}
+/**
+* @fn GetRowFromPosition
+* @brief Gets the row index on the grid based on the given y-coordinate position.
+* @param yPosition : The y-coordinate position.
+* @return The row index.
+*/
+int GameState::GetRowFromPosition(float yPosition) const
+{
+	const float rowHeight = _gridSprite.getGlobalBounds().height / NB_LINES;
+    
+	// Calculate and return the row index
+	return static_cast<int>(yPosition / rowHeight) + 1;
+}
+
+/**
+* @fn IsPiecePlaced
+* @brief Checks if a specific game piece is already placed on the grid at the given position.
+* @param pieceType : The type of game piece to check.
+* @param column : The column on the grid.
+* @param row : The row on the grid.
+* @return True if the piece is already placed, false otherwise.
+*/
+bool GameState::IsPiecePlaced(GridPieces pieceType, int column, int row) const
+{
+	const auto& gridArray = GetGame()->GetGridArray();
+
+	// Check if the piece is the starting point
+	if (pieceType == START_PIECE)
+	{
+		return GetGame()->_StartingPoint.x != -1 && GetGame()->_StartingPoint.y != -1;
 	}
 
-	for (int r = 1; r <= NB_LINES; r++) {
-		if (gridLocalTouchPos.y < rowHeight * r) {
-			row = r;
-			break;
-		}
+	// Check if the piece is the ending point
+	if (pieceType == END_PIECE)
+	{
+		return GetGame()->_EndingPoint.x != -1 && GetGame()->_EndingPoint.y != -1;
 	}
 
-	const bool StartPlaced = GetGame()->_StartingPoint.x != -1 && GetGame()->_StartingPoint.y != -1;
-	const bool EndPlaced = GetGame()->_EndingPoint.x != -1 && GetGame()->_EndingPoint.y != -1;
-
-	sf::Vector2i point( -1, - 1);
-
-	switch (Piece) {
-	case START_PIECE:
-		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Start Point")) {
-			ResetItem(column, row, START_PIECE, nullptr);
-			break;
-		}
-		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("End Point")  ) {
-			ResetItem(column, row, END_PIECE, nullptr);
-			GetGame()->_EndingPoint = point;
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Wall") ) {
-			ResetItem(column, row, WALL_PIECE, nullptr);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
-			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
-		}
-
-		if (!StartPlaced)
-		{
-			PlaceItem(column, row, "Start Point", START_PIECE,nullptr);
-		}
-
-		break;
-
-	case END_PIECE:
-		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("End Point")) {
-			ResetItem(column, row, END_PIECE, nullptr);
-			break;
-		}
-		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Start Point")) {
-			ResetItem(column, row, START_PIECE, nullptr);
-			GetGame()->_StartingPoint = point;
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Wall")) {
-			ResetItem(column, row, WALL_PIECE, nullptr);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
-			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
-
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
-
-		}
-
-		if (!EndPlaced)
-		{
-			PlaceItem(column, row, "End Point", END_PIECE, nullptr);
-		}
-
-		break;
-
-	case WALL_PIECE:
-		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("End Point")) {
-			ResetItem(column, row, END_PIECE, nullptr);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Start Point")) {
-			ResetItem(column, row, START_PIECE, nullptr);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Wall")) {
-			ResetItem(column, row, WALL_PIECE, nullptr);
-			break;
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
-			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
-
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
-
-		}
-
-		PlaceItem(column, row, "Wall", WALL_PIECE, nullptr);
-		
-		break;
-
-	case CHECKPOINT_PIECE:
-		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
-
-			break;
-		}
-		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Start Point")) {
-			ResetItem(column, row, START_PIECE, nullptr);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("End Point")) {
-			ResetItem(column, row, END_PIECE, nullptr);
-
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Wall")) {
-			ResetItem(column, row, WALL_PIECE, nullptr);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
-			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
-
-		}
-		
-		PlaceItem(column, row, "CheckPoint", CHECKPOINT_PIECE, GetGame()->_CheckPoints);
-
-		break;
-
-	case PORTAL_PIECE:
-		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Portal")) {
-			ResetItem(column, row, PORTAL_PIECE, GetGame()->_Portals);
-			break;
-		}
-		if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Start Point")) {
-			ResetItem(column, row, START_PIECE, nullptr);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("End Point")) {
-			ResetItem(column, row, END_PIECE, nullptr);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("Wall")) {
-			ResetItem(column, row, WALL_PIECE, nullptr);
-		}
-		else if (_gridPieces[column - 1][row - 1].getTexture() == &_data->m_assetManager.GetTexture("CheckPoint")) {
-			ResetItem(column, row, CHECKPOINT_PIECE, GetGame()->_CheckPoints);
-		}
-
-		PlaceItem(column, row, "Portal", PORTAL_PIECE, GetGame()->_Portals);
-
-		break;
-
-	default:
-		break;
+	// Check if the column and row are within valid bounds
+	if (column > 0 && row > 0 && column <= NB_COLUMNS && row <= NB_LINES)
+	{
+		// Check if the specified piece is placed at the given position on the grid
+		return gridArray[column - 1][row - 1] == pieceType;
 	}
 
+	// Default case: the piece is not placed
+	return false;
 }
 
 GameDataRef GameState::GetGameData() const
