@@ -21,15 +21,15 @@ using namespace std;
 /**
 * @fn Game
 * @brief Default constructor
-* @param width
-* @param height
-* @param title
+* @param width width of the window
+* @param height height of the window
+* @param title title of the window
 */
-Game::Game(const int width, const int height, const std::string& title)
-    : _UseDiagonal(false)
-    , _DebugMode(false)
-    , _CurrentDebugStep(0)
+Game::Game(const int width, const int height, const std::string& title) :
+    _DebugMode(false)
     , _gridArray{}
+    , _UseDiagonal(false)
+    , _CurrentDebugStep(0)
     , _CheckPoints(new std::vector<sf::Vector2i>)
     , _Portals(new std::vector<sf::Vector2i>)
 {
@@ -42,7 +42,7 @@ Game::Game(const int width, const int height, const std::string& title)
 
 /**
 * @fn ~Game
-* @brief 
+* @brief Default destructor
 */
 Game::~Game()
 {
@@ -54,12 +54,12 @@ Game::~Game()
 
 /**
 * @fn AStarAlgorithm
-* @brief  
-* @param startingPoint
-* @param endingPoint
-* @param UseDiagonal
-* @param _path
-* @return 
+* @brief Find the path to the ending point 
+* @param startingPoint the starting point of the path
+* @param endingPoint the ending point of the path
+* @param UseDiagonal if we can use diagonal
+* @param _path the path to the ending point as reference to fill
+* @return the path from the starting point to the ending point if found
 */
 std::vector<Pair> Game::AStarAlgorithm(sf::Vector2i startingPoint, sf::Vector2i endingPoint, bool UseDiagonal,
     std::vector<Pair>& _path)
@@ -72,7 +72,7 @@ std::vector<Pair> Game::AStarAlgorithm(sf::Vector2i startingPoint, sf::Vector2i 
 
 /**
 * @fn Run
-* @brief
+* @brief Run the game loop, process the state changes, handle the input, update the state and draw the state
 */
 void Game::Run()
 {
@@ -110,10 +110,10 @@ void Game::Run()
 
 /**
 * @fn IsCellInBoundOfTheGrid
-* @brief  
-* @param row
-* @param col
-* @return 
+* @brief Check if the cell is in the grid
+* @param row row of the cell
+* @param col column of the cell
+* @return true if the cell is in the grid, false otherwise
 */
 bool Game::IsCellInBoundOfTheGrid(const int row, const int col)
 {
@@ -123,10 +123,10 @@ bool Game::IsCellInBoundOfTheGrid(const int row, const int col)
 
 /**
 * @fn IsNotAWall
-* @brief  
-* @param row
-* @param col
-* @return 
+* @brief Check if the cell is not a wall 
+* @param row row of the cell
+* @param col column of the cell
+* @return true if the cell is not a wall, false otherwise 
 */
 bool Game::IsNotAWall(const int row, const int col)
 {
@@ -135,11 +135,11 @@ bool Game::IsNotAWall(const int row, const int col)
 
 /**
 * @fn IsDestination
-* @brief  
-* @param row
-* @param col
-* @param dest
-* @return 
+* @brief Check if the cell is the destination
+* @param row row of the cell
+* @param col column of the cell
+* @param dest destination
+* @return true if the cell is the destination, false otherwise
 */
 bool Game::IsDestination(const int row, const int col, const Pair dest)
 {
@@ -148,11 +148,11 @@ bool Game::IsDestination(const int row, const int col, const Pair dest)
 
 /**
 * @fn CalculateHeuristicValue
-* @brief  
-* @param row
-* @param col
-* @param dest
-* @return 
+* @brief Calculate the heuristic value of the cell
+* @param row row of the cell
+* @param col column of the cell
+* @param dest destination
+* @return the heuristic value of the cell
 */
 double Game::CalculateHeuristicValue(const int row, const int col, const Pair dest)
 {
@@ -164,9 +164,9 @@ double Game::CalculateHeuristicValue(const int row, const int col, const Pair de
 /**
 * @fn tracePath
 * @brief Fill the path vector with the path from the starting point to the ending point
-* @param cellDetails
-* @param dest
-* @param path
+* @param cellDetails the details of the cell
+* @param dest the destination
+* @param path the path to the ending point as reference to fill
 */
 std::vector<Pair> Game::tracePath(cell cellDetails[][NB_COLUMNS], const Pair dest, std::vector<Pair>& path)
 {
@@ -195,11 +195,11 @@ std::vector<Pair> Game::tracePath(cell cellDetails[][NB_COLUMNS], const Pair des
 
 /**
 * @fn aStarSearch
-* @brief
-* @param startingPoint
-* @param endingPoint
-* @param UseDiagonal
-* @param path
+* @brief Find the path to the ending point using the A* algorithm
+* @param startingPoint the starting point of the path
+* @param endingPoint the ending point of the path
+* @param UseDiagonal if we can use diagonal
+* @param path the path to the ending point as reference to fill
 */
 std::vector<Pair> Game::aStarSearch(const Pair startingPoint, const Pair endingPoint, const bool UseDiagonal, std::vector<Pair>& path)
 {
@@ -339,7 +339,7 @@ std::vector<Pair> Game::aStarSearch(const Pair startingPoint, const Pair endingP
 
 /**
 * @fn Play
-* @brief
+* @brief Find the path to the ending point
 */
 void Game::Play()
 {
@@ -361,7 +361,7 @@ void Game::Play()
             {
                 AllCheckPointsReached = false;
                 _path.clear();
-                return;
+                break;
             }
         }
 
@@ -403,18 +403,22 @@ sf::Vector2i Game::ProcessNextCheckpoint(std::vector<sf::Vector2i>& checkpoints,
 
 /**
 * @fn ProcessFinalPath
-* @brief Draw the final path from the current point to the ending point
-* @param currentPoint : the current point
+* @brief Draws the final path from the current point to the ending point using the A* algorithm.
+* @param currentPoint : The current point from which the path is generated.
 */
 void Game::ProcessFinalPath(const sf::Vector2i& currentPoint)
 {
+    // Temporary path storage for A* algorithm result
     std::vector<Pair> tempPath;
 
-    GetGame()->AStarAlgorithm( _EndingPoint,currentPoint,_UseDiagonal, tempPath);
+    // Run A* algorithm to find the path from current point to the ending point
+    GetGame()->AStarAlgorithm(_EndingPoint, currentPoint, _UseDiagonal, tempPath);
 
+    // Check for the presence of a portal along the path
     sf::Vector2i closestPortal = CheckPortalPath(currentPoint, _EndingPoint, tempPath);
 
-    if ( !tempPath.empty() || closestPortal.x != -1 && closestPortal.y != -1)
+    // If there is a valid path or a portal connection, draw the path
+    if (!tempPath.empty() || (closestPortal.x != -1 && closestPortal.y != -1))
     {
         DrawPath();
     }
@@ -423,6 +427,7 @@ void Game::ProcessFinalPath(const sf::Vector2i& currentPoint)
 /**
 * @fn CheckMapValidity
 * @brief Verify if the starting point and the ending point are set
+* @return true if the starting point and the ending point are set, false otherwise
 */
 bool Game::CheckMapValidity()
 {
@@ -431,46 +436,53 @@ bool Game::CheckMapValidity()
 
 /**
 * @fn CheckPortalPath
-* @brief Check if the path through a portal is shorter than the base path
-* @param currentPoint
-* @param nextPoint
-* @param basePath
+* @brief Checks if the path through a portal is shorter than the base path and updates the base path accordingly.
+* @param currentPoint : The current point.
+* @param nextPoint : The next point.
+* @param basePath : The base path to be compared and updated.
+* @return The next point to start from after considering portal paths.
 */
 sf::Vector2i Game::CheckPortalPath(const sf::Vector2i& currentPoint, const sf::Vector2i& nextPoint, std::vector<Pair>& basePath)
 {
     if (!_Portals->empty())
     {
-        std::vector<Pair> tempPath; 
+        std::vector<Pair> tempPath;
 
-        const sf::Vector2i closestPortalStart = PathToClosestPortal(currentPoint,tempPath); 
+        // Find the path to the closest portal from the current point
+        const sf::Vector2i closestPortalStart = PathToClosestPortal(currentPoint, tempPath);
         
         std::reverse(tempPath.begin(), tempPath.end());
 
-        const sf::Vector2i closestPortalNextPoint = PathToClosestPortal(nextPoint,tempPath);
+        // Find the path to the closest portal from the next point
+        const sf::Vector2i closestPortalNextPoint = PathToClosestPortal(nextPoint, tempPath);
 
-        const bool PointFound = closestPortalStart.x != -1 && closestPortalStart.y != -1 && closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1; 
-  
-        if ( PointFound && (tempPath.size() < basePath.size() || basePath.empty() )  && !tempPath.empty())
+        // Check if valid paths to both portals are found
+        const bool PointFound = closestPortalStart.x != -1 && closestPortalStart.y != -1 &&
+                                closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1;
+
+        // Compare the lengths of paths through portals with the base path
+        if (PointFound && (tempPath.size() < basePath.size() || basePath.empty()) && !tempPath.empty())
         {
-            for (auto i : tempPath)
+            // Update the base path with the shorter path through portals
+            for (const auto& i : tempPath)
             {
                 _path.push_back(i);
                 basePath.push_back(i);
             }
-            
-            if ( closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1)
-            {
-                return closestPortalNextPoint;
-            }
-            return closestPortalStart;
+
+            // Return the appropriate point to start from after considering portal paths
+            return (closestPortalNextPoint.x != -1 && closestPortalNextPoint.y != -1) ?
+                closestPortalNextPoint : closestPortalStart;
         }
     }
-    
-    for (auto i : basePath)
+
+    // If no valid paths through portals are found, update the base path without changes
+    for (const auto& i : basePath)
     {
         _path.push_back(i);
     }
-        
+
+    // Return an invalid point to indicate no significant change in the starting point
     return {-1, -1};
 }
 
@@ -574,8 +586,8 @@ void Game::DrawPath()
 /**
 * @fn RemoveCheckPoint
 * @brief Remove a checkpoint from the checkpoints vector
-* @param point
-* @param checkpoints
+* @param point : the point to remove
+* @param checkpoints : the checkpoints vector
 */
 void Game::RemoveCheckPoint(const sf::Vector2i& point, std::vector<sf::Vector2i>& checkpoints)
 {
@@ -665,7 +677,7 @@ void Game::ClearPath()
 
 /**
 * @fn ResetGame
-* @brief  
+* @brief Clear the path, the debug step, the checkpoints and the portals  
 */
 void Game::ResetGame()
 {
@@ -682,8 +694,8 @@ void Game::ResetGame()
 
 /**
 * @fn SetDebugMode
-* @brief  
-* @param debugMode
+* @brief Set the debug mode 
+* @param debugMode true if we want to set the debug mode, false otherwise
 */
 void Game::SetDebugMode(bool debugMode)
 {
@@ -697,10 +709,10 @@ void Game::SetDebugMode(bool debugMode)
 
 /**
 * @fn SetGridArrayItem
-* @brief  
-* @param column
-* @param row
-* @param piece
+* @brief Set the grid array item  
+* @param column : the column of the item
+* @param row : the row of the item
+* @param piece : the piece to set
 */
 void Game::SetGridArrayItem(const int column, const int row, const GridPieces piece)
 {
@@ -714,8 +726,8 @@ void Game::SetGridArrayItem(const int column, const int row, const GridPieces pi
 
 /**
 * @fn IsDebugMode
-* @brief  
-* @return 
+* @brief Check if the debug mode is set 
+* @return true if the debug mode is set, false otherwise
 */
 bool Game::IsDebugMode() const
 {

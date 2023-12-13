@@ -16,11 +16,12 @@
 
 #include "State.h"
 #include "Game.h"
+
 #include <memory>
 
 /**
 * @class PauseState
-* @brief
+* @brief Pause screen of the game
 */
 class PauseState final : public State
 {
@@ -40,6 +41,8 @@ public:
 	void Update(float dt) override;
 	void SetScales() override;
 	void SetPositions() override;
+
+	/* Implementation of State class */
 
 	void ResumeState();
 	void BackToHome();

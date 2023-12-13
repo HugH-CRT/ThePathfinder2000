@@ -22,8 +22,8 @@ Game* gGame = nullptr;
 
 /**
 * @fn GetGame
-* @brief  
-* @return 
+* @brief  Get the game instance
+* @return Game*
 */
 Game* GetGame()
 {
@@ -32,8 +32,8 @@ Game* GetGame()
 
 /**
 * @fn main
-* @brief  
-* @return 
+* @brief  Main function of the game
+* @return exit code of the game
 */
 int main() 
 {

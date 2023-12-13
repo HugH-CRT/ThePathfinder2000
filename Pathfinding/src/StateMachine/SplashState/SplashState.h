@@ -19,7 +19,7 @@
 
 /**
 * @class SplashState
-* @brief
+* @brief Splash screen of the game
 */
 class SplashState final : public State
 {
@@ -38,7 +38,9 @@ public:
 	void SetTextures() override;
 	void Update(float dt) override;
 	void SetScales() override;
-	void SetPositions() override {};
+	void SetPositions() override {}
+
+	/* Implementation of State class */
 
 private: 
 	GameDataRef m_data;

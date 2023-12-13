@@ -27,7 +27,6 @@ enum GridPieces : int;
 
 /**
 * @struct GameData
-* @brief
 */
 struct GameData
 {
@@ -43,7 +42,7 @@ typedef std::pair<double, std::pair<int, int> > pPair;
 
 /**
 * @struct cell
-* @brief
+* @brief Stores details of a cell
 */
 struct cell 
 {
@@ -61,7 +60,7 @@ struct grid
 
 /**
 * @class Game
-* @brief 
+* @brief Logic of the game
 */
 class Game
 {

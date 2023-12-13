@@ -16,9 +16,11 @@
 
 #include<SFML/Graphics.hpp>
 
+class GameState;
+
 /**
 * @class InputManager
-* @brief
+* @brief Manage the inputs of the game
 */
 class InputManager
 {
@@ -30,6 +32,8 @@ public:
 
 	bool IsSpriteClicked(const sf::Sprite& object, sf::Mouse::Button button, sf::RenderWindow& window);
 	bool IsMouseOverSprite(const sf::Sprite& object, const sf::RenderWindow& window);
+
+	void HandleKeyDown(const sf::Event& event, const sf::Sprite& _gridSprite,GameState& _gameState);
 	
 	sf::Vector2i GetMousePosition(const sf::RenderWindow& window);
 };

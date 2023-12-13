@@ -31,7 +31,7 @@ void AssetManager::LoadTexture(const std::string& name, const std::string& fileN
 	else
 	{
 		Logger::error("Error loading texture: " + fileName);
-		exit(1); // @Todo : throw an exception
+		throw std::runtime_error("Error loading texture: " + fileName);
 	}
 }
 
@@ -47,7 +47,7 @@ sf::Texture& AssetManager::GetTexture(const std::string& name)
 	if (_textures.find(name) == _textures.end())
 	{
 		Logger::error("Error texture not found: " + name);
-		exit(1); // @Todo : throw an exception
+		throw std::runtime_error("Error texture not found: " + name);
 	}
 	
 	return _textures.at(name);
@@ -70,7 +70,7 @@ void AssetManager::LoadFont(const std::string& name, const std::string& fileName
 	else
 	{
 		Logger::error("Error loading font: " + fileName);
-		exit(1); // @Todo : throw an exception
+		throw std::runtime_error("Error loading font: " + fileName);
 	}
 }
 
@@ -86,7 +86,7 @@ sf::Font& AssetManager::GetFont(const std::string& name)
 	if (_fonts.find(name) == _fonts.end())
 	{
 		Logger::error("Error font not found: " + name);
-		exit(1); // @Todo : throw an exception
+		throw std::runtime_error("Error font not found: " + name);
 	}
 	
 	return _fonts.at(name);
