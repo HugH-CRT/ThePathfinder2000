@@ -16,7 +16,7 @@
 
 /**
 * @class State
-* @brief
+* @brief Interface for the states of the game
 */
 class State
 {

@@ -21,7 +21,7 @@
 
 /**
 * @class MainMenuState
-* @brief 
+* @brief  Main menu screen of the game
 */
 class MainMenuState final : public State
 {
@@ -41,6 +41,8 @@ public:
 	void Update(float dt) override;
 	void SetScales() override;
 	void SetPositions() override;
+
+	/* Implementation of State class */
 
 private: 
 		

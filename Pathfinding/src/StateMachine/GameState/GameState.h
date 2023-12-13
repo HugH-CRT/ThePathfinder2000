@@ -36,9 +36,17 @@ enum GridPieces
 	PORTAL_PIECE = 6
 };
 
+struct PieceInfo
+{
+	std::string textureName;
+	GridPieces type;
+	sf::Vector2i* point;
+	std::vector<sf::Vector2i>* container;
+};
+
 /**
 * @class GameState
-* @brief
+* @brief Game screen of the game
 */
 class GameState final : public State
 {
@@ -73,6 +81,13 @@ public:
 	void ForwardDebug();
 	void BackwardDebug();
 
+	void PlacePiece(GridPieces);
+	int GetColumnFromPosition(float xPosition) const;
+	int GetRowFromPosition(float yPosition) const;
+	bool IsPiecePlaced(GridPieces pieceType, int column, int row) const;
+
+	GameDataRef GetGameData() const;
+
 private : 
 
 	GameDataRef _data;
@@ -90,7 +105,7 @@ private :
 	void PlaceItem(int column, int row, const std::string& textureName, GridPieces itemType, std::vector<sf::Vector2i>* itemContainer);
 	void ResetItem(int column, int row, GridPieces resetType, std::vector<sf::Vector2i>* itemContainer);
 	
-	void PlacePiece(GridPieces);
+
 };
 
 #endif /* GAME_STATE_H */

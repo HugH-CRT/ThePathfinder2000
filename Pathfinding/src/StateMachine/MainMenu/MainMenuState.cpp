@@ -13,21 +13,20 @@
 #include "GameState/GameState.h"
 #include "UI/Widget/MainMenuWidget.h"
 #include "SFML/System/Vector2.hpp"
+
 #include <sstream>
 
 /**
 * @fn MainMenuState
-* @brief  
-* @param data
+* @brief  Constructor
+* @param data : GameData reference
 */
 MainMenuState::MainMenuState(GameDataRef data) 
 	: _data(std::move(data))
 {
 }
 
-MainMenuState::~MainMenuState()
-{
-}
+MainMenuState::~MainMenuState() = default;
 
 /**
 * @fn Init
@@ -65,8 +64,8 @@ void MainMenuState::HandleInput()
 
 /**
 * @fn Update
-* @brief  
-* @param dt
+* @brief Update the state
+* @param dt : Delta time
 */
 void MainMenuState::Update(float dt)
 {
@@ -82,7 +81,7 @@ void MainMenuState::SetScales()
 
 /**
 * @fn SetPositions
-* @brief  
+* @brief Set the position of the elements
 */
 void MainMenuState::SetPositions()
 {

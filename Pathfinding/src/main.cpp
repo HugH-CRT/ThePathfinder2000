@@ -2,25 +2,26 @@
 * @file main.cpp
 * @brief
 *
-* @author hugo.carricart@ynov.com
+* @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
 *
 * @copyright TeamRandom (c) 2023
 * @version 0.1
 *
 * @date 12/10/2023
 */
-#include <iostream>
 
 #include "defined.h"
 #include "logger.h"
 #include "Game.h"
 
+#include <iostream>
+
 Game* gGame = nullptr;
 
 /**
 * @fn GetGame
-* @brief  
-* @return 
+* @brief  Get the game instance
+* @return Game*
 */
 Game* GetGame()
 {
@@ -29,8 +30,8 @@ Game* GetGame()
 
 /**
 * @fn main
-* @brief  
-* @return 
+* @brief  Main function of the game
+* @return exit code of the game
 */
 int main() 
 {
