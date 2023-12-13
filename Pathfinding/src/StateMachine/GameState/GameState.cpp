@@ -15,7 +15,7 @@
 #include "Game.h"
 #include "Widget/GameWidget/GameWidget.h"
 
-GameState::GameState() = default;
+// GameState::GameState() = default;
 
 /**
 * @fn GameState
