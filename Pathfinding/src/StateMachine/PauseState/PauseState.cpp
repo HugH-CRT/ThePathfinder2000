@@ -98,7 +98,8 @@ void PauseState::ResumeState()
  */
 void PauseState::BackToHome()
 {
-	_data->machine.RemoveState();
+	GetGame()->ResetGame();
+	_data->machine.RemoveState();	
 	_data->machine.AddState(std::make_unique<MainMenuState>(_data), true);
 }
 

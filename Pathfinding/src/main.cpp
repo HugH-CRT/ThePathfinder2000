@@ -42,8 +42,6 @@ int main()
 	Logger::info("Start game ... ");
   
     gGame = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE_WINDOW);
-	gGame->nb_columns = 15;
-	gGame->nb_lines = 15;
 	gGame->Run();
 
 	DELETE_PTR(gGame)

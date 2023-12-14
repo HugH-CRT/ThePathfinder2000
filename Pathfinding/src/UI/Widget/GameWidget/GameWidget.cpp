@@ -17,13 +17,13 @@ GameWidget::GameWidget(sf::Vector2f size, GameDataRef& gameDataRef)
 
 	UIButton* launchButton = addElement<UIButton>("launch button");
 	launchButton->SetBackgroundImage(_gameDataRef.get()->m_assetManager.GetTexture("Resume Button"));
-	launchButton->SetScale(.2f, .2f);
-	launchButton->SetPosition(launchButton->_size.x, 5.5f);
+	launchButton->SetScale(.1f, .1f);
+	launchButton->SetPosition(launchButton->_size.x * 2, 5.5f);
 	launchButton->BindOnClick(_currentState, &GameState::Start);
 
 	UIButton* pauseButton = addElement<UIButton>("pause button");
 	pauseButton->SetBackgroundImage(_gameDataRef.get()->m_assetManager.GetTexture("Pause Button"));
-	pauseButton->SetScale(.2f, .2f);
+	pauseButton->SetScale(.1f, .1f);
 	pauseButton->SetPosition(_size.x - (pauseButton->_size.x * 2), 5.5f);
 	pauseButton->BindOnClick(_currentState, &GameState::PauseGame);
 
@@ -50,24 +50,24 @@ GameWidget::GameWidget(sf::Vector2f size, GameDataRef& gameDataRef)
 	UIButton* forwardDebugButton = addElement<UIButton>("forward button");
 	forwardDebugButton->SetBackgroundImage(_gameDataRef.get()->m_assetManager.GetTexture("Forward Arrow"));
 	forwardDebugButton->SetScale(.5f, .5f);
-	forwardDebugButton->SetPosition(_size.x / 2 + forwardDebugButton->_size.x / 2,  size.y - forwardDebugButton->_size.y);
+	forwardDebugButton->SetPosition(_size.x / 2 + forwardDebugButton->_size.x,  size.y - (forwardDebugButton->_size.y * 2));
 	forwardDebugButton->BindOnClick(_currentState, &GameState::ForwardDebug);
 
 	UIButton* backwardDebugButton = addElement<UIButton>("backword button");
 	backwardDebugButton->SetBackgroundImage(_gameDataRef.get()->m_assetManager.GetTexture("Backward Arrow"));
 	backwardDebugButton->SetScale(.5f, .5f);
-	backwardDebugButton->SetPosition(_size.x / 2 - backwardDebugButton->_size.x / 2, size.y - backwardDebugButton->_size.y);
+	backwardDebugButton->SetPosition(_size.x / 2 - backwardDebugButton->_size.x, size.y - (backwardDebugButton->_size.y * 2));
 	backwardDebugButton->BindOnClick(_currentState, &GameState::BackwardDebug);
 
 	UIButton* clearAllButton = addElement<UIButton>("clear button");
 	clearAllButton->SetBackgroundImage(_gameDataRef.get()->m_assetManager.GetTexture("Clear Button"));
-	clearAllButton->SetScale(.2f, .2f);
+	clearAllButton->SetScale(.15f, .15f);
 	clearAllButton->SetPosition(_size.x / 2 - clearAllButton->_size.x / 2, clearAllButton->_size.y / 2);
 	clearAllButton->BindOnClick(_currentState, &GameState::ClearAll);
 
 	UIButton* clearPathButton = addElement<UIButton>("clear path button");
 	clearPathButton->SetBackgroundImage(_gameDataRef.get()->m_assetManager.GetTexture("Clear Path Button"));
-	clearPathButton->SetScale(.2f, .2f);
+	clearPathButton->SetScale(.15f, .15f);
 	clearPathButton->SetPosition(_size.x / 2 + clearAllButton->_size.x + clearPathButton->_size.x / 2, clearPathButton->_size.y / 2);
 	clearPathButton->BindOnClick(_currentState, &GameState::ClearPath);
 
