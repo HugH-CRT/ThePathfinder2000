@@ -51,7 +51,7 @@
 #define CLEAR_BUTTON RSC_PATH("ClearButton.png")
 #define CLEAR_PATH_BUTTON RSC_PATH("ClearPathButton.png")
 
-/// ********************************** PARAMETRES ********************************** ///
+/// ********************************** SETTINGS ********************************** ///
 
 #define TITLE_WINDOW "ThePathfinder2000"
 
@@ -61,6 +61,6 @@
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
 
-#define SPLASH_STATE_SHOW_TIME 3.0
+#define SPLASH_STATE_SHOW_TIME 2.5
 
 #endif /* DEFINED_H */
