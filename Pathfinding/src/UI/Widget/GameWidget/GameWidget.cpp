@@ -15,16 +15,16 @@ GameWidget::GameWidget(sf::Vector2f size, GameDataRef& gameDataRef)
 	backgroundImage->SetTexture(_gameDataRef.get()->m_assetManager.GetTexture("Game Background"));
 	backgroundImage->SetScale(_size.x / backgroundImage->_size.x, _size.y / backgroundImage->_size.y);
 
-	UIButton* playButton = addElement<UIButton>("play button");
-	playButton->SetBackgroundImage(_gameDataRef.get()->m_assetManager.GetTexture("Play Button"));
-	playButton->SetScale(.3f, .3f);
-	playButton->SetPosition(playButton->_size.x, 5.f);
-	playButton->BindOnClick(_currentState, &GameState::Start);
+	UIButton* launchButton = addElement<UIButton>("launch button");
+	launchButton->SetBackgroundImage(_gameDataRef.get()->m_assetManager.GetTexture("Resume Button"));
+	launchButton->SetScale(.2f, .2f);
+	launchButton->SetPosition(launchButton->_size.x, 5.5f);
+	launchButton->BindOnClick(_currentState, &GameState::Start);
 
 	UIButton* pauseButton = addElement<UIButton>("pause button");
 	pauseButton->SetBackgroundImage(_gameDataRef.get()->m_assetManager.GetTexture("Pause Button"));
-	pauseButton->SetScale(.3f, .3f);
-	pauseButton->SetPosition(_size.x - pauseButton->_size.x, pauseButton->_position.y);
+	pauseButton->SetScale(.2f, .2f);
+	pauseButton->SetPosition(_size.x - (pauseButton->_size.x * 2), 5.5f);
 	pauseButton->BindOnClick(_currentState, &GameState::PauseGame);
 
 	UICheckbox* checkboxDiagMode = addElement<UICheckbox>("checkbox diagonal mode");
@@ -61,17 +61,17 @@ GameWidget::GameWidget(sf::Vector2f size, GameDataRef& gameDataRef)
 
 	UIButton* clearAllButton = addElement<UIButton>("clear button");
 	clearAllButton->SetBackgroundImage(_gameDataRef.get()->m_assetManager.GetTexture("Clear Button"));
-	clearAllButton->SetScale(.5f, .5f);
+	clearAllButton->SetScale(.2f, .2f);
 	clearAllButton->SetPosition(_size.x / 2 - clearAllButton->_size.x / 2, clearAllButton->_size.y / 2);
 	clearAllButton->BindOnClick(_currentState, &GameState::ClearAll);
 
 	UIButton* clearPathButton = addElement<UIButton>("clear path button");
 	clearPathButton->SetBackgroundImage(_gameDataRef.get()->m_assetManager.GetTexture("Clear Path Button"));
-	clearPathButton->SetScale(.5f, .5f);
+	clearPathButton->SetScale(.2f, .2f);
 	clearPathButton->SetPosition(_size.x / 2 + clearAllButton->_size.x + clearPathButton->_size.x / 2, clearPathButton->_size.y / 2);
 	clearPathButton->BindOnClick(_currentState, &GameState::ClearPath);
 
-	// TEST
+	/*
 	UITextField* inputXGrid = addElement<UITextField>("input x grid");
 	inputXGrid->SetScale(0.05f, 0.05f);
 	inputXGrid->SetPosition(5.f, 50.f);
@@ -79,7 +79,7 @@ GameWidget::GameWidget(sf::Vector2f size, GameDataRef& gameDataRef)
 	inputXGrid->SetMaxChar(2);
 	inputXGrid->SetSizeChar(400);
 	inputXGrid->SetNumericsOnly(true);
-	//
+	*/
 }
 
 GameWidget::GameWidget(UIElement* parent, sf::Vector2f size, std::string& name) 

@@ -26,7 +26,6 @@
 #define MAIN_MENU_BACKGROUND_FILEPATH RSC_PATH("BackgroundMainMenu.png")
 #define MAIN_MENU_TITLE_PATH RSC_PATH("PathfinderLogo.png")
 #define MAIN_MENU_PLAY_BUTTON RSC_PATH("PlayButton.png")
-#define MAIN_MENU_PLAY_BUTTON_OUTER RSC_PATH("CloseButtonLogo.png")
 
 #define GAME_BACKGROUND_FILEPATH RSC_PATH("BackgroundGame.png")
 #define PAUSE_BUTTON RSC_PATH("PauseButton.png")
@@ -54,10 +53,10 @@
 
 /// ********************************** PARAMETRES ********************************** ///
 
-#define TITLE_WINDOW "Pathfinder2000"
+#define TITLE_WINDOW "ThePathfinder2000"
 
-#define NB_LINES 15
-#define NB_COLUMNS 15
+#define NB_LINES 10
+#define NB_COLUMNS 10
 
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900

@@ -110,7 +110,6 @@ void MainMenuState::LoadTextures()
 	_data->m_assetManager.LoadTexture("Main Menu Background", MAIN_MENU_BACKGROUND_FILEPATH);
 	_data->m_assetManager.LoadTexture("Game Title", MAIN_MENU_TITLE_PATH);
 	_data->m_assetManager.LoadTexture("Play Button", MAIN_MENU_PLAY_BUTTON);
-	_data->m_assetManager.LoadTexture("Play Button Outer", MAIN_MENU_PLAY_BUTTON_OUTER);
 }
 
 /**
