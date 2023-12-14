@@ -13,16 +13,16 @@
 #include "defined.h"
 #include "PauseState/PauseState.h"
 #include "Game.h"
-#include "UI/Widget/GameWidget.h"
+#include "Widget/GameWidget/GameWidget.h"
 
-GameState::GameState() = default;
+// GameState::GameState() = default;
 
 /**
 * @fn GameState
 * @brief Constructor
 * @param data : Game data reference
 */
-GameState::GameState(GameDataRef data) 
+GameState::GameState(GameDataRef data)
 	: _data(std::move(data)) 
 {
 	
@@ -131,7 +131,7 @@ void GameState::LoadTextures()
 	_data->m_assetManager.LoadTexture("Path", PATH);
 	_data->m_assetManager.LoadTexture("Start Point", START_POINT);
 	_data->m_assetManager.LoadTexture("End Point", END_POINT);
-	_data->m_assetManager.LoadTexture("Play Button", MAIN_MENU_PLAY_BUTTON);
+	_data->m_assetManager.LoadTexture("Resume Button", RESUME_BUTTON);
 	_data->m_assetManager.LoadTexture("Check Box Checked", CHECK_BOX_CHECKED);
 	_data->m_assetManager.LoadTexture("Check Box Unchecked", CHECK_BOX_UNCHECKED);
 	_data->m_assetManager.LoadTexture("CheckPoint", CHECKPOINT);
@@ -393,12 +393,13 @@ void GameState::PlacePiece(const GridPieces piece)
     int row = GetRowFromPosition(gridLocalTouchPos.y);
 
     // Information about different types of game pieces
-    const std::vector<PieceInfo> pieceInfos = {
+    const std::vector<PieceInfo> pieceInfos =
+	{
         PieceInfo{"Start Point", START_PIECE, &GetGame()->_StartingPoint, nullptr},
         PieceInfo{"End Point", END_PIECE, &GetGame()->_EndingPoint, nullptr},
         PieceInfo{"Wall", WALL_PIECE, nullptr, nullptr},
         PieceInfo{"Portal", PORTAL_PIECE, nullptr, GetGame()->_Portals},
-        PieceInfo{"CheckPoint", CHECKPOINT_PIECE, nullptr, GetGame()->_CheckPoints}
+        PieceInfo{"CheckPoint", CHECKPOINT_PIECE, nullptr, GetGame()->_CheckPoints} 
     };
 
     // Check if the clicked position already has a piece and reset it

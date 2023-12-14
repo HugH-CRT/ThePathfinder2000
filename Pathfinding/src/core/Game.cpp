@@ -168,15 +168,17 @@ double Game::CalculateHeuristicValue(const int row, const int col, const Pair de
 * @param dest the destination
 * @param path the path to the ending point as reference to fill
 */
-std::vector<Pair> Game::tracePath(cell cellDetails[][NB_COLUMNS], const Pair dest,std::vector<Pair>& path)
+std::vector<Pair> Game::tracePath(cell cellDetails[][NB_COLUMNS], const Pair dest, std::vector<Pair>& path)
 {
     int row = dest.first;
     int col = dest.second;
     
     while (!(cellDetails[row][col].parent_i == row
-        && cellDetails[row][col].parent_j == col)) {
+        && cellDetails[row][col].parent_j == col)) 
+    {
 
-		if (row != dest.first || col != dest.second) {
+		if (row != dest.first || col != dest.second) 
+        {
             path.emplace_back(row, col);
 		}
 
@@ -199,31 +201,33 @@ std::vector<Pair> Game::tracePath(cell cellDetails[][NB_COLUMNS], const Pair des
 * @param UseDiagonal if we can use diagonal
 * @param path the path to the ending point as reference to fill
 */
-std::vector<Pair> Game::aStarSearch(const Pair startingPoint, const Pair endingPoint, const bool UseDiagonal,std::vector<Pair>& path)
+std::vector<Pair> Game::aStarSearch(const Pair startingPoint, const Pair endingPoint, const bool UseDiagonal, std::vector<Pair>& path)
 {
     // If the start is out of range
-    if (IsCellInBoundOfTheGrid(startingPoint.first, startingPoint.second) == false) {
+    if (IsCellInBoundOfTheGrid(startingPoint.first, startingPoint.second) == false) 
+    {
         Logger::debug("Source is invalid \n");
         return path;
     }
 
     // If the destination is out of range
-    if (IsCellInBoundOfTheGrid(endingPoint.first, endingPoint.second) == false) {
+    if (IsCellInBoundOfTheGrid(endingPoint.first, endingPoint.second) == false) 
+    {
         Logger::debug("Destination is invalid \n");
         return path;
     }
 
     // Either the source or the destination is blocked
     if (IsNotAWall(startingPoint.first, startingPoint.second) == false
-        || IsNotAWall( endingPoint.first, endingPoint.second)
-        == false) {
+        || IsNotAWall( endingPoint.first, endingPoint.second) == false) 
+    {
         Logger::debug("Source or the destination is blocked \n");
         return path;
     }
 
     // If the destination cell is the same as source cell
-    if (IsDestination(startingPoint.first, startingPoint.second,endingPoint)
-        == true) {
+    if (IsDestination(startingPoint.first, startingPoint.second,endingPoint) == true) 
+    {
         Logger::debug("We are already at the destination \n");
         return path;
     }
@@ -236,8 +240,10 @@ std::vector<Pair> Game::aStarSearch(const Pair startingPoint, const Pair endingP
     int i, j;
 
     // Initialising the parameters of the cells to infinity
-    for (i = 0; i < NB_LINES; i++) {
-        for (j = 0; j < NB_COLUMNS; j++) {
+    for (i = 0; i < NB_LINES; i++)
+    {
+        for (j = 0; j < NB_COLUMNS; j++)
+        {
             cellDetails[i][j].f = FLT_MAX;
             cellDetails[i][j].g = FLT_MAX;
             cellDetails[i][j].h = FLT_MAX;
@@ -278,7 +284,8 @@ std::vector<Pair> Game::aStarSearch(const Pair startingPoint, const Pair endingP
         dy.push_back(-1);
     }
 
-    while (!openList.empty()) {
+    while (!openList.empty()) 
+    {
         
         // Extraire le n�ud de la liste ouverte avec le co�t "f" le plus bas
         pPair p = *openList.begin();
@@ -490,7 +497,7 @@ sf::Vector2i Game::CheckPortalPath(const sf::Vector2i& currentPoint, const sf::V
 */
 sf::Vector2i Game::PathToClosestPortal(const sf::Vector2i& point,std::vector<Pair>& finalPath)
 {
-    float minDistance =  std::numeric_limits<float>::max();
+    double minDistance =  std::numeric_limits<double>::max();
     int minIndex = -1;
 
     std::vector<Pair> tempPath;
@@ -605,12 +612,12 @@ void Game::RemoveCheckPoint(const sf::Vector2i& point, std::vector<sf::Vector2i>
 */
 sf::Vector2i Game::GetClosestCheckPoint(const sf::Vector2i& point, std::vector<sf::Vector2i>& checkpoints)
 {
-    float minDistance = std::numeric_limits<float>::max();
+    double minDistance = std::numeric_limits<double>::max();
     const sf::Vector2i* closestCheckPoint = nullptr;
 
     for (const auto& checkPoint : checkpoints)
     {
-        const float distance = sqrt(static_cast<float>((checkPoint.x - point.x) * (checkPoint.x - point.x) +
+        const double distance = sqrt(static_cast<double>((checkPoint.x - point.x) * (checkPoint.x - point.x) +
                                        (checkPoint.y - point.y) * (checkPoint.y - point.y)));
 
         if (distance < minDistance)

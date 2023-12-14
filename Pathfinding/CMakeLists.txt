@@ -3,6 +3,11 @@
 project(Pathfinding)
 
 set (PATH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set (LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+
+set(SFML_HEADER ${LIB_DIR}/SFML/include)
+set(ImGUI_HEADER ${LIB_DIR}/ImGUI)
+set(ImGUI_SFML_HEADER ${LIB_DIR}/ImGUI-SFML)
 
 set(HEADERS
     "${PATH_DIR}/macro.h"
@@ -15,21 +20,20 @@ set(HEADERS
     "${PATH_DIR}/StateMachine/MainMenu/MainMenuState.h"
     "${PATH_DIR}/StateMachine/SplashState/SplashState.h"
     "${PATH_DIR}/StateMachine/PauseState/PauseState.h"
-    "${PATH_DIR}/UI/UIElement.h"
-    "${PATH_DIR}/UI/UIElements/UIButton.h"
-    "${PATH_DIR}/UI/UIElements/UICheckbox.h"
-    "${PATH_DIR}/UI/UIElements/UIImage.h"
-    "${PATH_DIR}/UI/UIElements/UIText.h"
-    "${PATH_DIR}/UI/UIElements/UIWidget.h"
+    "${PATH_DIR}/UI/UIElements/UIElement.h"
+    "${PATH_DIR}/UI/UIElements/UI_Button/UIButton.h"
+    "${PATH_DIR}/UI/UIElements/UI_CheckBox/UICheckbox.h"
+    "${PATH_DIR}/UI/UIElements/UI_Image/UIImage.h"
+    "${PATH_DIR}/UI/UIElements/UI_Text/UIText.h"
+    "${PATH_DIR}/UI/UIElements/UI_TextField/UITextField.h"
     "${PATH_DIR}/UI/Events/UIEvent.h"
     "${PATH_DIR}/UI/Events/UIEventListener.h"
-    "${PATH_DIR}/UI/Widget/GameWidget.h"
-    "${PATH_DIR}/UI/Widget/MainMenuWidget.h"
-    "${PATH_DIR}/UI/Widget/PauseWidget.h"
-    "${PATH_DIR}/UI/Widget/SplashWidget.h"
-    
+    "${PATH_DIR}/UI/Widget/UIWidget.h"
+    "${PATH_DIR}/UI/Widget/GameWidget/GameWidget.h"
+    "${PATH_DIR}/UI/Widget/MainMenuWidget/MainMenuWidget.h"
+    "${PATH_DIR}/UI/Widget/PauseWidget/PauseWidget.h"
+    "${PATH_DIR}/UI/Widget/SplashWidget/SplashWidget.h"
     "${PATH_DIR}/defined.h"
-       
 )
 
 set(SOURCES
@@ -42,35 +46,39 @@ set(SOURCES
    "${PATH_DIR}/StateMachine/SplashState/SplashState.cpp"
    "${PATH_DIR}/StateMachine/MainMenu/MainMenuState.cpp"
    "${PATH_DIR}/StateMachine/PauseState/PauseState.cpp"
-   "${PATH_DIR}/UI/UIElement.cpp"
-   "${PATH_DIR}/UI/UIElements/UIButton.cpp"
-   "${PATH_DIR}/UI/UIElements/UICheckbox.cpp"
-   "${PATH_DIR}/UI/UIElements/UIImage.cpp"
-   "${PATH_DIR}/UI/UIElements/UIText.cpp"
-   "${PATH_DIR}/UI/UIElements/UIWidget.cpp"
-   "${PATH_DIR}/UI/Events/UIEventListener.cpp"
-   "${PATH_DIR}/UI/Widget/GameWidget.cpp"
-   "${PATH_DIR}/UI/Widget/MainMenuWidget.cpp"
-   "${PATH_DIR}/UI/Widget/PauseWidget.cpp"
-   "${PATH_DIR}/UI/Widget/SplashWidget.cpp"
+    "${PATH_DIR}/UI/UIElements/UIElement.cpp"
+    "${PATH_DIR}/UI/UIElements/UI_Button/UIButton.cpp"
+    "${PATH_DIR}/UI/UIElements/UI_CheckBox/UICheckbox.cpp"
+    "${PATH_DIR}/UI/UIElements/UI_Image/UIImage.cpp"
+    "${PATH_DIR}/UI/UIElements/UI_Text/UIText.cpp"
+    "${PATH_DIR}/UI/UIElements/UI_TextField/UITextField.cpp"
+    "${PATH_DIR}/UI/Events/UIEventListener.cpp"
+    "${PATH_DIR}/UI/Widget/UIWidget.cpp"
+    "${PATH_DIR}/UI/Widget/GameWidget/GameWidget.cpp"
+    "${PATH_DIR}/UI/Widget/MainMenuWidget/MainMenuWidget.cpp"
+    "${PATH_DIR}/UI/Widget/PauseWidget/PauseWidget.cpp"
+    "${PATH_DIR}/UI/Widget/SplashWidget/SplashWidget.cpp"
 
    # LIB 
-   "${PATH_DIR}/lib/ImGUI/imgui.cpp"
-   "${PATH_DIR}/lib/ImGUI/imgui_tables.cpp"
-   "${PATH_DIR}/lib/ImGUI/imgui_widgets.cpp"
-   "${PATH_DIR}/lib/ImGUI/imgui_draw.cpp"
+   #"${PATH_DIR}/lib/ImGUI/imgui.cpp"
+   #"${PATH_DIR}/lib/ImGUI/imgui_tables.cpp"
+   #"${PATH_DIR}/lib/ImGUI/imgui_widgets.cpp"
+   #"${PATH_DIR}/lib/ImGUI/imgui_draw.cpp"
    # Pour demo 
-   "${PATH_DIR}/lib/ImGUI/imgui_demo.cpp"
+   #"${PATH_DIR}/lib/ImGUI/imgui_demo.cpp"
    # Link src : ImGui to SFML
-   "${PATH_DIR}/lib/ImGUI-SFML/imgui-SFML.cpp"
+   #"${PATH_DIR}/lib/ImGUI-SFML/imgui-SFML.cpp"
 )
 
 include_directories(
     "${PATH_DIR}"
     "${PATH_DIR}/core"
-    "${PATH_DIR}/lib"
     "${PATH_DIR}/Managers"
     "${PATH_DIR}/StateMachine"
+    "${PATH_DIR}/UI"
+    ${SFML_HEADER}
+    ${ImGUI_HEADER}
+    ${ImGUI_SFML_HEADER}
 )
 
 add_executable(${PROJECT_NAME}
@@ -82,21 +90,22 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC
 	$<INSTALL_INTERFACE:include>
 	$<BUILD_INTERFACE:${HEADER_DIR}>
-	$<BUILD_INTERFACE:${C_PATH_HEADER}>
 	$<BUILD_INTERFACE:${LOGGER_HEADER}>
-        "${PATH_DIR}/lib/SFML/include"
-        "${PATH_DIR}/lib/ImGUI"
-        "${PATH_DIR}/lib/ImGUI/backends"
-        "${PATH_DIR}/lib/ImGUI-SFML"
+	# $<BUILD_INTERFACE:${SFML_HEADER}>
+	# $<BUILD_INTERFACE:${ImGUI_HEADER}>
+	# $<BUILD_INTERFACE:${ImGUI_SFML_HEADER}>
+    ${SFML_HEADER}
+    ${ImGUI_HEADER}
+    ${ImGUI_SFML_HEADER}
 )
 
 target_link_directories(${PROJECT_NAME}
     PUBLIC
-	"${PATH_DIR}/lib/SFML/lib"  
+	"${PATH_DIR}/SFML/lib"  
 )
 
 # Remove GLOB_RECURSE
-file(GLOB_RECURSE OTHER_LINK_LIBRARIES  ${PATH_DIR}/lib/SFML/lib/*.lib)
+file(GLOB_RECURSE OTHER_LINK_LIBRARIES  ${LIB_DIR}/SFML/lib/*.lib)
 
 find_package(OpenGL REQUIRED)
 target_link_libraries(${PROJECT_NAME}
@@ -104,14 +113,13 @@ target_link_libraries(${PROJECT_NAME}
 	${OPENGL_gl_LIBRARY}
 	${OTHER_LINK_LIBRARIES}
     PRIVATE
-	CustomPath
 	Logger
 )
 
 # Copy DLL
 add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
-                   ${PATH_DIR}/lib/SFML/bin/ $<TARGET_FILE_DIR:${PROJECT_NAME}>
+                   ${LIB_DIR}/SFML/bin/ $<TARGET_FILE_DIR:${PROJECT_NAME}>
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.8)

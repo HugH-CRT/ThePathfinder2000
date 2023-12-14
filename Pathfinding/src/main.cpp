@@ -1,5 +1,6 @@
 /**
 * @file main.cpp
+*
 * @brief
 *
 * @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
@@ -12,6 +13,7 @@
 
 #include "defined.h"
 #include "logger.h"
+#include "macro.h"
 #include "Game.h"
 
 #include <iostream>
@@ -41,6 +43,8 @@ int main()
   
     gGame = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE_WINDOW);
 	gGame->Run();
+
+	DELETE_PTR(gGame)
 
 	return EXIT_SUCCESS;
 }

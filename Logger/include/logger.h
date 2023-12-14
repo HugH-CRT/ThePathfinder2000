@@ -17,7 +17,6 @@
 
 #define TEMP_PATH std::filesystem::temp_directory_path().generic_string()
 
-
 typedef enum 
 {
 	SYS_NONE = -1,

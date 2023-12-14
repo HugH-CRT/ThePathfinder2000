@@ -44,10 +44,18 @@ typedef std::pair<double, std::pair<int, int> > pPair;
 * @struct cell
 * @brief Stores details of a cell
 */
-struct cell {
+struct cell 
+{
 	int parent_i, parent_j;
 
 	double f, g, h; // f = g + h
+};
+
+struct grid
+{
+	int lines;
+	int columns;
+	GridPieces pieces;
 };
 
 /**
@@ -63,6 +71,10 @@ public:
 	std::vector<Pair> AStarAlgorithm(sf::Vector2i startingPoint, sf::Vector2i endingPoint, bool UseDiagonal, std::vector<Pair>& _path);
 
 	void Run();
+
+	// @todo replace define NB_LINES & NB_COLUMNS
+	// int nb_lines = 10;
+	// int nb_columns = 10;
 	
 private: 
 
@@ -92,7 +104,7 @@ private:
 	void ProcessFinalPath(const sf::Vector2i& currentPoint);
 	bool CheckMapValidity();
 
-	sf::Vector2i  CheckPortalPath(const sf::Vector2i& currentPoint, const sf::Vector2i& nextPoint, std::vector<Pair>& basePath);
+	sf::Vector2i CheckPortalPath(const sf::Vector2i& currentPoint, const sf::Vector2i& nextPoint, std::vector<Pair>& basePath);
 	sf::Vector2i PathToClosestPortal(const sf::Vector2i& point,std::vector<Pair>& finalPath);
 	sf::Vector2i PathToClosestCheckPoint(const sf::Vector2i& point,std::vector<sf::Vector2i>& checkpoints,std::vector<Pair>& finalPath);
 
@@ -124,7 +136,8 @@ public :
 	
 	bool IsDebugMode() const;
 
-	int(&GetGridArray())[NB_LINES][NB_COLUMNS]{
+	int(&GetGridArray())[NB_LINES][NB_COLUMNS]
+	{
 		return _gridArray;
 	}
 	

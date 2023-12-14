@@ -12,7 +12,7 @@
 #include "defined.h"
 #include "GameState/GameState.h"
 #include "MainMenu/MainMenuState.h"
-#include "UI/Widget/PauseWidget.h"
+#include "Widget/PauseWidget/PauseWidget.h"
 
 /**
 * @fn PauseState
@@ -98,7 +98,8 @@ void PauseState::ResumeState()
  */
 void PauseState::BackToHome()
 {
-	_data->machine.RemoveState();
+	GetGame()->ResetGame();
+	_data->machine.RemoveState();	
 	_data->machine.AddState(std::make_unique<MainMenuState>(_data), true);
 }
 

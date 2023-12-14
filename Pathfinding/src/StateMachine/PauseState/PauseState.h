@@ -18,6 +18,7 @@
 #include "Game.h"
 
 #include <memory>
+
 /**
 * @class PauseState
 * @brief Pause screen of the game

@@ -52,7 +52,7 @@ class GameState final : public State
 {
 
 public:
-	GameState();
+	// GameState();
 	explicit GameState(GameDataRef data);
 	
 	/* ImplGameDataRef e class */

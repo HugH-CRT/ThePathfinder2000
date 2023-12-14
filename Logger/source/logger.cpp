@@ -8,6 +8,7 @@
 * @version 1.0.0
 * @date 28/10/2023
 */
+
 #include "logger.h"
 
 #include <iostream>
@@ -179,7 +180,6 @@ void Logger::Log::addLog(const LOGGER_MESSAGE_TYPE& type, const std::string& log
 	file << prefixLine << " [" << logType << "] " << logString;
 	file << "\n";
 	file.close();
-
 }
 
 /**
@@ -244,18 +244,12 @@ void Logger::Log::setPrefixLine()
 */
 void Logger::debug(std::string content)
 {
-	Log* log = new Log;
-	if (log == nullptr) { return; }
-
+	Log log;
 	if (withConsoleLog == true)
 	{
-		log->setConsoleLog_ON();
+		log.setConsoleLog_ON();
 	}
-
-	log->debug(content);	
-
-	delete log;
-	log = nullptr;
+	log.debug(content);	
 }
 
 /**
@@ -266,18 +260,12 @@ void Logger::debug(std::string content)
 */
 void Logger::info(std::string content)
 {
-	Log* log = new Log;
-	if (log == nullptr) { return; }
-
+	Log log;
 	if (withConsoleLog == true)
 	{
-		log->setConsoleLog_ON();
+		log.setConsoleLog_ON();
 	}
-
-	log->info(content);
-
-	delete log;
-	log = nullptr;
+	log.info(content);
 }
 
 /**
@@ -288,18 +276,12 @@ void Logger::info(std::string content)
 */
 void Logger::warning(std::string content)
 {
-	Log* log = new Log;
-	if (log == nullptr) { return; }
-
+	Log log;
 	if (withConsoleLog == true)
 	{
-		log->setConsoleLog_ON();
+		log.setConsoleLog_ON();
 	}
-
-	log->warning(content);
-
-	delete log;
-	log = nullptr;
+	log.warning(content);
 }
 
 /**
@@ -310,18 +292,12 @@ void Logger::warning(std::string content)
 */
 void Logger::error(std::string content)
 {
-	Log* log = new Log;
-	if (log == nullptr) { return; }
-
+	Log log;
 	if (withConsoleLog == true)
 	{
-		log->setConsoleLog_ON();
+		log.setConsoleLog_ON();
 	}
-
-	log->error(content);
-
-	delete log;
-	log = nullptr;
+	log.error(content);
 }
 
 /**
@@ -332,18 +308,12 @@ void Logger::error(std::string content)
 */
 void Logger::critical(std::string content)
 {
-	Log* log = new Log;
-	if (log == nullptr) { return; }
-
+	Log log;
 	if (withConsoleLog == true)
 	{
-		log->setConsoleLog_ON();
+		log.setConsoleLog_ON();
 	}
-
-	log->critical(content);
-
-	delete log;
-	log = nullptr;
+	log.critical(content);
 }
 
 /**
@@ -355,18 +325,12 @@ void Logger::critical(std::string content)
 */
 void Logger::custom(std::string content, LOGGER_MESSAGE_TYPE type)
 {
-	Log* log = new Log;
-	if (log == nullptr) { return; }
-
+	Log log;
 	if (withConsoleLog == true)
 	{
-		log->setConsoleLog_ON();
+		log.setConsoleLog_ON();
 	}
-
-	log->custom(content, type);
-
-	delete log;
-	log = nullptr;
+	log.custom(content, type);
 }
 
 /**
