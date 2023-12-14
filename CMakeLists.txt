@@ -9,8 +9,10 @@ if (POLICY CMP0141)
       "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-set(PROJECT_NAME "Pathfinding")
+project(ThePathfinder2000)
 
-project(${PROJECT_NAME})
+set(LOGGER_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/Logger/include)
 
-add_subdirectory(${PROJECT_NAME})
+add_subdirectory(Logger)
+
+add_subdirectory(Pathfinding)

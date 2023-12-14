@@ -1,83 +1,50 @@
-﻿/**
+/**
 * @file main.cpp
+*
 * @brief
 *
-* @author hugo.carricart@ynov.com
+* @author yoan.laurain@ynov.com // hugo.carricart@ynov.com // kritofer.ledoux@ynov.com
 *
 * @copyright TeamRandom (c) 2023
 * @version 0.1
 *
 * @date 12/10/2023
 */
-#include "macro.h"
 
-/*
+#include "defined.h"
+#include "logger.h"
+#include "macro.h"
+#include "Game.h"
+
 #include <iostream>
 
-#include <SFML/Graphics.hpp>
+Game* gGame = nullptr;
 
-int main()
+/**
+* @fn GetGame
+* @brief  Get the game instance
+* @return Game*
+*/
+Game* GetGame()
 {
-    auto window = sf::RenderWindow{ { 1920u, 1080u }, "ThePathfinder2000" };
-    window.setFramerateLimit(144);
-
-    while (window.isOpen())
-    {
-        for (auto event = sf::Event{}; window.pollEvent(event);)
-        {
-            if (event.type == sf::Event::Closed)
-            {
-                window.close();
-            }
-        }
-
-        window.clear();
-        window.display();
-    }
+	return gGame;
 }
 
+/**
+* @fn main
+* @brief  Main function of the game
+* @return exit code of the game
 */
+int main() 
+{
+	Logger::setConsoleLog_ON();
 
-#include "imgui.h"
-#include "imgui-SFML.h"
+	Logger::info("Start game ... ");
+  
+    gGame = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE_WINDOW);
+	gGame->Run();
 
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/Window/Event.hpp>
+	DELETE_PTR(gGame)
 
-int main() {
-    sf::RenderWindow window(sf::VideoMode(640, 480), "ThePathFinder2000");
-    window.setFramerateLimit(60);
-    ImGui::SFML::Init(window);
-
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
-
-    sf::Clock deltaClock;
-    while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            ImGui::SFML::ProcessEvent(window, event);
-
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
-        }
-
-        ImGui::SFML::Update(window, deltaClock.restart());
-
-        ImGui::ShowDemoWindow(); // Manque un truc.
-
-        ImGui::Begin("Hello, world!");
-        ImGui::Button("Look at this pretty button");
-        ImGui::End();
-
-        window.clear();
-        window.draw(shape);
-        ImGui::SFML::Render(window);
-        window.display();
-    }
-
-    ImGui::SFML::Shutdown();
+	return EXIT_SUCCESS;
 }
